@@ -28,7 +28,7 @@ const Footer = () => {
                 <Row>
                     <Col>
                         <p style={{ margin: '0', fontSize: '1.5rem' }}>
-                            Copyright &copy; SAP-Shop 
+                            Copyright &copy; <a href="https://github.com/YogendraBits/FSADProject" target="_blank" style={{ color: 'white' }} >FSAD-Shop</a>
                             <span 
                                 style={{ ...heartStyle, marginLeft: '0.5rem' }} 
                                 onMouseEnter={() => document.getElementById('namesTile').style.display = 'block'}
