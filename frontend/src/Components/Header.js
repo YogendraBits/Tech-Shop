@@ -5,6 +5,7 @@ import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { logout } from "../actions/userActions";
 import SearchBox from './SearchBox';
 import { withRouter } from 'react-router-dom';
+import './Header.css'; // Import the CSS file for additional styling
 
 const Header = ({ history }) => {
     const dispatch = useDispatch();
@@ -17,14 +18,20 @@ const Header = ({ history }) => {
 
     return (
         <header>
-            <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
+            <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect className="navbar-custom">
                 <Container>
-                    <LinkContainer to="/">
-                        <Navbar.Brand>FSAD-Tech-Store</Navbar.Brand>
-                    </LinkContainer>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <SearchBox history={history} />
+                    <div className="header-section brand-section">
+                        <LinkContainer to="/">
+                            <Navbar.Brand>FSAD-Tech-Store</Navbar.Brand>
+                        </LinkContainer>
+                    </div>
+                    <div className="header-section search-section">
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <SearchBox history={history} />
+                        </Navbar.Collapse>
+                    </div>
+                    <div className="header-section nav-section">
                         <Nav className="ms-auto">
                             <LinkContainer to="/cart">
                                 <Nav.Link>
@@ -59,7 +66,7 @@ const Header = ({ history }) => {
                                 </NavDropdown>
                             )}
                         </Nav>
-                    </Navbar.Collapse>
+                    </div>
                 </Container>
             </Navbar>
         </header>

@@ -55,9 +55,9 @@ const ProductScreen = ({ history,match }) => {
       }
     return (
         <>
-            <Link className='btn btn-light my-3' to='/'>
-                Go Back
-            </Link>
+            <Button onClick={history.goBack} variant="light" className="mb-3">
+                    <i className="fas fa-arrow-left mr-2"></i>  Go Back
+                </Button>
             {loading ? <Loader /> : error ? <Message>{error}</Message> : (
                 <>
                 <Row>

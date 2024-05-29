@@ -1,0 +1,53 @@
+/* Header.css */
+.navbar-custom {
+    padding: 0;
+}
+
+.header-section {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.brand-section {
+    background-color: #343a40; /* Dark background */
+    color: white;
+    justify-content: flex-start;
+}
+
+.search-section {
+    background-color: #495057; /* Slightly lighter dark background */
+    justify-content: center;
+    flex: 1;
+}
+
+.nav-section {
+    background-color: #6baff3; /* Dark background */
+    justify-content: flex-end;
+}
+
+.header-section a,
+.header-section .navbar-brand,
+.header-section .nav-link {
+    color: white !important;
+}
+
+.nav-section .nav-link,
+.nav-section .nav-dropdown {
+    margin-left: 10px;
+}
+
+/* Dropdown menu styling */
+.navbar-dark .dropdown-menu {
+    background-color: white;
+}
+
+.navbar-dark .dropdown-item {
+    color: rgb(14, 223, 105) !important;
+}
+
+.navbar-dark .dropdown-item:hover,
+.navbar-dark .dropdown-item:focus {
+    background-color: #e9ecef; /* Light gray background on hover */
+    color: rgb(240, 37, 37) !important;
+}
