@@ -1,53 +1,66 @@
 /* Header.css */
 .navbar-custom {
-    padding: 0;
+    background-color: white; /* White background */
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Add a subtle border at the bottom */
 }
 
-.header-section {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
+.navbar-brand {
+    color: #344036 !important; /* Dark text color */
+    font-weight: bold;
 }
 
-.brand-section {
-    background-color: #343a40; /* Dark background */
-    color: white;
-    justify-content: flex-start;
+.navbar-brand:hover {
+    color: #0a7ff5 !important; /* Darker text color on hover */
 }
 
-.search-section {
-    background-color: #495057; /* Slightly lighter dark background */
-    justify-content: center;
-    flex: 1;
+.navbar-nav .nav-link {
+    color: #344035 !important; /* Dark text color */
+    font-weight: 500;
+    transition: color 0.3s ease; /* Smooth color transition */
 }
 
-.nav-section {
-    background-color: #6baff3; /* Dark background */
-    justify-content: flex-end;
+.navbar-nav .nav-link:hover {
+    color: #0a7ff5 !important; /* Darker text color on hover */
 }
 
-.header-section a,
-.header-section .navbar-brand,
-.header-section .nav-link {
-    color: white !important;
+.navbar-nav .dropdown-menu {
+    background-color: white; /* White background for dropdown menu */
 }
 
-.nav-section .nav-link,
-.nav-section .nav-dropdown {
-    margin-left: 10px;
+.dropdown-item {
+    color: #343a40 !important; /* Dark text color for dropdown items */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
 }
 
-/* Dropdown menu styling */
-.navbar-dark .dropdown-menu {
-    background-color: white;
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: rgba(0, 0, 0, 0.05); /* Light gray background on hover */
+    color: #212529 !important; /* Darker text color on hover */
 }
 
-.navbar-dark .dropdown-item {
-    color: rgb(14, 223, 105) !important;
+
+/* Header.css */
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: rgba(0, 0, 0, 0.1); /* Light gray background when item is active */
+    color: #98dd0d !important; /* Darker text color for active item */
 }
 
-.navbar-dark .dropdown-item:hover,
-.navbar-dark .dropdown-item:focus {
-    background-color: #e9ecef; /* Light gray background on hover */
-    color: rgb(240, 37, 37) !important;
+/* .navbar-toggler {
+    border-color: #343a40; 
 }
+
+.navbar-toggler-icon {
+    background-color: #1a88f5; 
+} */
+
+/* @media (max-width: 768px) {
+    .navbar-nav .nav-link {
+        color: #fff !important; 
+    }
+
+    .dropdown-item {
+        color: #fff !important; 
+    }
+} */

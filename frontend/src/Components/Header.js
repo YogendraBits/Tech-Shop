@@ -18,20 +18,14 @@ const Header = ({ history }) => {
 
     return (
         <header>
-            <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect className="navbar-custom">
+            <Navbar expand="lg" variant="dark" className="navbar-custom">
                 <Container>
-                    <div className="header-section brand-section">
-                        <LinkContainer to="/">
-                            <Navbar.Brand>FSAD-Tech-Store</Navbar.Brand>
-                        </LinkContainer>
-                    </div>
-                    <div className="header-section search-section">
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav">
-                            <SearchBox history={history} />
-                        </Navbar.Collapse>
-                    </div>
-                    <div className="header-section nav-section">
+                    <LinkContainer to="/">
+                        <Navbar.Brand>FSAD-Tech-Store</Navbar.Brand>
+                    </LinkContainer>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <SearchBox history={history} />
                         <Nav className="ms-auto">
                             <LinkContainer to="/cart">
                                 <Nav.Link>
@@ -39,12 +33,13 @@ const Header = ({ history }) => {
                                 </Nav.Link>
                             </LinkContainer>
                             {userInfo ? (
-                                <NavDropdown title={userInfo.name} id="username">
-                                    <LinkContainer to="/profile">
-                                        <NavDropdown.Item>Profile</NavDropdown.Item>
-                                    </LinkContainer>
-                                    <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
-                                </NavDropdown>
+                                <NavDropdown title={<span style={{ color: 'black' }}>{userInfo.name}</span>} id="username" id="adminmenu">
+                                <LinkContainer to="/profile">
+                                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                                </LinkContainer>
+                                <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
+                            </NavDropdown>
+
                             ) : (
                                 <LinkContainer to="/login">
                                     <Nav.Link>
@@ -66,7 +61,7 @@ const Header = ({ history }) => {
                                 </NavDropdown>
                             )}
                         </Nav>
-                    </div>
+                    </Navbar.Collapse>
                 </Container>
             </Navbar>
         </header>
