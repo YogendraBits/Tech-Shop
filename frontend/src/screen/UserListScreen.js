@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { listUsers, deleteUser } from '../actions/userActions';
-import './UserListScreen.css'; // Import custom CSS for styling
+import './UserListScreen.css'; 
+import { Link } from 'react-router-dom'
 
 const UserListScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -35,6 +36,9 @@ const UserListScreen = ({ history }) => {
 
   return (
     <div className="user-list-container">
+      <Link to="/" className="btn btn-light my-3" style={{ textDecoration: 'none' }}>
+          <i className="fas fa-arrow-left"></i> Home
+        </Link>
       <h1 className="user-list-heading">Manage Users</h1>
       {loading ? (
         <Loader />

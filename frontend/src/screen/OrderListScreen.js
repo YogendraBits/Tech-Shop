@@ -27,6 +27,9 @@ const OrderListScreen = ({ history }) => {
 
   return (
     <div className="order-list-container">
+      <Link to="/" className="btn btn-light my-3" style={{ textDecoration: 'none' }}>
+          <i className="fas fa-arrow-left"></i> Home
+        </Link>
       <h1>Orders</h1>
       {loading ? (
         <Loader />
