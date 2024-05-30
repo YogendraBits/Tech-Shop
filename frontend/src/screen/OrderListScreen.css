@@ -1,0 +1,45 @@
+.order-list-container {
+    padding: 20px;
+  }
+  
+  .order-list-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .order-list-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-list-container th,
+  .order-list-container td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .order-list-container th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  .order-list-container tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .order-list-container .btn {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .order-list-container .btn:hover {
+    background-color: #0056b3;
+  }
+  

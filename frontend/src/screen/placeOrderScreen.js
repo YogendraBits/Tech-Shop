@@ -1,43 +1,40 @@
-import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
-import Message from '../Components/Message'
-import CheckoutSteps from '../Components/CheckoutSteps'
-import {createOrder} from '../actions/orderActions'
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Message from '../Components/Message';
+import CheckoutSteps from '../Components/CheckoutSteps';
+import { createOrder } from '../actions/orderActions';
 
-function PlaceOrderScreen({history}) {
+const PlaceOrderScreen = ({ history }) => {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
 
-
-    const dispatch = useDispatch()
-
-    const cart = useSelector((state) => state.cart)
-
-      //   Calculate prices
+  // Calculate prices
   const addDecimals = (num) => {
-    return (Math.round(num * 100) / 100).toFixed(2)
-  }
+    return (Math.round(num * 100) / 100).toFixed(2);
+  };
 
   cart.itemsPrice = addDecimals(
     cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
-  )
-  cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100)
-  cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)))
+  );
+  cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100);
+  cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)));
   cart.totalPrice = (
     Number(cart.itemsPrice) +
     Number(cart.shippingPrice) +
     Number(cart.taxPrice)
-  ).toFixed(2)
+  ).toFixed(2);
 
-  const orderCreate = useSelector((state) => state.orderCreate)
-  const { order, success, error } = orderCreate
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, error } = orderCreate;
 
   useEffect(() => {
     if (success) {
-      history.push(`/order/${order._id}`)
+      history.push(`/order/${order._id}`);
     }
     // eslint-disable-next-line
-  }, [history, success])
+  }, [history, success]);
 
   const placeOrderHandler = () => {
     dispatch(
@@ -50,16 +47,15 @@ function PlaceOrderScreen({history}) {
         taxPrice: cart.taxPrice,
         totalPrice: cart.totalPrice,
       })
-    )
-  }
+    );
+  };
 
-    return (
-     
-        <>
+  return (
+    <>
       <CheckoutSteps step1 step2 step3 step4 />
-      <Row>
+      <Row className="justify-content-center">
         <Col md={8}>
-          <ListGroup variant='flush'>
+          <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
@@ -81,11 +77,11 @@ function PlaceOrderScreen({history}) {
               {cart.cartItems.length === 0 ? (
                 <Message>Your cart is empty</Message>
               ) : (
-                <ListGroup variant='flush'>
+                <ListGroup variant="flush">
                   {cart.cartItems.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
-                        <Col md={1}>
+                        <Col md={2}>
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -99,7 +95,8 @@ function PlaceOrderScreen({history}) {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
+                          {item.qty} x ${item.price} = $
+                          {item.qty * item.price}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -111,7 +108,7 @@ function PlaceOrderScreen({history}) {
         </Col>
         <Col md={4}>
           <Card>
-            <ListGroup variant='flush'>
+            <ListGroup variant="flush">
               <ListGroup.Item>
                 <h2>Order Summary</h2>
               </ListGroup.Item>
@@ -140,14 +137,15 @@ function PlaceOrderScreen({history}) {
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
-                {error && <Message variant='danger'>{error}</Message>}
+                {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Button
-                  type='button'
-                  className='btn-block'
+                  type="button"
+                  className="btn-block"
                   disabled={cart.cartItems === 0}
                   onClick={placeOrderHandler}
+                  style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}
                 >
                   Place Order
                 </Button>
@@ -157,8 +155,7 @@ function PlaceOrderScreen({history}) {
         </Col>
       </Row>
     </>
+  );
+};
 
-    )
-}
-
-export default PlaceOrderScreen
+export default PlaceOrderScreen;

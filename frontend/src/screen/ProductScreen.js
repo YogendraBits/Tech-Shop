@@ -169,49 +169,51 @@ const ProductScreen = ({ history, match }) => {
                     <p>{review.comment}</p>
                   </ListGroup.Item>
                 ))}
-                <ListGroup.Item className="border rounded shadow-sm p-4">
-                  <h2 className="mb-3">Write a Customer Review</h2>
-                  {successProductReview && (
-                    <Message variant="success">
-                      Review submitted successfully
-                    </Message>
-                  )}
-                  {loadingProductReview && <Loader />}
-                  {errorProductReview && (
-                    <Message variant="danger">{errorProductReview}</Message>
-                  )}
-                  {userInfo ? (
-                    <Form onSubmit={submitHandler}>
-                      <Form.Group controlId="rating" className="mb-3">
-                        <Form.Label>Rating</Form.Label>
-                        <StarRating rating={rating} setRating={setRating} />
-                      </Form.Group>
-                      <Form.Group controlId="comment" className="mb-3">
-                        <Form.Label>Comment</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows="3"
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
-                          className="form-control"
-                        ></Form.Control>
-                      </Form.Group>
-                      <Button
-                        disabled={loadingProductReview}
-                        type="submit"
-                        variant="primary"
-                        className="w-100"
-                      >
-                        Submit
-                      </Button>
-                    </Form>
-                  ) : (
-                    <Message>
-                      Please <Link to="/login">sign in</Link> to write a review
-                    </Message>
-                  )}
-                </ListGroup.Item>
               </ListGroup>
+            </Col>
+            <Col md={6} className="my-4">
+              <Col>
+                <h2 className="mb-3">Write a Customer Review</h2>
+                {successProductReview && (
+                  <Message variant="success">
+                    Review submitted successfully
+                  </Message>
+                )}
+                {loadingProductReview && <Loader />}
+                {errorProductReview && (
+                  <Message variant="danger">{errorProductReview}</Message>
+                )}
+                {userInfo ? (
+                  <Form onSubmit={submitHandler}>
+                    <Form.Group controlId="rating" className="mb-3">
+                      <Form.Label>Rating</Form.Label>
+                      <StarRating rating={rating} setRating={setRating} />
+                    </Form.Group>
+                    <Form.Group controlId="comment" className="mb-3">
+                      <Form.Label>Comment</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows="3"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        className="form-control"
+                      ></Form.Control>
+                    </Form.Group>
+                    <Button
+                      disabled={loadingProductReview}
+                      type="submit"
+                      variant="primary"
+                      className="w-100"
+                    >
+                      Submit
+                    </Button>
+                  </Form>
+                ) : (
+                  <Message>
+                    Please <Link to="/login">sign in</Link> to write a review
+                  </Message>
+                )}
+              </Col>
             </Col>
           </Row>
         </>
