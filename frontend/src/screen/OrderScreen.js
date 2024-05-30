@@ -91,9 +91,9 @@ const OrderScreen = ({ match, history }) => {
       <Message variant='danger'>{error}</Message>
     ) : (
       <>
-        <Button onClick={history.goBack} variant="light" className="mb-3">
-        <i className="fas fa-arrow-left mr-2"></i> Go Back
-      </Button>
+        <Link to="/" className="btn btn-light my-3" style={{ textDecoration: 'none' }}>
+          <i className="fas fa-arrow-left"></i> Home
+        </Link>
         <h1><span style={{ fontSize: '20px'}}>Order Id: {order._id}</span></h1>
           
       <Row>

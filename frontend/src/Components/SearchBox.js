@@ -22,11 +22,11 @@ const SearchBox = ({ history }) => {
                         name='q'
                         onChange={(e) => setKeyword(e.target.value)}
                         placeholder='Search Products...'
-                        style={{ borderRadius: '20px 0 0 20px', border: '2px solid #ced4da', minWidth: '300px' }}
+                        style={{ borderRadius: '200px 0 0 20px', border: '2px solid #ced4da', minWidth: '300px' }}
                     />
                 </Col>
                 <Col sm={3}>
-                    <Button type='submit' variant='outline-success' className='p-2' style={{ borderRadius: '0 20px 20px 0' }}>
+                    <Button type='submit' variant='outline-success' className='p-2' style={{ borderRadius: '0 200px 20px 0'  }}>
                         Search
                     </Button>
                 </Col>

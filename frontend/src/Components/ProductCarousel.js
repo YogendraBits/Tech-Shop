@@ -44,7 +44,7 @@ const ProductCarousel = () => {
                     interval={5000} 
                     stopOnHover={true} 
                     dynamicHeight={true}
-                    arrowColor="grey" // Change arrow color to grey
+                    arrowColor="grey"
                 >
                     {products.map((product) => (
                         <div key={product._id} style={styles.carouselItem}>

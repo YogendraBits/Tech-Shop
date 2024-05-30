@@ -10,7 +10,7 @@ const Footer = () => {
     };
 
     return (
-        <footer style={{ backgroundColor: 'transparent', color: '#343a40', padding: '1rem 0', textAlign: 'center', borderTop: '1px solid #000' }}>
+        <footer style={{ backgroundColor: 'transparent', color: '#343a40', padding: '5px 0', textAlign: 'center', borderTop: '1px solid #000' }}>
             <Container>
                 <Row>
                     <Col>
