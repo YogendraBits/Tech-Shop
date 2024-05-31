@@ -6,6 +6,7 @@ import Loader from './Loader';
 import Message from './Message';
 import { listTopProducts } from '../actions/productActions';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import './CarouselStyles.css'; // Import the custom CSS
 
 const ProductCarousel = () => {
     const dispatch = useDispatch();
@@ -44,7 +45,6 @@ const ProductCarousel = () => {
                     interval={5000} 
                     stopOnHover={true} 
                     dynamicHeight={true}
-                    arrowColor="grey"
                 >
                     {products.map((product) => (
                         <div key={product._id} style={styles.carouselItem}>

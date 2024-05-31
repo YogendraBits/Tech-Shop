@@ -1,0 +1,31 @@
+.carousel .control-prev.control-arrow:before,
+.carousel .control-next.control-arrow:before {
+    border: solid grey;
+    content: '';
+    display: inline-block;
+    padding: 3px;
+    border-width: 0 3px 3px 0;
+}
+
+.carousel .control-prev.control-arrow:before {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    left: 15px;
+}
+
+.carousel .control-next.control-arrow:before {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    right: 15px;
+}
+
+.carousel .control-prev.control-arrow,
+.carousel .control-next.control-arrow {
+    background: none;
+    border: none;
+}
+
+.carousel .control-prev.control-arrow:hover:before,
+.carousel .control-next.control-arrow:hover:before {
+    border-color: darkgrey;
+}

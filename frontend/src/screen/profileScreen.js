@@ -58,8 +58,8 @@ const ProfileScreen = ({ history }) => {
     <div className="profile-container">
       <Row>
         <Col md={5}>
-          <div className="profile-form">
-            <h2>User Profile</h2>
+          <div className="profile-form tile">
+            <h2 className="section-title">User Profile</h2>
             {message && <Message variant='danger'>{message}</Message>}
             {error && <Message variant='danger'>{error}</Message>}
             {success && <Message variant='success'>Profile Updated</Message>}
@@ -112,49 +112,51 @@ const ProfileScreen = ({ history }) => {
           </div>
         </Col>
         <Col md={7}>
-          <div className="orders-section">
-            <h2>My Orders</h2>
+          <div className="orders-section tile">
+            <h2 className="section-title">My Orders</h2>
             {loadingOrders ? (
               <Loader />
             ) : errorOrders ? (
               <Message variant='danger'>{errorOrders}</Message>
             ) : (
-              <Table striped bordered hover responsive className='table-sm'>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>DATE</th>
-                    <th>TOTAL</th>
-                    <th>PAID</th>
-                    <th>DELIVERED</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <LinkContainer key={order._id} to={`/order/${order._id}`}>
-                      <tr style={{ cursor: 'pointer' }}>
-                        <td>{order._id}</td>
-                        <td>{order.createdAt.substring(0, 10)}</td>
-                        <td>{order.totalPrice}</td>
-                        <td>
-                          {order.isPaid ? (
-                            order.paidAt.substring(0, 10)
-                          ) : (
-                            <i className='fas fa-times' style={{ color: 'red' }}></i>
-                          )}
-                        </td>
-                        <td>
-                          {order.isDelivered ? (
-                            order.deliveredAt.substring(0, 10)
-                          ) : (
-                            <i className='fas fa-times' style={{ color: 'red' }}></i>
-                          )}
-                        </td>
-                      </tr>
-                    </LinkContainer>
-                  ))}
-                </tbody>
-              </Table>
+              <div className="orders-table-wrapper">
+                <Table striped bordered hover responsive className='table-sm'>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>DATE</th>
+                      <th>TOTAL</th>
+                      <th>PAID</th>
+                      <th>DELIVERED</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => (
+                      <LinkContainer key={order._id} to={`/order/${order._id}`}>
+                        <tr>
+                          <td>{order._id}</td>
+                          <td>{order.createdAt.substring(0, 10)}</td>
+                          <td>${order.totalPrice}</td>
+                          <td>
+                            {order.isPaid ? (
+                              order.paidAt.substring(0, 10)
+                            ) : (
+                              <i className='fas fa-times' style={{ color: 'red' }}></i>
+                            )}
+                          </td>
+                          <td>
+                            {order.isDelivered ? (
+                              order.deliveredAt.substring(0, 10)
+                            ) : (
+                              <i className='fas fa-times' style={{ color: 'red' }}></i>
+                            )}
+                          </td>
+                        </tr>
+                      </LinkContainer>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             )}
           </div>
         </Col>

@@ -21,11 +21,13 @@ const Header = ({ history }) => {
             <Navbar expand="lg" variant="dark" className="navbar-custom">
                 <Container>
                     <LinkContainer to="/">
-                        <Navbar.Brand>FSAD-Tech-Store</Navbar.Brand>
+                        <Navbar.Brand className="navbar-brand-custom">FSAD-Tech-Store</Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <SearchBox history={history} />
+                        <div className="navbar-search-container">
+                            <SearchBox history={history} />
+                        </div>
                         <Nav className="ms-auto">
                             <LinkContainer to="/cart">
                                 <Nav.Link>
@@ -33,13 +35,12 @@ const Header = ({ history }) => {
                                 </Nav.Link>
                             </LinkContainer>
                             {userInfo ? (
-                                <NavDropdown title={<span style={{ color: 'black' }}>{userInfo.name}</span>} id="username" id="adminmenu">
-                                <LinkContainer to="/profile">
-                                    <NavDropdown.Item>Profile</NavDropdown.Item>
-                                </LinkContainer>
-                                <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
-                            </NavDropdown>
-
+                                <NavDropdown title={<span style={{ color: 'black' }}>{userInfo.name}</span>} id="username">
+                                    <LinkContainer to="/profile">
+                                        <NavDropdown.Item>Profile</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
+                                </NavDropdown>
                             ) : (
                                 <LinkContainer to="/login">
                                     <Nav.Link>
