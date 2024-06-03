@@ -1,0 +1,56 @@
+/* OrderScreen.css */
+
+.order-screen {
+    padding: 20px;
+  }
+  
+  .order-screen-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  .order-details-container {
+    display: flex;
+  }
+  
+  .order-details-left,
+  .order-details-right {
+    flex: 1;
+  }
+  
+  .shipping-details,
+  .payment-details,
+  .order-items,
+  .order-summary,
+  .order-actions {
+    margin-bottom: 20px;
+  }
+  
+  .shipping-details h2,
+  .payment-details h2,
+  .order-items h2,
+  .order-summary h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .order-items {
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .order-items .list-group-item {
+    border: none;
+  }
+  
+  .order-summary {
+    border: 1px solid #ccc;
+    padding: 20px;
+  }
+  
+  .order-actions button {
+    margin-top: 10px;
+  }
+  
+  /* Style PayPal button and other buttons as needed */
+  
