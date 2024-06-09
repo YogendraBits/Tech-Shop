@@ -571,6 +571,7 @@
           }
         }
       },
+      
       "put" : {
         "summary" : "Update user",
         "description" : "Updates a user by ID. (Admin access required)",
