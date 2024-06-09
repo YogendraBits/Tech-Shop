@@ -1,4 +1,4 @@
-> eCommerce platform built with the MERN stack & Redux.
+> eCommerce Tech Shop built with the MERN stack & Redux - By Team 6
 
 ## Features
 
@@ -82,7 +82,7 @@ Sample User Logins
 admin@example.com (Admin)
 123456
 
-ali@example.com (Customer)
+yogendra@example.com (Customer)
 123456
 ```
 
