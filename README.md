@@ -41,6 +41,7 @@ MONGO_URI = your mongodb uri
 JWT_SECRET = 'abc123'
 PAYPAL_CLIENT_ID = your paypal client id
 ```
+Note: If you don't add your paypal id , project will still work but the payment feature won't.
 
 ### Install Dependencies (frontend & backend)
 
