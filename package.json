@@ -1,7 +1,7 @@
 {
-  "name": "proshop",
+  "name": "FSAD-Tech-Shop",
   "version": "1.0.0",
-  "description": "MERN shopping cart app by Vvork Cloud",
+  "description": "MERN shop Website By Team 6 FSAD",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "author": "FSAD Group",
-  "license": "MIT",
+  "license": "",
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
