@@ -1,6 +1,6 @@
 > eCommerce Tech Shop built with the MERN stack & Redux - By Team 6
 > 
-> Standard Naming Comventions are Used , so you can take help of A.I. tools like ChatGpt , Gemini e.t.c to understand and enhance the product.
+> Standard Naming Conventions are Used , so you can take help of A.I. tools like ChatGpt , Gemini e.t.c to understand and enhance the product.
 
 ## Features
 
