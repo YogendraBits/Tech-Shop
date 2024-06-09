@@ -13,7 +13,7 @@
     "data:destroy": "node backend/seeder -d",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
-  "author": "Ali Ahmad",
+  "author": "FSAD Group",
   "license": "MIT",
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
