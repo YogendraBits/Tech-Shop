@@ -16,6 +16,8 @@
 - PayPal / credit card integration
 - Database seeder (products & users)
 
+- API with postman testing code 
+
 ## Usage
 
 ### ES Modules in Node
