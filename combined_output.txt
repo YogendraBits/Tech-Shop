@@ -1,0 +1,2542 @@
+=== Content of server.js ===
+import path from 'path';
+import express from 'express';
+import dotenv from 'dotenv';
+import colors from 'colors';
+import morgan from 'morgan';
+import connectDB from './config/db.js';
+import productsRoutes from './routes/productRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+import cartRoutes from './routes/cartRoutes.js'; // Import Cart routes
+import wishlistRoutes from './routes/wishlistRoutes.js'; // Import wishlist routes
+import { notFound, errorHandler } from './middlewear/errorMiddlewear.js';
+
+dotenv.config();
+connectDB();
+const app = express();
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+app.use(express.json());
+
+app.use("/api/products", productsRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/cart", cartRoutes); // Use Cart routes
+app.use("/api/wishlist", wishlistRoutes); // Use wishlist routes
+
+app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
+
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')));
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running....');
+  });
+}
+
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+app.listen(
+  PORT,
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold)
+);
+
+
+=== Content of wishlistControllers.js ===
+import wishlistItem from '../models/wishlistModel.js';
+import Product from '../models/productModel.js'; // Ensure you import the Product model
+
+// @desc    Add an item to the wishlist
+// @route   POST /api/wishlist
+// @access  Private
+export const addTowishlist = async (req, res) => {
+    const { productId } = req.body;
+
+    try {
+        const existingItem = await wishlistItem.findOne({
+            userId: req.user._id,
+            productId,
+        });
+
+        if (existingItem) {
+            return res.status(400).json({ message: 'Item already in wishlist' });
+        }
+
+        const wishlistItem = new wishlistItem({
+            userId: req.user._id,
+            productId,
+        });
+
+        await wishlistItem.save();
+        res.status(201).json({ message: 'Item added to wishlist', wishlistItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Get all wishlist items for a user
+// @route   GET /api/wishlist
+// @access  Private
+export const getwishlist = async (req, res) => {
+    try {
+        const wishlistitems = await wishlistItem.find({ userId: req.user._id }).populate('productId');
+        res.status(200).json(wishlistitems);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// @desc    Remove an item from the wishlist
+// @route   DELETE /api/wishlist/:id
+// @access  Private
+export const removeFromwishlist = async (req, res) => {
+    try {
+        const wishlistItem = await wishlistItem.findByIdAndDelete(req.params.id);
+
+        if (!wishlistItem) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        res.status(200).json({ message: 'Item removed from wishlist' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
+=== Content of wishlistModel.js ===
+import mongoose from 'mongoose';
+
+const wishlistitemschema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User', // Reference to the User model
+    },
+    productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Product', // Reference to the Product model
+    },
+    dateAdded: {
+        type: Date,
+        default: Date.now, // Automatically set the date when the item is added
+    },
+});
+
+const wishlistItem = mongoose.model('wishlistItem', wishlistitemschema);
+
+export default wishlistItem;
+
+
+=== Content of wishlistRoutes.js ===
+import express from 'express';
+import { addTowishlist, getwishlist, removeFromwishlist } from '../controllers/wishlistControllers.js';
+import { protect } from '../middlewear/authMiddlewear.js';
+
+const router = express.Router();
+
+router.use(protect);
+router.post('/', addTowishlist);
+router.get('/', getwishlist);
+router.delete('/:id', removeFromwishlist);
+
+export default router;
+
+
+=== Content of server.js ===
+'use strict';
+
+module.exports = require('./server.node');
+
+
+=== Content of server.js ===
+'use strict'
+
+var assert = require('assert')
+var https = require('https')
+var http = require('http')
+var tls = require('tls')
+var net = require('net')
+var util = require('util')
+var selectHose = require('select-hose')
+var transport = require('spdy-transport')
+var debug = require('debug')('spdy:server')
+var EventEmitter = require('events').EventEmitter
+
+// Node.js 0.8, 0.10 and 0.12 support
+Object.assign = process.versions.modules >= 46
+  ? Object.assign // eslint-disable-next-line
+  : util._extend
+
+var spdy = require('../spdy')
+
+var proto = {}
+
+function instantiate (base) {
+  function Server (options, handler) {
+    this._init(base, options, handler)
+  }
+  util.inherits(Server, base)
+
+  Server.create = function create (options, handler) {
+    return new Server(options, handler)
+  }
+
+  Object.keys(proto).forEach(function (key) {
+    Server.prototype[key] = proto[key]
+  })
+
+  return Server
+}
+
+proto._init = function _init (base, options, handler) {
+  var state = {}
+  this._spdyState = state
+
+  state.options = options.spdy || {}
+
+  var protocols = state.options.protocols || [
+    'h2',
+    'spdy/3.1', 'spdy/3', 'spdy/2',
+    'http/1.1', 'http/1.0'
+  ]
+
+  var actualOptions = Object.assign({
+    NPNProtocols: protocols,
+
+    // Future-proof
+    ALPNProtocols: protocols
+  }, options)
+
+  state.secure = this instanceof tls.Server
+
+  if (state.secure) {
+    base.call(this, actualOptions)
+  } else {
+    base.call(this)
+  }
+
+  // Support HEADERS+FIN
+  this.httpAllowHalfOpen = true
+
+  var event = state.secure ? 'secureConnection' : 'connection'
+
+  state.listeners = this.listeners(event).slice()
+  assert(state.listeners.length > 0, 'Server does not have default listeners')
+  this.removeAllListeners(event)
+
+  if (state.options.plain) {
+    this.on(event, this._onPlainConnection)
+  } else { this.on(event, this._onConnection) }
+
+  if (handler) {
+    this.on('request', handler)
+  }
+
+  debug('server init secure=%d', state.secure)
+}
+
+proto._onConnection = function _onConnection (socket) {
+  var state = this._spdyState
+
+  var protocol
+  if (state.secure) {
+    protocol = socket.npnProtocol || socket.alpnProtocol
+  }
+
+  this._handleConnection(socket, protocol)
+}
+
+proto._handleConnection = function _handleConnection (socket, protocol) {
+  var state = this._spdyState
+
+  if (!protocol) {
+    protocol = state.options.protocol
+  }
+
+  debug('incoming socket protocol=%j', protocol)
+
+  // No way we can do anything with the socket
+  if (!protocol || protocol === 'http/1.1' || protocol === 'http/1.0') {
+    debug('to default handler it goes')
+    return this._invokeDefault(socket)
+  }
+
+  socket.setNoDelay(true)
+
+  var connection = transport.connection.create(socket, Object.assign({
+    protocol: /spdy/.test(protocol) ? 'spdy' : 'http2',
+    isServer: true
+  }, state.options.connection || {}))
+
+  // Set version when we are certain
+  if (protocol === 'http2') { connection.start(4) } else if (protocol === 'spdy/3.1') {
+    connection.start(3.1)
+  } else if (protocol === 'spdy/3') { connection.start(3) } else if (protocol === 'spdy/2') {
+    connection.start(2)
+  }
+
+  connection.on('error', function () {
+    socket.destroy()
+  })
+
+  var self = this
+  connection.on('stream', function (stream) {
+    self._onStream(stream)
+  })
+}
+
+// HTTP2 preface
+var PREFACE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n'
+var PREFACE_BUFFER = Buffer.from(PREFACE)
+
+function hoseFilter (data, callback) {
+  if (data.length < 1) {
+    return callback(null, null)
+  }
+
+  // SPDY!
+  if (data[0] === 0x80) { return callback(null, 'spdy') }
+
+  var avail = Math.min(data.length, PREFACE_BUFFER.length)
+  for (var i = 0; i < avail; i++) {
+    if (data[i] !== PREFACE_BUFFER[i]) { return callback(null, 'http/1.1') }
+  }
+
+  // Not enough bytes to be sure about HTTP2
+  if (avail !== PREFACE_BUFFER.length) { return callback(null, null) }
+
+  return callback(null, 'h2')
+}
+
+proto._onPlainConnection = function _onPlainConnection (socket) {
+  var hose = selectHose.create(socket, {}, hoseFilter)
+
+  var self = this
+  hose.on('select', function (protocol, socket) {
+    self._handleConnection(socket, protocol)
+  })
+
+  hose.on('error', function (err) {
+    debug('hose error %j', err.message)
+    socket.destroy()
+  })
+}
+
+proto._invokeDefault = function _invokeDefault (socket) {
+  var state = this._spdyState
+
+  for (var i = 0; i < state.listeners.length; i++) { state.listeners[i].call(this, socket) }
+}
+
+proto._onStream = function _onStream (stream) {
+  var state = this._spdyState
+
+  var handle = spdy.handle.create(this._spdyState.options, stream)
+
+  var socketOptions = {
+    handle: handle,
+    allowHalfOpen: true
+  }
+
+  var socket
+  if (state.secure) {
+    socket = new spdy.Socket(stream.connection.socket, socketOptions)
+  } else {
+    socket = new net.Socket(socketOptions)
+  }
+
+  // This is needed because the `error` listener, added by the default
+  // `connection` listener, no longer has bound arguments. It relies instead
+  // on the `server` property of the socket. See https://github.com/nodejs/node/pull/11926
+  // for more details.
+  // This is only done for Node.js >= 4 in order to not break compatibility
+  // with older versions of the platform.
+  if (process.versions.modules >= 46) { socket.server = this }
+
+  handle.assignSocket(socket)
+
+  // For v0.8
+  socket.readable = true
+  socket.writable = true
+
+  this._invokeDefault(socket)
+
+  // For v0.8, 0.10 and 0.12
+  if (process.versions.modules < 46) {
+    // eslint-disable-next-line
+    this.listenerCount = EventEmitter.listenerCount.bind(this)
+  }
+
+  // Add lazy `checkContinue` listener, otherwise `res.writeContinue` will be
+  // called before the response object was patched by us.
+  if (stream.headers.expect !== undefined &&
+      /100-continue/i.test(stream.headers.expect) &&
+      this.listenerCount('checkContinue') === 0) {
+    this.once('checkContinue', function (req, res) {
+      res.writeContinue()
+
+      this.emit('request', req, res)
+    })
+  }
+
+  handle.emitRequest()
+}
+
+proto.emit = function emit (event, req, res) {
+  if (event !== 'request' && event !== 'checkContinue') {
+    return EventEmitter.prototype.emit.apply(this, arguments)
+  }
+
+  if (!(req.socket._handle instanceof spdy.handle)) {
+    debug('not spdy req/res')
+    req.isSpdy = false
+    req.spdyVersion = 1
+    res.isSpdy = false
+    res.spdyVersion = 1
+    return EventEmitter.prototype.emit.apply(this, arguments)
+  }
+
+  var handle = req.connection._handle
+
+  req.isSpdy = true
+  req.spdyVersion = handle.getStream().connection.getVersion()
+  res.isSpdy = true
+  res.spdyVersion = req.spdyVersion
+  req.spdyStream = handle.getStream()
+
+  debug('override req/res')
+  res.writeHead = spdy.response.writeHead
+  res.end = spdy.response.end
+  res.push = spdy.response.push
+  res.writeContinue = spdy.response.writeContinue
+  res.spdyStream = handle.getStream()
+
+  res._req = req
+
+  handle.assignRequest(req)
+  handle.assignResponse(res)
+
+  return EventEmitter.prototype.emit.apply(this, arguments)
+}
+
+exports.Server = instantiate(https.Server)
+exports.PlainServer = instantiate(http.Server)
+
+exports.create = function create (base, options, handler) {
+  if (typeof base === 'object') {
+    handler = options
+    options = base
+    base = null
+  }
+
+  if (base) {
+    return instantiate(base).create(options, handler)
+  }
+
+  if (options.spdy && options.spdy.plain) { return exports.PlainServer.create(options, handler) } else {
+    return exports.Server.create(options, handler)
+  }
+}
+
+
+=== Content of server.js ===
+'use strict';
+
+var util       = require('util'),
+    HttpParser = require('../http_parser'),
+    Base       = require('./base'),
+    Draft75    = require('./draft75'),
+    Draft76    = require('./draft76'),
+    Hybi       = require('./hybi');
+
+var Server = function(options) {
+  Base.call(this, null, null, options);
+  this._http = new HttpParser('request');
+};
+util.inherits(Server, Base);
+
+var instance = {
+  EVENTS: ['open', 'message', 'error', 'close', 'ping', 'pong'],
+
+  _bindEventListeners: function() {
+    this.messages.on('error', function() {});
+    this.on('error', function() {});
+  },
+
+  parse: function(chunk) {
+    if (this._delegate) return this._delegate.parse(chunk);
+
+    this._http.parse(chunk);
+    if (!this._http.isComplete()) return;
+
+    this.method  = this._http.method;
+    this.url     = this._http.url;
+    this.headers = this._http.headers;
+    this.body    = this._http.body;
+
+    var self = this;
+    this._delegate = Server.http(this, this._options);
+    this._delegate.messages = this.messages;
+    this._delegate.io = this.io;
+    this._open();
+
+    this.EVENTS.forEach(function(event) {
+      this._delegate.on(event, function(e) { self.emit(event, e) });
+    }, this);
+
+    this.protocol = this._delegate.protocol;
+    this.version  = this._delegate.version;
+
+    this.parse(this._http.body);
+    this.emit('connect', new Base.ConnectEvent());
+  },
+
+  _open: function() {
+    this.__queue.forEach(function(msg) {
+      this._delegate[msg[0]].apply(this._delegate, msg[1]);
+    }, this);
+    this.__queue = [];
+  }
+};
+
+['addExtension', 'setHeader', 'start', 'frame', 'text', 'binary', 'ping', 'close'].forEach(function(method) {
+  instance[method] = function() {
+    if (this._delegate) {
+      return this._delegate[method].apply(this._delegate, arguments);
+    } else {
+      this.__queue.push([method, arguments]);
+      return true;
+    }
+  };
+});
+
+for (var key in instance)
+  Server.prototype[key] = instance[key];
+
+Server.isSecureRequest = function(request) {
+  if (request.connection && request.connection.authorized !== undefined) return true;
+  if (request.socket && request.socket.secure) return true;
+
+  var headers = request.headers;
+  if (!headers) return false;
+  if (headers['https'] === 'on') return true;
+  if (headers['x-forwarded-ssl'] === 'on') return true;
+  if (headers['x-forwarded-scheme'] === 'https') return true;
+  if (headers['x-forwarded-proto'] === 'https') return true;
+
+  return false;
+};
+
+Server.determineUrl = function(request) {
+  var scheme = this.isSecureRequest(request) ? 'wss:' : 'ws:';
+  return scheme + '//' + request.headers.host + request.url;
+};
+
+Server.http = function(request, options) {
+  options = options || {};
+  if (options.requireMasking === undefined) options.requireMasking = true;
+
+  var headers = request.headers,
+      version = headers['sec-websocket-version'],
+      key     = headers['sec-websocket-key'],
+      key1    = headers['sec-websocket-key1'],
+      key2    = headers['sec-websocket-key2'],
+      url     = this.determineUrl(request);
+
+  if (version || key)
+    return new Hybi(request, url, options);
+  else if (key1 || key2)
+    return new Draft76(request, url, options);
+  else
+    return new Draft75(request, url, options);
+};
+
+module.exports = Server;
+
+
+=== Content of server.js ===
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Server = void 0;
+const connection_1 = require("../cmap/connection");
+const connection_pool_1 = require("../cmap/connection_pool");
+const errors_1 = require("../cmap/errors");
+const constants_1 = require("../constants");
+const error_1 = require("../error");
+const mongo_types_1 = require("../mongo_types");
+const transactions_1 = require("../transactions");
+const utils_1 = require("../utils");
+const write_concern_1 = require("../write_concern");
+const common_1 = require("./common");
+const monitor_1 = require("./monitor");
+const server_description_1 = require("./server_description");
+const stateTransition = (0, utils_1.makeStateMachine)({
+    [common_1.STATE_CLOSED]: [common_1.STATE_CLOSED, common_1.STATE_CONNECTING],
+    [common_1.STATE_CONNECTING]: [common_1.STATE_CONNECTING, common_1.STATE_CLOSING, common_1.STATE_CONNECTED, common_1.STATE_CLOSED],
+    [common_1.STATE_CONNECTED]: [common_1.STATE_CONNECTED, common_1.STATE_CLOSING, common_1.STATE_CLOSED],
+    [common_1.STATE_CLOSING]: [common_1.STATE_CLOSING, common_1.STATE_CLOSED]
+});
+/** @internal */
+class Server extends mongo_types_1.TypedEventEmitter {
+    /**
+     * Create a server
+     */
+    constructor(topology, description, options) {
+        super();
+        this.serverApi = options.serverApi;
+        const poolOptions = { hostAddress: description.hostAddress, ...options };
+        this.topology = topology;
+        this.pool = new connection_pool_1.ConnectionPool(this, poolOptions);
+        this.s = {
+            description,
+            options,
+            state: common_1.STATE_CLOSED,
+            operationCount: 0
+        };
+        for (const event of [...constants_1.CMAP_EVENTS, ...constants_1.APM_EVENTS]) {
+            this.pool.on(event, (e) => this.emit(event, e));
+        }
+        this.pool.on(connection_1.Connection.CLUSTER_TIME_RECEIVED, (clusterTime) => {
+            this.clusterTime = clusterTime;
+        });
+        if (this.loadBalanced) {
+            this.monitor = null;
+            // monitoring is disabled in load balancing mode
+            return;
+        }
+        // create the monitor
+        this.monitor = new monitor_1.Monitor(this, this.s.options);
+        for (const event of constants_1.HEARTBEAT_EVENTS) {
+            this.monitor.on(event, (e) => this.emit(event, e));
+        }
+        this.monitor.on('resetServer', (error) => markServerUnknown(this, error));
+        this.monitor.on(Server.SERVER_HEARTBEAT_SUCCEEDED, (event) => {
+            this.emit(Server.DESCRIPTION_RECEIVED, new server_description_1.ServerDescription(this.description.hostAddress, event.reply, {
+                roundTripTime: this.monitor?.roundTripTime,
+                minRoundTripTime: this.monitor?.minRoundTripTime
+            }));
+            if (this.s.state === common_1.STATE_CONNECTING) {
+                stateTransition(this, common_1.STATE_CONNECTED);
+                this.emit(Server.CONNECT, this);
+            }
+        });
+    }
+    get clusterTime() {
+        return this.topology.clusterTime;
+    }
+    set clusterTime(clusterTime) {
+        this.topology.clusterTime = clusterTime;
+    }
+    get description() {
+        return this.s.description;
+    }
+    get name() {
+        return this.s.description.address;
+    }
+    get autoEncrypter() {
+        if (this.s.options && this.s.options.autoEncrypter) {
+            return this.s.options.autoEncrypter;
+        }
+        return;
+    }
+    get loadBalanced() {
+        return this.topology.description.type === common_1.TopologyType.LoadBalanced;
+    }
+    /**
+     * Initiate server connect
+     */
+    connect() {
+        if (this.s.state !== common_1.STATE_CLOSED) {
+            return;
+        }
+        stateTransition(this, common_1.STATE_CONNECTING);
+        // If in load balancer mode we automatically set the server to
+        // a load balancer. It never transitions out of this state and
+        // has no monitor.
+        if (!this.loadBalanced) {
+            this.monitor?.connect();
+        }
+        else {
+            stateTransition(this, common_1.STATE_CONNECTED);
+            this.emit(Server.CONNECT, this);
+        }
+    }
+    /** Destroy the server connection */
+    destroy() {
+        if (this.s.state === common_1.STATE_CLOSED) {
+            return;
+        }
+        stateTransition(this, common_1.STATE_CLOSING);
+        if (!this.loadBalanced) {
+            this.monitor?.close();
+        }
+        this.pool.close();
+        stateTransition(this, common_1.STATE_CLOSED);
+        this.emit('closed');
+    }
+    /**
+     * Immediately schedule monitoring of this server. If there already an attempt being made
+     * this will be a no-op.
+     */
+    requestCheck() {
+        if (!this.loadBalanced) {
+            this.monitor?.requestCheck();
+        }
+    }
+    async command(ns, cmd, options, responseType) {
+        if (ns.db == null || typeof ns === 'string') {
+            throw new error_1.MongoInvalidArgumentError('Namespace must not be a string');
+        }
+        if (this.s.state === common_1.STATE_CLOSING || this.s.state === common_1.STATE_CLOSED) {
+            throw new error_1.MongoServerClosedError();
+        }
+        // Clone the options
+        const finalOptions = Object.assign({}, options, {
+            wireProtocolCommand: false,
+            directConnection: this.topology.s.options.directConnection
+        });
+        // There are cases where we need to flag the read preference not to get sent in
+        // the command, such as pre-5.0 servers attempting to perform an aggregate write
+        // with a non-primary read preference. In this case the effective read preference
+        // (primary) is not the same as the provided and must be removed completely.
+        if (finalOptions.omitReadPreference) {
+            delete finalOptions.readPreference;
+        }
+        const session = finalOptions.session;
+        let conn = session?.pinnedConnection;
+        this.incrementOperationCount();
+        if (conn == null) {
+            try {
+                conn = await this.pool.checkOut();
+                if (this.loadBalanced && isPinnableCommand(cmd, session)) {
+                    session?.pin(conn);
+                }
+            }
+            catch (checkoutError) {
+                this.decrementOperationCount();
+                if (!(checkoutError instanceof errors_1.PoolClearedError))
+                    this.handleError(checkoutError);
+                throw checkoutError;
+            }
+        }
+        try {
+            try {
+                const res = await conn.command(ns, cmd, finalOptions, responseType);
+                (0, write_concern_1.throwIfWriteConcernError)(res);
+                return res;
+            }
+            catch (commandError) {
+                throw this.decorateCommandError(conn, cmd, finalOptions, commandError);
+            }
+        }
+        catch (operationError) {
+            if (operationError instanceof error_1.MongoError &&
+                operationError.code === error_1.MONGODB_ERROR_CODES.Reauthenticate) {
+                await this.pool.reauthenticate(conn);
+                try {
+                    const res = await conn.command(ns, cmd, finalOptions, responseType);
+                    (0, write_concern_1.throwIfWriteConcernError)(res);
+                    return res;
+                }
+                catch (commandError) {
+                    throw this.decorateCommandError(conn, cmd, finalOptions, commandError);
+                }
+            }
+            else {
+                throw operationError;
+            }
+        }
+        finally {
+            this.decrementOperationCount();
+            if (session?.pinnedConnection !== conn) {
+                this.pool.checkIn(conn);
+            }
+        }
+    }
+    /**
+     * Handle SDAM error
+     * @internal
+     */
+    handleError(error, connection) {
+        if (!(error instanceof error_1.MongoError)) {
+            return;
+        }
+        const isStaleError = error.connectionGeneration && error.connectionGeneration < this.pool.generation;
+        if (isStaleError) {
+            return;
+        }
+        const isNetworkNonTimeoutError = error instanceof error_1.MongoNetworkError && !(error instanceof error_1.MongoNetworkTimeoutError);
+        const isNetworkTimeoutBeforeHandshakeError = (0, error_1.isNetworkErrorBeforeHandshake)(error);
+        const isAuthHandshakeError = error.hasErrorLabel(error_1.MongoErrorLabel.HandshakeError);
+        if (isNetworkNonTimeoutError || isNetworkTimeoutBeforeHandshakeError || isAuthHandshakeError) {
+            // In load balanced mode we never mark the server as unknown and always
+            // clear for the specific service id.
+            if (!this.loadBalanced) {
+                error.addErrorLabel(error_1.MongoErrorLabel.ResetPool);
+                markServerUnknown(this, error);
+            }
+            else if (connection) {
+                this.pool.clear({ serviceId: connection.serviceId });
+            }
+        }
+        else {
+            if ((0, error_1.isSDAMUnrecoverableError)(error)) {
+                if (shouldHandleStateChangeError(this, error)) {
+                    const shouldClearPool = (0, utils_1.maxWireVersion)(this) <= 7 || (0, error_1.isNodeShuttingDownError)(error);
+                    if (this.loadBalanced && connection && shouldClearPool) {
+                        this.pool.clear({ serviceId: connection.serviceId });
+                    }
+                    if (!this.loadBalanced) {
+                        if (shouldClearPool) {
+                            error.addErrorLabel(error_1.MongoErrorLabel.ResetPool);
+                        }
+                        markServerUnknown(this, error);
+                        process.nextTick(() => this.requestCheck());
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * Ensure that error is properly decorated and internal state is updated before throwing
+     * @internal
+     */
+    decorateCommandError(connection, cmd, options, error) {
+        if (typeof error !== 'object' || error == null || !('name' in error)) {
+            throw new error_1.MongoRuntimeError('An unexpected error type: ' + typeof error);
+        }
+        if (error.name === 'AbortError' && 'cause' in error && error.cause instanceof error_1.MongoError) {
+            error = error.cause;
+        }
+        if (!(error instanceof error_1.MongoError)) {
+            // Node.js or some other error we have not special handling for
+            return error;
+        }
+        if (connectionIsStale(this.pool, connection)) {
+            return error;
+        }
+        const session = options?.session;
+        if (error instanceof error_1.MongoNetworkError) {
+            if (session && !session.hasEnded && session.serverSession) {
+                session.serverSession.isDirty = true;
+            }
+            // inActiveTransaction check handles commit and abort.
+            if (inActiveTransaction(session, cmd) &&
+                !error.hasErrorLabel(error_1.MongoErrorLabel.TransientTransactionError)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.TransientTransactionError);
+            }
+            if ((isRetryableWritesEnabled(this.topology) || (0, transactions_1.isTransactionCommand)(cmd)) &&
+                (0, utils_1.supportsRetryableWrites)(this) &&
+                !inActiveTransaction(session, cmd)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.RetryableWriteError);
+            }
+        }
+        else {
+            if ((isRetryableWritesEnabled(this.topology) || (0, transactions_1.isTransactionCommand)(cmd)) &&
+                (0, error_1.needsRetryableWriteLabel)(error, (0, utils_1.maxWireVersion)(this), this.description.type) &&
+                !inActiveTransaction(session, cmd)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.RetryableWriteError);
+            }
+        }
+        if (session &&
+            session.isPinned &&
+            error.hasErrorLabel(error_1.MongoErrorLabel.TransientTransactionError)) {
+            session.unpin({ force: true });
+        }
+        this.handleError(error, connection);
+        return error;
+    }
+    /**
+     * Decrement the operation count, returning the new count.
+     */
+    decrementOperationCount() {
+        return (this.s.operationCount -= 1);
+    }
+    /**
+     * Increment the operation count, returning the new count.
+     */
+    incrementOperationCount() {
+        return (this.s.operationCount += 1);
+    }
+}
+exports.Server = Server;
+/** @event */
+Server.SERVER_HEARTBEAT_STARTED = constants_1.SERVER_HEARTBEAT_STARTED;
+/** @event */
+Server.SERVER_HEARTBEAT_SUCCEEDED = constants_1.SERVER_HEARTBEAT_SUCCEEDED;
+/** @event */
+Server.SERVER_HEARTBEAT_FAILED = constants_1.SERVER_HEARTBEAT_FAILED;
+/** @event */
+Server.CONNECT = constants_1.CONNECT;
+/** @event */
+Server.DESCRIPTION_RECEIVED = constants_1.DESCRIPTION_RECEIVED;
+/** @event */
+Server.CLOSED = constants_1.CLOSED;
+/** @event */
+Server.ENDED = constants_1.ENDED;
+function markServerUnknown(server, error) {
+    // Load balancer servers can never be marked unknown.
+    if (server.loadBalanced) {
+        return;
+    }
+    if (error instanceof error_1.MongoNetworkError && !(error instanceof error_1.MongoNetworkTimeoutError)) {
+        server.monitor?.reset();
+    }
+    server.emit(Server.DESCRIPTION_RECEIVED, new server_description_1.ServerDescription(server.description.hostAddress, undefined, { error }));
+}
+function isPinnableCommand(cmd, session) {
+    if (session) {
+        return (session.inTransaction() ||
+            (session.transaction.isCommitted && 'commitTransaction' in cmd) ||
+            'aggregate' in cmd ||
+            'find' in cmd ||
+            'getMore' in cmd ||
+            'listCollections' in cmd ||
+            'listIndexes' in cmd);
+    }
+    return false;
+}
+function connectionIsStale(pool, connection) {
+    if (connection.serviceId) {
+        return (connection.generation !== pool.serviceGenerations.get(connection.serviceId.toHexString()));
+    }
+    return connection.generation !== pool.generation;
+}
+function shouldHandleStateChangeError(server, err) {
+    const etv = err.topologyVersion;
+    const stv = server.description.topologyVersion;
+    return (0, server_description_1.compareTopologyVersion)(stv, etv) < 0;
+}
+function inActiveTransaction(session, cmd) {
+    return session && session.inTransaction() && !(0, transactions_1.isTransactionCommand)(cmd);
+}
+/** this checks the retryWrites option passed down from the client options, it
+ * does not check if the server supports retryable writes */
+function isRetryableWritesEnabled(topology) {
+    return topology.s.options.retryWrites !== false;
+}
+//# sourceMappingURL=server.js.map
+
+=== Content of server.js ===
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Server = void 0;
+const connection_1 = require("../cmap/connection");
+const connection_pool_1 = require("../cmap/connection_pool");
+const errors_1 = require("../cmap/errors");
+const constants_1 = require("../constants");
+const error_1 = require("../error");
+const logger_1 = require("../logger");
+const mongo_types_1 = require("../mongo_types");
+const transactions_1 = require("../transactions");
+const utils_1 = require("../utils");
+const common_1 = require("./common");
+const monitor_1 = require("./monitor");
+const server_description_1 = require("./server_description");
+const stateTransition = (0, utils_1.makeStateMachine)({
+    [common_1.STATE_CLOSED]: [common_1.STATE_CLOSED, common_1.STATE_CONNECTING],
+    [common_1.STATE_CONNECTING]: [common_1.STATE_CONNECTING, common_1.STATE_CLOSING, common_1.STATE_CONNECTED, common_1.STATE_CLOSED],
+    [common_1.STATE_CONNECTED]: [common_1.STATE_CONNECTED, common_1.STATE_CLOSING, common_1.STATE_CLOSED],
+    [common_1.STATE_CLOSING]: [common_1.STATE_CLOSING, common_1.STATE_CLOSED]
+});
+/** @internal */
+const kMonitor = Symbol('monitor');
+/** @internal */
+class Server extends mongo_types_1.TypedEventEmitter {
+    /**
+     * Create a server
+     */
+    constructor(topology, description, options) {
+        super();
+        this.serverApi = options.serverApi;
+        const poolOptions = { hostAddress: description.hostAddress, ...options };
+        this.s = {
+            description,
+            options,
+            logger: new logger_1.Logger('Server'),
+            state: common_1.STATE_CLOSED,
+            topology,
+            pool: new connection_pool_1.ConnectionPool(this, poolOptions),
+            operationCount: 0
+        };
+        for (const event of [...constants_1.CMAP_EVENTS, ...constants_1.APM_EVENTS]) {
+            this.s.pool.on(event, (e) => this.emit(event, e));
+        }
+        this.s.pool.on(connection_1.Connection.CLUSTER_TIME_RECEIVED, (clusterTime) => {
+            this.clusterTime = clusterTime;
+        });
+        if (this.loadBalanced) {
+            this[kMonitor] = null;
+            // monitoring is disabled in load balancing mode
+            return;
+        }
+        // create the monitor
+        // TODO(NODE-4144): Remove new variable for type narrowing
+        const monitor = new monitor_1.Monitor(this, this.s.options);
+        this[kMonitor] = monitor;
+        for (const event of constants_1.HEARTBEAT_EVENTS) {
+            monitor.on(event, (e) => this.emit(event, e));
+        }
+        monitor.on('resetServer', (error) => markServerUnknown(this, error));
+        monitor.on(Server.SERVER_HEARTBEAT_SUCCEEDED, (event) => {
+            this.emit(Server.DESCRIPTION_RECEIVED, new server_description_1.ServerDescription(this.description.hostAddress, event.reply, {
+                roundTripTime: calculateRoundTripTime(this.description.roundTripTime, event.duration)
+            }));
+            if (this.s.state === common_1.STATE_CONNECTING) {
+                stateTransition(this, common_1.STATE_CONNECTED);
+                this.emit(Server.CONNECT, this);
+            }
+        });
+    }
+    get clusterTime() {
+        return this.s.topology.clusterTime;
+    }
+    set clusterTime(clusterTime) {
+        this.s.topology.clusterTime = clusterTime;
+    }
+    get description() {
+        return this.s.description;
+    }
+    get name() {
+        return this.s.description.address;
+    }
+    get autoEncrypter() {
+        if (this.s.options && this.s.options.autoEncrypter) {
+            return this.s.options.autoEncrypter;
+        }
+        return;
+    }
+    get loadBalanced() {
+        return this.s.topology.description.type === common_1.TopologyType.LoadBalanced;
+    }
+    /**
+     * Initiate server connect
+     */
+    connect() {
+        var _a;
+        if (this.s.state !== common_1.STATE_CLOSED) {
+            return;
+        }
+        stateTransition(this, common_1.STATE_CONNECTING);
+        // If in load balancer mode we automatically set the server to
+        // a load balancer. It never transitions out of this state and
+        // has no monitor.
+        if (!this.loadBalanced) {
+            (_a = this[kMonitor]) === null || _a === void 0 ? void 0 : _a.connect();
+        }
+        else {
+            stateTransition(this, common_1.STATE_CONNECTED);
+            this.emit(Server.CONNECT, this);
+        }
+    }
+    /** Destroy the server connection */
+    destroy(options, callback) {
+        var _a;
+        if (typeof options === 'function')
+            (callback = options), (options = {});
+        options = Object.assign({}, { force: false }, options);
+        if (this.s.state === common_1.STATE_CLOSED) {
+            if (typeof callback === 'function') {
+                callback();
+            }
+            return;
+        }
+        stateTransition(this, common_1.STATE_CLOSING);
+        if (!this.loadBalanced) {
+            (_a = this[kMonitor]) === null || _a === void 0 ? void 0 : _a.close();
+        }
+        this.s.pool.close(options, err => {
+            stateTransition(this, common_1.STATE_CLOSED);
+            this.emit('closed');
+            if (typeof callback === 'function') {
+                callback(err);
+            }
+        });
+    }
+    /**
+     * Immediately schedule monitoring of this server. If there already an attempt being made
+     * this will be a no-op.
+     */
+    requestCheck() {
+        var _a;
+        if (!this.loadBalanced) {
+            (_a = this[kMonitor]) === null || _a === void 0 ? void 0 : _a.requestCheck();
+        }
+    }
+    /**
+     * Execute a command
+     * @internal
+     */
+    command(ns, cmd, options, callback) {
+        if (callback == null) {
+            throw new error_1.MongoInvalidArgumentError('Callback must be provided');
+        }
+        if (ns.db == null || typeof ns === 'string') {
+            throw new error_1.MongoInvalidArgumentError('Namespace must not be a string');
+        }
+        if (this.s.state === common_1.STATE_CLOSING || this.s.state === common_1.STATE_CLOSED) {
+            callback(new error_1.MongoServerClosedError());
+            return;
+        }
+        // Clone the options
+        const finalOptions = Object.assign({}, options, { wireProtocolCommand: false });
+        // There are cases where we need to flag the read preference not to get sent in
+        // the command, such as pre-5.0 servers attempting to perform an aggregate write
+        // with a non-primary read preference. In this case the effective read preference
+        // (primary) is not the same as the provided and must be removed completely.
+        if (finalOptions.omitReadPreference) {
+            delete finalOptions.readPreference;
+        }
+        const session = finalOptions.session;
+        const conn = session === null || session === void 0 ? void 0 : session.pinnedConnection;
+        // NOTE: This is a hack! We can't retrieve the connections used for executing an operation
+        //       (and prevent them from being checked back in) at the point of operation execution.
+        //       This should be considered as part of the work for NODE-2882
+        // NOTE:
+        //       When incrementing operation count, it's important that we increment it before we
+        //       attempt to check out a connection from the pool.  This ensures that operations that
+        //       are waiting for a connection are included in the operation count.  Load balanced
+        //       mode will only ever have a single server, so the operation count doesn't matter.
+        //       Incrementing the operation count above the logic to handle load balanced mode would
+        //       require special logic to decrement it again, or would double increment (the load
+        //       balanced code makes a recursive call).  Instead, we increment the count after this
+        //       check.
+        if (this.loadBalanced && session && conn == null && isPinnableCommand(cmd, session)) {
+            this.s.pool.checkOut((err, checkedOut) => {
+                if (err || checkedOut == null) {
+                    if (callback)
+                        return callback(err);
+                    return;
+                }
+                session.pin(checkedOut);
+                this.command(ns, cmd, finalOptions, callback);
+            });
+            return;
+        }
+        this.s.operationCount += 1;
+        this.s.pool.withConnection(conn, (err, conn, cb) => {
+            if (err || !conn) {
+                this.s.operationCount -= 1;
+                if (!err) {
+                    return cb(new error_1.MongoRuntimeError('Failed to create connection without error'));
+                }
+                if (!(err instanceof errors_1.PoolClearedError)) {
+                    this.handleError(err);
+                }
+                return cb(err);
+            }
+            conn.command(ns, cmd, finalOptions, makeOperationHandler(this, conn, cmd, finalOptions, (error, response) => {
+                this.s.operationCount -= 1;
+                cb(error, response);
+            }));
+        }, callback);
+    }
+    /**
+     * Handle SDAM error
+     * @internal
+     */
+    handleError(error, connection) {
+        if (!(error instanceof error_1.MongoError)) {
+            return;
+        }
+        const isStaleError = error.connectionGeneration && error.connectionGeneration < this.s.pool.generation;
+        if (isStaleError) {
+            return;
+        }
+        const isNetworkNonTimeoutError = error instanceof error_1.MongoNetworkError && !(error instanceof error_1.MongoNetworkTimeoutError);
+        const isNetworkTimeoutBeforeHandshakeError = (0, error_1.isNetworkErrorBeforeHandshake)(error);
+        const isAuthHandshakeError = error.hasErrorLabel(error_1.MongoErrorLabel.HandshakeError);
+        if (isNetworkNonTimeoutError || isNetworkTimeoutBeforeHandshakeError || isAuthHandshakeError) {
+            // In load balanced mode we never mark the server as unknown and always
+            // clear for the specific service id.
+            if (!this.loadBalanced) {
+                error.addErrorLabel(error_1.MongoErrorLabel.ResetPool);
+                markServerUnknown(this, error);
+            }
+            else if (connection) {
+                this.s.pool.clear({ serviceId: connection.serviceId });
+            }
+        }
+        else {
+            if ((0, error_1.isSDAMUnrecoverableError)(error)) {
+                if (shouldHandleStateChangeError(this, error)) {
+                    const shouldClearPool = (0, utils_1.maxWireVersion)(this) <= 7 || (0, error_1.isNodeShuttingDownError)(error);
+                    if (this.loadBalanced && connection && shouldClearPool) {
+                        this.s.pool.clear({ serviceId: connection.serviceId });
+                    }
+                    if (!this.loadBalanced) {
+                        if (shouldClearPool) {
+                            error.addErrorLabel(error_1.MongoErrorLabel.ResetPool);
+                        }
+                        markServerUnknown(this, error);
+                        process.nextTick(() => this.requestCheck());
+                    }
+                }
+            }
+        }
+    }
+}
+exports.Server = Server;
+/** @event */
+Server.SERVER_HEARTBEAT_STARTED = constants_1.SERVER_HEARTBEAT_STARTED;
+/** @event */
+Server.SERVER_HEARTBEAT_SUCCEEDED = constants_1.SERVER_HEARTBEAT_SUCCEEDED;
+/** @event */
+Server.SERVER_HEARTBEAT_FAILED = constants_1.SERVER_HEARTBEAT_FAILED;
+/** @event */
+Server.CONNECT = constants_1.CONNECT;
+/** @event */
+Server.DESCRIPTION_RECEIVED = constants_1.DESCRIPTION_RECEIVED;
+/** @event */
+Server.CLOSED = constants_1.CLOSED;
+/** @event */
+Server.ENDED = constants_1.ENDED;
+function calculateRoundTripTime(oldRtt, duration) {
+    if (oldRtt === -1) {
+        return duration;
+    }
+    const alpha = 0.2;
+    return alpha * duration + (1 - alpha) * oldRtt;
+}
+function markServerUnknown(server, error) {
+    var _a;
+    // Load balancer servers can never be marked unknown.
+    if (server.loadBalanced) {
+        return;
+    }
+    if (error instanceof error_1.MongoNetworkError && !(error instanceof error_1.MongoNetworkTimeoutError)) {
+        (_a = server[kMonitor]) === null || _a === void 0 ? void 0 : _a.reset();
+    }
+    server.emit(Server.DESCRIPTION_RECEIVED, new server_description_1.ServerDescription(server.description.hostAddress, undefined, { error }));
+}
+function isPinnableCommand(cmd, session) {
+    if (session) {
+        return (session.inTransaction() ||
+            'aggregate' in cmd ||
+            'find' in cmd ||
+            'getMore' in cmd ||
+            'listCollections' in cmd ||
+            'listIndexes' in cmd);
+    }
+    return false;
+}
+function connectionIsStale(pool, connection) {
+    if (connection.serviceId) {
+        return (connection.generation !== pool.serviceGenerations.get(connection.serviceId.toHexString()));
+    }
+    return connection.generation !== pool.generation;
+}
+function shouldHandleStateChangeError(server, err) {
+    const etv = err.topologyVersion;
+    const stv = server.description.topologyVersion;
+    return (0, server_description_1.compareTopologyVersion)(stv, etv) < 0;
+}
+function inActiveTransaction(session, cmd) {
+    return session && session.inTransaction() && !(0, transactions_1.isTransactionCommand)(cmd);
+}
+/** this checks the retryWrites option passed down from the client options, it
+ * does not check if the server supports retryable writes */
+function isRetryableWritesEnabled(topology) {
+    return topology.s.options.retryWrites !== false;
+}
+function makeOperationHandler(server, connection, cmd, options, callback) {
+    const session = options === null || options === void 0 ? void 0 : options.session;
+    return function handleOperationResult(error, result) {
+        if (result != null) {
+            return callback(undefined, result);
+        }
+        if ((options === null || options === void 0 ? void 0 : options.noResponse) === true) {
+            return callback(undefined, null);
+        }
+        if (!error) {
+            return callback(new error_1.MongoUnexpectedServerResponseError('Empty response with no error'));
+        }
+        if (!(error instanceof error_1.MongoError)) {
+            // Node.js or some other error we have not special handling for
+            return callback(error);
+        }
+        if (connectionIsStale(server.s.pool, connection)) {
+            return callback(error);
+        }
+        if (error instanceof error_1.MongoNetworkError) {
+            if (session && !session.hasEnded && session.serverSession) {
+                session.serverSession.isDirty = true;
+            }
+            // inActiveTransaction check handles commit and abort.
+            if (inActiveTransaction(session, cmd) &&
+                !error.hasErrorLabel(error_1.MongoErrorLabel.TransientTransactionError)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.TransientTransactionError);
+            }
+            if ((isRetryableWritesEnabled(server.s.topology) || (0, transactions_1.isTransactionCommand)(cmd)) &&
+                (0, utils_1.supportsRetryableWrites)(server) &&
+                !inActiveTransaction(session, cmd)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.RetryableWriteError);
+            }
+        }
+        else {
+            if ((isRetryableWritesEnabled(server.s.topology) || (0, transactions_1.isTransactionCommand)(cmd)) &&
+                (0, error_1.needsRetryableWriteLabel)(error, (0, utils_1.maxWireVersion)(server)) &&
+                !inActiveTransaction(session, cmd)) {
+                error.addErrorLabel(error_1.MongoErrorLabel.RetryableWriteError);
+            }
+        }
+        if (session &&
+            session.isPinned &&
+            error.hasErrorLabel(error_1.MongoErrorLabel.TransientTransactionError)) {
+            session.unpin({ force: true });
+        }
+        server.handleError(error, connection);
+        return callback(error);
+    };
+}
+//# sourceMappingURL=server.js.map
+
+=== Content of server.js ===
+var express = require('express'),
+	 OAuth = require('oauth').OAuth,
+	 querystring = require('querystring');
+
+// Setup the Express.js server
+var app = express.createServer();
+app.use(express.logger());
+app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({
+	secret: "skjghskdjfhbqigohqdiouk"
+}));
+
+// Home Page
+app.get('/', function(req, res){
+	if(!req.session.oauth_access_token) {
+		res.redirect("/google_login");
+	}
+	else {
+		res.redirect("/google_contacts");
+	}
+});
+
+// Request an OAuth Request Token, and redirects the user to authorize it
+app.get('/google_login', function(req, res) {
+	
+	var getRequestTokenUrl = "https://www.google.com/accounts/OAuthGetRequestToken";
+	
+	// GData specifid: scopes that wa want access to
+	var gdataScopes = [
+		querystring.escape("https://www.google.com/m8/feeds/"),
+		querystring.escape("https://www.google.com/calendar/feeds/")
+	];
+	
+	var oa = new OAuth(getRequestTokenUrl+"?scope="+gdataScopes.join('+'),
+	                  "https://www.google.com/accounts/OAuthGetAccessToken",
+	                  "anonymous",
+	                  "anonymous",
+	                  "1.0",
+	                  "http://localhost:3000/google_cb"+( req.param('action') && req.param('action') != "" ? "?action="+querystring.escape(req.param('action')) : "" ),
+	                  "HMAC-SHA1");
+
+	oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
+	  if(error) {
+			console.log('error');
+	 		console.log(error);
+		}
+	  else { 
+			// store the tokens in the session
+			req.session.oa = oa;
+			req.session.oauth_token = oauth_token;
+			req.session.oauth_token_secret = oauth_token_secret;
+		
+			// redirect the user to authorize the token
+	   	res.redirect("https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token="+oauth_token);
+	  }
+	})
+
+});
+
+// Callback for the authorization page
+app.get('/google_cb', function(req, res) {
+		
+	// get the OAuth access token with the 'oauth_verifier' that we received
+	
+	var oa = new OAuth(req.session.oa._requestUrl,
+	                  req.session.oa._accessUrl,
+	                  req.session.oa._consumerKey,
+	                  req.session.oa._consumerSecret,
+	                  req.session.oa._version,
+	                  req.session.oa._authorize_callback,
+	                  req.session.oa._signatureMethod);
+	
+    console.log(oa);
+	
+	oa.getOAuthAccessToken(
+		req.session.oauth_token, 
+		req.session.oauth_token_secret, 
+		req.param('oauth_verifier'), 
+		function(error, oauth_access_token, oauth_access_token_secret, results2) {
+			
+			if(error) {
+				console.log('error');
+				console.log(error);
+	 		}
+	 		else {
+		
+				// store the access token in the session
+				req.session.oauth_access_token = oauth_access_token;
+				req.session.oauth_access_token_secret = oauth_access_token_secret;
+
+	    		res.redirect((req.param('action') && req.param('action') != "") ? req.param('action') : "/google_contacts");
+	 		}
+
+	});
+	
+});
+
+
+function require_google_login(req, res, next) {
+	if(!req.session.oauth_access_token) {
+		res.redirect("/google_login?action="+querystring.escape(req.originalUrl));
+		return;
+	}
+	next();
+};
+
+app.get('/google_contacts', require_google_login, function(req, res) {
+	var oa = new OAuth(req.session.oa._requestUrl,
+	                  req.session.oa._accessUrl,
+	                  req.session.oa._consumerKey,
+	                  req.session.oa._consumerSecret,
+	                  req.session.oa._version,
+	                  req.session.oa._authorize_callback,
+	                  req.session.oa._signatureMethod);
+	
+    console.log(oa);
+
+	// Example using GData API v3
+	// GData Specific Header
+	oa._headers['GData-Version'] = '3.0'; 
+	
+	oa.getProtectedResource(
+		"https://www.google.com/m8/feeds/contacts/default/full?alt=json", 
+		"GET", 
+		req.session.oauth_access_token, 
+		req.session.oauth_access_token_secret,
+		function (error, data, response) {
+			
+			var feed = JSON.parse(data);
+			
+			res.render('google_contacts.ejs', {
+				locals: { feed: feed }
+			});
+	});
+	
+});
+
+app.get('/google_calendars', require_google_login, function(req, res) {
+		var oa = new OAuth(req.session.oa._requestUrl,
+	                  req.session.oa._accessUrl,
+	                  req.session.oa._consumerKey,
+	                  req.session.oa._consumerSecret,
+	                  req.session.oa._version,
+	                  req.session.oa._authorize_callback,
+	                  req.session.oa._signatureMethod);
+	// Example using GData API v2
+	// GData Specific Header
+	oa._headers['GData-Version'] = '2'; 
+	
+	oa.getProtectedResource(
+		"https://www.google.com/calendar/feeds/default/allcalendars/full?alt=jsonc", 
+		"GET", 
+		req.session.oauth_access_token, 
+		req.session.oauth_access_token_secret,
+		function (error, data, response) {
+			
+			var feed = JSON.parse(data);
+			
+			res.render('google_calendars.ejs', {
+				locals: { feed: feed }
+			});
+	});
+	
+});
+
+app.listen(3000);
+console.log("listening on http://localhost:3000");
+
+
+=== Content of server.js ===
+'use strict';
+
+module.exports = require('./server.node');
+
+
+=== Content of server.js ===
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var React = require('react');
+var router = require('@remix-run/router');
+var reactRouter = require('react-router');
+var reactRouterDom = require('react-router-dom');
+
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n["default"] = e;
+    return Object.freeze(n);
+}
+
+var React__namespace = /*#__PURE__*/_interopNamespace(React);
+
+/**
+ * A `<Router>` that may not navigate to any other location. This is useful
+ * on the server where there is no stateful UI.
+ */
+function StaticRouter({
+  basename,
+  children,
+  location: locationProp = "/",
+  future
+}) {
+  if (typeof locationProp === "string") {
+    locationProp = reactRouterDom.parsePath(locationProp);
+  }
+  let action = router.Action.Pop;
+  let location = {
+    pathname: locationProp.pathname || "/",
+    search: locationProp.search || "",
+    hash: locationProp.hash || "",
+    state: locationProp.state != null ? locationProp.state : null,
+    key: locationProp.key || "default"
+  };
+  let staticNavigator = getStatelessNavigator();
+  return /*#__PURE__*/React__namespace.createElement(reactRouterDom.Router, {
+    basename: basename,
+    children: children,
+    location: location,
+    navigationType: action,
+    navigator: staticNavigator,
+    future: future,
+    static: true
+  });
+}
+/**
+ * A Data Router that may not navigate to any other location. This is useful
+ * on the server where there is no stateful UI.
+ */
+function StaticRouterProvider({
+  context,
+  router: router$1,
+  hydrate = true,
+  nonce
+}) {
+  !(router$1 && context) ? process.env.NODE_ENV !== "production" ? router.UNSAFE_invariant(false, "You must provide `router` and `context` to <StaticRouterProvider>") : router.UNSAFE_invariant(false) : void 0;
+  let dataRouterContext = {
+    router: router$1,
+    navigator: getStatelessNavigator(),
+    static: true,
+    staticContext: context,
+    basename: context.basename || "/"
+  };
+  let fetchersContext = new Map();
+  let hydrateScript = "";
+  if (hydrate !== false) {
+    let data = {
+      loaderData: context.loaderData,
+      actionData: context.actionData,
+      errors: serializeErrors(context.errors)
+    };
+    // Use JSON.parse here instead of embedding a raw JS object here to speed
+    // up parsing on the client.  Dual-stringify is needed to ensure all quotes
+    // are properly escaped in the resulting string.  See:
+    //   https://v8.dev/blog/cost-of-javascript-2019#json
+    let json = htmlEscape(JSON.stringify(JSON.stringify(data)));
+    hydrateScript = `window.__staticRouterHydrationData = JSON.parse(${json});`;
+  }
+  let {
+    state
+  } = dataRouterContext.router;
+  return /*#__PURE__*/React__namespace.createElement(React__namespace.Fragment, null, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_DataRouterContext.Provider, {
+    value: dataRouterContext
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_DataRouterStateContext.Provider, {
+    value: state
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_FetchersContext.Provider, {
+    value: fetchersContext
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_ViewTransitionContext.Provider, {
+    value: {
+      isTransitioning: false
+    }
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.Router, {
+    basename: dataRouterContext.basename,
+    location: state.location,
+    navigationType: state.historyAction,
+    navigator: dataRouterContext.navigator,
+    static: dataRouterContext.static,
+    future: {
+      v7_relativeSplatPath: router$1.future.v7_relativeSplatPath
+    }
+  }, /*#__PURE__*/React__namespace.createElement(DataRoutes, {
+    routes: router$1.routes,
+    future: router$1.future,
+    state: state
+  })))))), hydrateScript ? /*#__PURE__*/React__namespace.createElement("script", {
+    suppressHydrationWarning: true,
+    nonce: nonce,
+    dangerouslySetInnerHTML: {
+      __html: hydrateScript
+    }
+  }) : null);
+}
+function DataRoutes({
+  routes,
+  future,
+  state
+}) {
+  return reactRouter.UNSAFE_useRoutesImpl(routes, undefined, state, future);
+}
+function serializeErrors(errors) {
+  if (!errors) return null;
+  let entries = Object.entries(errors);
+  let serialized = {};
+  for (let [key, val] of entries) {
+    // Hey you!  If you change this, please change the corresponding logic in
+    // deserializeErrors in react-router-dom/index.tsx :)
+    if (router.isRouteErrorResponse(val)) {
+      serialized[key] = {
+        ...val,
+        __type: "RouteErrorResponse"
+      };
+    } else if (val instanceof Error) {
+      // Do not serialize stack traces from SSR for security reasons
+      serialized[key] = {
+        message: val.message,
+        __type: "Error",
+        // If this is a subclass (i.e., ReferenceError), send up the type so we
+        // can re-create the same type during hydration.
+        ...(val.name !== "Error" ? {
+          __subType: val.name
+        } : {})
+      };
+    } else {
+      serialized[key] = val;
+    }
+  }
+  return serialized;
+}
+function getStatelessNavigator() {
+  return {
+    createHref,
+    encodeLocation,
+    push(to) {
+      throw new Error(`You cannot use navigator.push() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${JSON.stringify(to)})\` somewhere in your app.`);
+    },
+    replace(to) {
+      throw new Error(`You cannot use navigator.replace() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${JSON.stringify(to)}, { replace: true })\` somewhere ` + `in your app.`);
+    },
+    go(delta) {
+      throw new Error(`You cannot use navigator.go() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${delta})\` somewhere in your app.`);
+    },
+    back() {
+      throw new Error(`You cannot use navigator.back() on the server because it is a stateless ` + `environment.`);
+    },
+    forward() {
+      throw new Error(`You cannot use navigator.forward() on the server because it is a stateless ` + `environment.`);
+    }
+  };
+}
+function createStaticHandler(routes, opts) {
+  return router.createStaticHandler(routes, {
+    ...opts,
+    mapRouteProperties: reactRouter.UNSAFE_mapRouteProperties
+  });
+}
+function createStaticRouter(routes, context, opts = {}) {
+  let manifest = {};
+  let dataRoutes = router.UNSAFE_convertRoutesToDataRoutes(routes, reactRouter.UNSAFE_mapRouteProperties, undefined, manifest);
+  // Because our context matches may be from a framework-agnostic set of
+  // routes passed to createStaticHandler(), we update them here with our
+  // newly created/enhanced data routes
+  let matches = context.matches.map(match => {
+    let route = manifest[match.route.id] || match.route;
+    return {
+      ...match,
+      route
+    };
+  });
+  let msg = method => `You cannot use router.${method}() on the server because it is a stateless environment`;
+  return {
+    get basename() {
+      return context.basename;
+    },
+    get future() {
+      return {
+        v7_fetcherPersist: false,
+        v7_normalizeFormMethod: false,
+        v7_partialHydration: opts.future?.v7_partialHydration === true,
+        v7_prependBasename: false,
+        v7_relativeSplatPath: opts.future?.v7_relativeSplatPath === true,
+        v7_skipActionErrorRevalidation: false
+      };
+    },
+    get state() {
+      return {
+        historyAction: router.Action.Pop,
+        location: context.location,
+        matches,
+        loaderData: context.loaderData,
+        actionData: context.actionData,
+        errors: context.errors,
+        initialized: true,
+        navigation: router.IDLE_NAVIGATION,
+        restoreScrollPosition: null,
+        preventScrollReset: false,
+        revalidation: "idle",
+        fetchers: new Map(),
+        blockers: new Map()
+      };
+    },
+    get routes() {
+      return dataRoutes;
+    },
+    get window() {
+      return undefined;
+    },
+    initialize() {
+      throw msg("initialize");
+    },
+    subscribe() {
+      throw msg("subscribe");
+    },
+    enableScrollRestoration() {
+      throw msg("enableScrollRestoration");
+    },
+    navigate() {
+      throw msg("navigate");
+    },
+    fetch() {
+      throw msg("fetch");
+    },
+    revalidate() {
+      throw msg("revalidate");
+    },
+    createHref,
+    encodeLocation,
+    getFetcher() {
+      return router.IDLE_FETCHER;
+    },
+    deleteFetcher() {
+      throw msg("deleteFetcher");
+    },
+    dispose() {
+      throw msg("dispose");
+    },
+    getBlocker() {
+      return router.IDLE_BLOCKER;
+    },
+    deleteBlocker() {
+      throw msg("deleteBlocker");
+    },
+    patchRoutes() {
+      throw msg("patchRoutes");
+    },
+    _internalFetchControllers: new Map(),
+    _internalActiveDeferreds: new Map(),
+    _internalSetRoutes() {
+      throw msg("_internalSetRoutes");
+    }
+  };
+}
+function createHref(to) {
+  return typeof to === "string" ? to : reactRouterDom.createPath(to);
+}
+function encodeLocation(to) {
+  let href = typeof to === "string" ? to : reactRouterDom.createPath(to);
+  // Treating this as a full URL will strip any trailing spaces so we need to
+  // pre-encode them since they might be part of a matching splat param from
+  // an ancestor route
+  href = href.replace(/ $/, "%20");
+  let encoded = ABSOLUTE_URL_REGEX.test(href) ? new URL(href) : new URL(href, "http://localhost");
+  return {
+    pathname: encoded.pathname,
+    search: encoded.search,
+    hash: encoded.hash
+  };
+}
+const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+// This utility is based on https://github.com/zertosh/htmlescape
+// License: https://github.com/zertosh/htmlescape/blob/0527ca7156a524d256101bb310a9f970f63078ad/LICENSE
+const ESCAPE_LOOKUP = {
+  "&": "\\u0026",
+  ">": "\\u003e",
+  "<": "\\u003c",
+  "\u2028": "\\u2028",
+  "\u2029": "\\u2029"
+};
+const ESCAPE_REGEX = /[&><\u2028\u2029]/g;
+function htmlEscape(str) {
+  return str.replace(ESCAPE_REGEX, match => ESCAPE_LOOKUP[match]);
+}
+
+exports.StaticRouter = StaticRouter;
+exports.StaticRouterProvider = StaticRouterProvider;
+exports.createStaticHandler = createStaticHandler;
+exports.createStaticRouter = createStaticRouter;
+
+
+=== Content of server.js ===
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var React = require('react');
+var router = require('@remix-run/router');
+var reactRouter = require('react-router');
+var reactRouterDom = require('react-router-dom');
+
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n["default"] = e;
+    return Object.freeze(n);
+}
+
+var React__namespace = /*#__PURE__*/_interopNamespace(React);
+
+/**
+ * A `<Router>` that may not navigate to any other location. This is useful
+ * on the server where there is no stateful UI.
+ */
+function StaticRouter({
+  basename,
+  children,
+  location: locationProp = "/",
+  future
+}) {
+  if (typeof locationProp === "string") {
+    locationProp = reactRouterDom.parsePath(locationProp);
+  }
+  let action = router.Action.Pop;
+  let location = {
+    pathname: locationProp.pathname || "/",
+    search: locationProp.search || "",
+    hash: locationProp.hash || "",
+    state: locationProp.state != null ? locationProp.state : null,
+    key: locationProp.key || "default"
+  };
+  let staticNavigator = getStatelessNavigator();
+  return /*#__PURE__*/React__namespace.createElement(reactRouterDom.Router, {
+    basename: basename,
+    children: children,
+    location: location,
+    navigationType: action,
+    navigator: staticNavigator,
+    future: future,
+    static: true
+  });
+}
+/**
+ * A Data Router that may not navigate to any other location. This is useful
+ * on the server where there is no stateful UI.
+ */
+function StaticRouterProvider({
+  context,
+  router: router$1,
+  hydrate = true,
+  nonce
+}) {
+  !(router$1 && context) ? process.env.NODE_ENV !== "production" ? router.UNSAFE_invariant(false, "You must provide `router` and `context` to <StaticRouterProvider>") : router.UNSAFE_invariant(false) : void 0;
+  let dataRouterContext = {
+    router: router$1,
+    navigator: getStatelessNavigator(),
+    static: true,
+    staticContext: context,
+    basename: context.basename || "/"
+  };
+  let fetchersContext = new Map();
+  let hydrateScript = "";
+  if (hydrate !== false) {
+    let data = {
+      loaderData: context.loaderData,
+      actionData: context.actionData,
+      errors: serializeErrors(context.errors)
+    };
+    // Use JSON.parse here instead of embedding a raw JS object here to speed
+    // up parsing on the client.  Dual-stringify is needed to ensure all quotes
+    // are properly escaped in the resulting string.  See:
+    //   https://v8.dev/blog/cost-of-javascript-2019#json
+    let json = htmlEscape(JSON.stringify(JSON.stringify(data)));
+    hydrateScript = `window.__staticRouterHydrationData = JSON.parse(${json});`;
+  }
+  let {
+    state
+  } = dataRouterContext.router;
+  return /*#__PURE__*/React__namespace.createElement(React__namespace.Fragment, null, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_DataRouterContext.Provider, {
+    value: dataRouterContext
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_DataRouterStateContext.Provider, {
+    value: state
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_FetchersContext.Provider, {
+    value: fetchersContext
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.UNSAFE_ViewTransitionContext.Provider, {
+    value: {
+      isTransitioning: false
+    }
+  }, /*#__PURE__*/React__namespace.createElement(reactRouterDom.Router, {
+    basename: dataRouterContext.basename,
+    location: state.location,
+    navigationType: state.historyAction,
+    navigator: dataRouterContext.navigator,
+    static: dataRouterContext.static,
+    future: {
+      v7_relativeSplatPath: router$1.future.v7_relativeSplatPath
+    }
+  }, /*#__PURE__*/React__namespace.createElement(DataRoutes, {
+    routes: router$1.routes,
+    future: router$1.future,
+    state: state
+  })))))), hydrateScript ? /*#__PURE__*/React__namespace.createElement("script", {
+    suppressHydrationWarning: true,
+    nonce: nonce,
+    dangerouslySetInnerHTML: {
+      __html: hydrateScript
+    }
+  }) : null);
+}
+function DataRoutes({
+  routes,
+  future,
+  state
+}) {
+  return reactRouter.UNSAFE_useRoutesImpl(routes, undefined, state, future);
+}
+function serializeErrors(errors) {
+  if (!errors) return null;
+  let entries = Object.entries(errors);
+  let serialized = {};
+  for (let [key, val] of entries) {
+    // Hey you!  If you change this, please change the corresponding logic in
+    // deserializeErrors in react-router-dom/index.tsx :)
+    if (router.isRouteErrorResponse(val)) {
+      serialized[key] = {
+        ...val,
+        __type: "RouteErrorResponse"
+      };
+    } else if (val instanceof Error) {
+      // Do not serialize stack traces from SSR for security reasons
+      serialized[key] = {
+        message: val.message,
+        __type: "Error",
+        // If this is a subclass (i.e., ReferenceError), send up the type so we
+        // can re-create the same type during hydration.
+        ...(val.name !== "Error" ? {
+          __subType: val.name
+        } : {})
+      };
+    } else {
+      serialized[key] = val;
+    }
+  }
+  return serialized;
+}
+function getStatelessNavigator() {
+  return {
+    createHref,
+    encodeLocation,
+    push(to) {
+      throw new Error(`You cannot use navigator.push() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${JSON.stringify(to)})\` somewhere in your app.`);
+    },
+    replace(to) {
+      throw new Error(`You cannot use navigator.replace() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${JSON.stringify(to)}, { replace: true })\` somewhere ` + `in your app.`);
+    },
+    go(delta) {
+      throw new Error(`You cannot use navigator.go() on the server because it is a stateless ` + `environment. This error was probably triggered when you did a ` + `\`navigate(${delta})\` somewhere in your app.`);
+    },
+    back() {
+      throw new Error(`You cannot use navigator.back() on the server because it is a stateless ` + `environment.`);
+    },
+    forward() {
+      throw new Error(`You cannot use navigator.forward() on the server because it is a stateless ` + `environment.`);
+    }
+  };
+}
+function createStaticHandler(routes, opts) {
+  return router.createStaticHandler(routes, {
+    ...opts,
+    mapRouteProperties: reactRouter.UNSAFE_mapRouteProperties
+  });
+}
+function createStaticRouter(routes, context, opts = {}) {
+  let manifest = {};
+  let dataRoutes = router.UNSAFE_convertRoutesToDataRoutes(routes, reactRouter.UNSAFE_mapRouteProperties, undefined, manifest);
+  // Because our context matches may be from a framework-agnostic set of
+  // routes passed to createStaticHandler(), we update them here with our
+  // newly created/enhanced data routes
+  let matches = context.matches.map(match => {
+    let route = manifest[match.route.id] || match.route;
+    return {
+      ...match,
+      route
+    };
+  });
+  let msg = method => `You cannot use router.${method}() on the server because it is a stateless environment`;
+  return {
+    get basename() {
+      return context.basename;
+    },
+    get future() {
+      return {
+        v7_fetcherPersist: false,
+        v7_normalizeFormMethod: false,
+        v7_partialHydration: opts.future?.v7_partialHydration === true,
+        v7_prependBasename: false,
+        v7_relativeSplatPath: opts.future?.v7_relativeSplatPath === true,
+        v7_skipActionErrorRevalidation: false
+      };
+    },
+    get state() {
+      return {
+        historyAction: router.Action.Pop,
+        location: context.location,
+        matches,
+        loaderData: context.loaderData,
+        actionData: context.actionData,
+        errors: context.errors,
+        initialized: true,
+        navigation: router.IDLE_NAVIGATION,
+        restoreScrollPosition: null,
+        preventScrollReset: false,
+        revalidation: "idle",
+        fetchers: new Map(),
+        blockers: new Map()
+      };
+    },
+    get routes() {
+      return dataRoutes;
+    },
+    get window() {
+      return undefined;
+    },
+    initialize() {
+      throw msg("initialize");
+    },
+    subscribe() {
+      throw msg("subscribe");
+    },
+    enableScrollRestoration() {
+      throw msg("enableScrollRestoration");
+    },
+    navigate() {
+      throw msg("navigate");
+    },
+    fetch() {
+      throw msg("fetch");
+    },
+    revalidate() {
+      throw msg("revalidate");
+    },
+    createHref,
+    encodeLocation,
+    getFetcher() {
+      return router.IDLE_FETCHER;
+    },
+    deleteFetcher() {
+      throw msg("deleteFetcher");
+    },
+    dispose() {
+      throw msg("dispose");
+    },
+    getBlocker() {
+      return router.IDLE_BLOCKER;
+    },
+    deleteBlocker() {
+      throw msg("deleteBlocker");
+    },
+    patchRoutes() {
+      throw msg("patchRoutes");
+    },
+    _internalFetchControllers: new Map(),
+    _internalActiveDeferreds: new Map(),
+    _internalSetRoutes() {
+      throw msg("_internalSetRoutes");
+    }
+  };
+}
+function createHref(to) {
+  return typeof to === "string" ? to : reactRouterDom.createPath(to);
+}
+function encodeLocation(to) {
+  let href = typeof to === "string" ? to : reactRouterDom.createPath(to);
+  // Treating this as a full URL will strip any trailing spaces so we need to
+  // pre-encode them since they might be part of a matching splat param from
+  // an ancestor route
+  href = href.replace(/ $/, "%20");
+  let encoded = ABSOLUTE_URL_REGEX.test(href) ? new URL(href) : new URL(href, "http://localhost");
+  return {
+    pathname: encoded.pathname,
+    search: encoded.search,
+    hash: encoded.hash
+  };
+}
+const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+// This utility is based on https://github.com/zertosh/htmlescape
+// License: https://github.com/zertosh/htmlescape/blob/0527ca7156a524d256101bb310a9f970f63078ad/LICENSE
+const ESCAPE_LOOKUP = {
+  "&": "\\u0026",
+  ">": "\\u003e",
+  "<": "\\u003c",
+  "\u2028": "\\u2028",
+  "\u2029": "\\u2029"
+};
+const ESCAPE_REGEX = /[&><\u2028\u2029]/g;
+function htmlEscape(str) {
+  return str.replace(ESCAPE_REGEX, match => ESCAPE_LOOKUP[match]);
+}
+
+exports.StaticRouter = StaticRouter;
+exports.StaticRouterProvider = StaticRouterProvider;
+exports.createStaticHandler = createStaticHandler;
+exports.createStaticRouter = createStaticRouter;
+
+
+=== Content of server.js ===
+'use strict'
+
+var assert = require('assert')
+var https = require('https')
+var http = require('http')
+var tls = require('tls')
+var net = require('net')
+var util = require('util')
+var selectHose = require('select-hose')
+var transport = require('spdy-transport')
+var debug = require('debug')('spdy:server')
+var EventEmitter = require('events').EventEmitter
+
+// Node.js 0.8, 0.10 and 0.12 support
+Object.assign = process.versions.modules >= 46
+  ? Object.assign // eslint-disable-next-line
+  : util._extend
+
+var spdy = require('../spdy')
+
+var proto = {}
+
+function instantiate (base) {
+  function Server (options, handler) {
+    this._init(base, options, handler)
+  }
+  util.inherits(Server, base)
+
+  Server.create = function create (options, handler) {
+    return new Server(options, handler)
+  }
+
+  Object.keys(proto).forEach(function (key) {
+    Server.prototype[key] = proto[key]
+  })
+
+  return Server
+}
+
+proto._init = function _init (base, options, handler) {
+  var state = {}
+  this._spdyState = state
+
+  state.options = options.spdy || {}
+
+  var protocols = state.options.protocols || [
+    'h2',
+    'spdy/3.1', 'spdy/3', 'spdy/2',
+    'http/1.1', 'http/1.0'
+  ]
+
+  var actualOptions = Object.assign({
+    NPNProtocols: protocols,
+
+    // Future-proof
+    ALPNProtocols: protocols
+  }, options)
+
+  state.secure = this instanceof tls.Server
+
+  if (state.secure) {
+    base.call(this, actualOptions)
+  } else {
+    base.call(this)
+  }
+
+  // Support HEADERS+FIN
+  this.httpAllowHalfOpen = true
+
+  var event = state.secure ? 'secureConnection' : 'connection'
+
+  state.listeners = this.listeners(event).slice()
+  assert(state.listeners.length > 0, 'Server does not have default listeners')
+  this.removeAllListeners(event)
+
+  if (state.options.plain) {
+    this.on(event, this._onPlainConnection)
+  } else { this.on(event, this._onConnection) }
+
+  if (handler) {
+    this.on('request', handler)
+  }
+
+  debug('server init secure=%d', state.secure)
+}
+
+proto._onConnection = function _onConnection (socket) {
+  var state = this._spdyState
+
+  var protocol
+  if (state.secure) {
+    protocol = socket.npnProtocol || socket.alpnProtocol
+  }
+
+  this._handleConnection(socket, protocol)
+}
+
+proto._handleConnection = function _handleConnection (socket, protocol) {
+  var state = this._spdyState
+
+  if (!protocol) {
+    protocol = state.options.protocol
+  }
+
+  debug('incoming socket protocol=%j', protocol)
+
+  // No way we can do anything with the socket
+  if (!protocol || protocol === 'http/1.1' || protocol === 'http/1.0') {
+    debug('to default handler it goes')
+    return this._invokeDefault(socket)
+  }
+
+  socket.setNoDelay(true)
+
+  var connection = transport.connection.create(socket, Object.assign({
+    protocol: /spdy/.test(protocol) ? 'spdy' : 'http2',
+    isServer: true
+  }, state.options.connection || {}))
+
+  // Set version when we are certain
+  if (protocol === 'http2') { connection.start(4) } else if (protocol === 'spdy/3.1') {
+    connection.start(3.1)
+  } else if (protocol === 'spdy/3') { connection.start(3) } else if (protocol === 'spdy/2') {
+    connection.start(2)
+  }
+
+  connection.on('error', function () {
+    socket.destroy()
+  })
+
+  var self = this
+  connection.on('stream', function (stream) {
+    self._onStream(stream)
+  })
+}
+
+// HTTP2 preface
+var PREFACE = 'PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n'
+var PREFACE_BUFFER = Buffer.from(PREFACE)
+
+function hoseFilter (data, callback) {
+  if (data.length < 1) {
+    return callback(null, null)
+  }
+
+  // SPDY!
+  if (data[0] === 0x80) { return callback(null, 'spdy') }
+
+  var avail = Math.min(data.length, PREFACE_BUFFER.length)
+  for (var i = 0; i < avail; i++) {
+    if (data[i] !== PREFACE_BUFFER[i]) { return callback(null, 'http/1.1') }
+  }
+
+  // Not enough bytes to be sure about HTTP2
+  if (avail !== PREFACE_BUFFER.length) { return callback(null, null) }
+
+  return callback(null, 'h2')
+}
+
+proto._onPlainConnection = function _onPlainConnection (socket) {
+  var hose = selectHose.create(socket, {}, hoseFilter)
+
+  var self = this
+  hose.on('select', function (protocol, socket) {
+    self._handleConnection(socket, protocol)
+  })
+
+  hose.on('error', function (err) {
+    debug('hose error %j', err.message)
+    socket.destroy()
+  })
+}
+
+proto._invokeDefault = function _invokeDefault (socket) {
+  var state = this._spdyState
+
+  for (var i = 0; i < state.listeners.length; i++) { state.listeners[i].call(this, socket) }
+}
+
+proto._onStream = function _onStream (stream) {
+  var state = this._spdyState
+
+  var handle = spdy.handle.create(this._spdyState.options, stream)
+
+  var socketOptions = {
+    handle: handle,
+    allowHalfOpen: true
+  }
+
+  var socket
+  if (state.secure) {
+    socket = new spdy.Socket(stream.connection.socket, socketOptions)
+  } else {
+    socket = new net.Socket(socketOptions)
+  }
+
+  // This is needed because the `error` listener, added by the default
+  // `connection` listener, no longer has bound arguments. It relies instead
+  // on the `server` property of the socket. See https://github.com/nodejs/node/pull/11926
+  // for more details.
+  // This is only done for Node.js >= 4 in order to not break compatibility
+  // with older versions of the platform.
+  if (process.versions.modules >= 46) { socket.server = this }
+
+  handle.assignSocket(socket)
+
+  // For v0.8
+  socket.readable = true
+  socket.writable = true
+
+  this._invokeDefault(socket)
+
+  // For v0.8, 0.10 and 0.12
+  if (process.versions.modules < 46) {
+    // eslint-disable-next-line
+    this.listenerCount = EventEmitter.listenerCount.bind(this)
+  }
+
+  // Add lazy `checkContinue` listener, otherwise `res.writeContinue` will be
+  // called before the response object was patched by us.
+  if (stream.headers.expect !== undefined &&
+      /100-continue/i.test(stream.headers.expect) &&
+      this.listenerCount('checkContinue') === 0) {
+    this.once('checkContinue', function (req, res) {
+      res.writeContinue()
+
+      this.emit('request', req, res)
+    })
+  }
+
+  handle.emitRequest()
+}
+
+proto.emit = function emit (event, req, res) {
+  if (event !== 'request' && event !== 'checkContinue') {
+    return EventEmitter.prototype.emit.apply(this, arguments)
+  }
+
+  if (!(req.socket._handle instanceof spdy.handle)) {
+    debug('not spdy req/res')
+    req.isSpdy = false
+    req.spdyVersion = 1
+    res.isSpdy = false
+    res.spdyVersion = 1
+    return EventEmitter.prototype.emit.apply(this, arguments)
+  }
+
+  var handle = req.connection._handle
+
+  req.isSpdy = true
+  req.spdyVersion = handle.getStream().connection.getVersion()
+  res.isSpdy = true
+  res.spdyVersion = req.spdyVersion
+  req.spdyStream = handle.getStream()
+
+  debug('override req/res')
+  res.writeHead = spdy.response.writeHead
+  res.end = spdy.response.end
+  res.push = spdy.response.push
+  res.writeContinue = spdy.response.writeContinue
+  res.spdyStream = handle.getStream()
+
+  res._req = req
+
+  handle.assignRequest(req)
+  handle.assignResponse(res)
+
+  return EventEmitter.prototype.emit.apply(this, arguments)
+}
+
+exports.Server = instantiate(https.Server)
+exports.PlainServer = instantiate(http.Server)
+
+exports.create = function create (base, options, handler) {
+  if (typeof base === 'object') {
+    handler = options
+    options = base
+    base = null
+  }
+
+  if (base) {
+    return instantiate(base).create(options, handler)
+  }
+
+  if (options.spdy && options.spdy.plain) { return exports.PlainServer.create(options, handler) } else {
+    return exports.Server.create(options, handler)
+  }
+}
+
+
+=== Content of server.js ===
+'use strict';
+
+var util       = require('util'),
+    HttpParser = require('../http_parser'),
+    Base       = require('./base'),
+    Draft75    = require('./draft75'),
+    Draft76    = require('./draft76'),
+    Hybi       = require('./hybi');
+
+var Server = function(options) {
+  Base.call(this, null, null, options);
+  this._http = new HttpParser('request');
+};
+util.inherits(Server, Base);
+
+var instance = {
+  EVENTS: ['open', 'message', 'error', 'close', 'ping', 'pong'],
+
+  _bindEventListeners: function() {
+    this.messages.on('error', function() {});
+    this.on('error', function() {});
+  },
+
+  parse: function(chunk) {
+    if (this._delegate) return this._delegate.parse(chunk);
+
+    this._http.parse(chunk);
+    if (!this._http.isComplete()) return;
+
+    this.method  = this._http.method;
+    this.url     = this._http.url;
+    this.headers = this._http.headers;
+    this.body    = this._http.body;
+
+    var self = this;
+    this._delegate = Server.http(this, this._options);
+    this._delegate.messages = this.messages;
+    this._delegate.io = this.io;
+    this._open();
+
+    this.EVENTS.forEach(function(event) {
+      this._delegate.on(event, function(e) { self.emit(event, e) });
+    }, this);
+
+    this.protocol = this._delegate.protocol;
+    this.version  = this._delegate.version;
+
+    this.parse(this._http.body);
+    this.emit('connect', new Base.ConnectEvent());
+  },
+
+  _open: function() {
+    this.__queue.forEach(function(msg) {
+      this._delegate[msg[0]].apply(this._delegate, msg[1]);
+    }, this);
+    this.__queue = [];
+  }
+};
+
+['addExtension', 'setHeader', 'start', 'frame', 'text', 'binary', 'ping', 'close'].forEach(function(method) {
+  instance[method] = function() {
+    if (this._delegate) {
+      return this._delegate[method].apply(this._delegate, arguments);
+    } else {
+      this.__queue.push([method, arguments]);
+      return true;
+    }
+  };
+});
+
+for (var key in instance)
+  Server.prototype[key] = instance[key];
+
+Server.isSecureRequest = function(request) {
+  if (request.connection && request.connection.authorized !== undefined) return true;
+  if (request.socket && request.socket.secure) return true;
+
+  var headers = request.headers;
+  if (!headers) return false;
+  if (headers['https'] === 'on') return true;
+  if (headers['x-forwarded-ssl'] === 'on') return true;
+  if (headers['x-forwarded-scheme'] === 'https') return true;
+  if (headers['x-forwarded-proto'] === 'https') return true;
+
+  return false;
+};
+
+Server.determineUrl = function(request) {
+  var scheme = this.isSecureRequest(request) ? 'wss:' : 'ws:';
+  return scheme + '//' + request.headers.host + request.url;
+};
+
+Server.http = function(request, options) {
+  options = options || {};
+  if (options.requireMasking === undefined) options.requireMasking = true;
+
+  var headers = request.headers,
+      version = headers['sec-websocket-version'],
+      key     = headers['sec-websocket-key'],
+      key1    = headers['sec-websocket-key1'],
+      key2    = headers['sec-websocket-key2'],
+      url     = this.determineUrl(request);
+
+  if (version || key)
+    return new Hybi(request, url, options);
+  else if (key1 || key2)
+    return new Draft76(request, url, options);
+  else
+    return new Draft75(request, url, options);
+};
+
+module.exports = Server;
+
+

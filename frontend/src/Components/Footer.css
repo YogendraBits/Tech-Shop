@@ -1,0 +1,82 @@
+/* Footer.css */
+
+.foot-footer-container {
+    background-color: #f4f4f4; /* Light grey/off-white background */
+    color: #333;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 2px solid #ccc;
+    position: relative;
+    z-index: 10;
+}
+
+.foot-footer-text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.foot-copy-text {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.foot-footer-link {
+    color: #1a88f5;
+    font-size: 1.3rem;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+}
+
+.foot-heart-button {
+    color: #ff1493;
+    font-size: 1.8rem;
+    margin-left: 10px;
+    padding-left: 0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.foot-name-tile {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #e0e0e0; /* Slightly darker grey for the modal */
+    color: #333;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.foot-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #ff1493;
+}
+
+.foot-heading {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1a88f5;
+}
+
+.foot-name {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
+    color: #444;
+}

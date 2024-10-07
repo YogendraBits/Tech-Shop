@@ -1,0 +1,42 @@
+.product-create-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.product-create-container h1 {
+  margin-bottom: 20px;
+}
+
+.card {
+  border-radius: 15px;
+}
+
+.form-control-file {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.img-preview {
+  width: 300px; /* Set your desired width */
+  height: 200px; /* Set your desired height */
+  object-fit: cover; /* Ensure the image covers the box */
+  margin-top: 10px; /* Adjust margin as needed */
+}
+
+
+.btn-danger {
+  margin-top: 10px; /* Adjust margin as needed */
+}
+

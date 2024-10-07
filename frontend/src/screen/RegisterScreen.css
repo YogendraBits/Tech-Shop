@@ -1,0 +1,79 @@
+/* Global Styling */
+body {
+    background-color: #f4f4f9;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Container for RegisterScreen */
+.register-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ececec, #dfe4ea);
+    padding: 30px;
+}
+
+/* Modern Card Design */
+.modern-card {
+    width: 100%;
+    max-width: 600px; /* Increased max-width to fit side-by-side */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+/* Side-by-Side Form Layout */
+.form-group-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; /* Spacing between input fields */
+    margin-bottom: 15px;
+}
+
+/* Adjust input fields to be 48% of the container for side-by-side display */
+.form-group-row .modern-input {
+    width: 48%;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+/* Styling for focus state */
+.modern-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Button Styling */
+.modern-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modern-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 91, 187, 0.3);
+}
+
+/* Link Styling */
+.modern-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.modern-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}

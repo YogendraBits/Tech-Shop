@@ -1,56 +1,119 @@
-/* ProductEditScreen.css */
+/* Styles for the entire page */
+body {
+  background-color: #f0f0f0; /* Slightly darker light background */
+  font-family: 'Arial', sans-serif; /* Clean font */
+  margin: 0; /* Remove default margin */
+}
 
-.product-edit-container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Container for the form */
+.form-container {
+  background: white; /* White background for the form */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  max-width: 500px; /* Limit the width */
+  margin: 40px auto; /* Center it with margin */
+  padding: 30px; /* Inner padding */
+  display: grid; /* Use grid layout */
+  grid-template-columns: 1fr; /* Single column layout */
+  gap: 20px; /* Space between grid items */
+}
+
+/* Header */
+h1 {
+  font-size: 22px; /* Adjusted font size */
+  margin-bottom: 20px; /* Space below header */
+  color: #333; /* Dark text */
+  text-align: center; /* Center the header */
+}
+
+/* Form elements */
+.form-group {
+  display: flex; /* Flexbox for label and input alignment */
+  flex-direction: column; /* Stack label above input */
+}
+
+/* Input fields */
+.form-control {
+  border: 1px solid #ddd; /* Light border color */
+  border-radius: 4px; /* Rounded edges */
+  padding: 12px; /* Inner padding */
+  transition: border-color 0.2s; /* Smooth transition */
+}
+
+.form-control:focus {
+  border-color: #007bff; /* Focus border color */
+  outline: none; /* Remove outline */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1); /* Focus shadow */
+}
+
+/* Textarea for description */
+.textarea {
+  resize: vertical; /* Allow vertical resizing */
+  height: 100px; /* Set a default height */
+}
+
+/* Labels */
+.form-label {
+  font-weight: 600; /* Slightly bolder labels */
+  color: #555; /* Slightly dark text */
+  margin-bottom: 5px; /* Space below labels */
+}
+
+/* Buttons */
+.btn {
+  background-color: #007bff; /* Primary color */
+  border: none; /* Remove border */
+  color: white; /* White text */
+  padding: 12px; /* Inner padding */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.2s; /* Smooth transition */
+  cursor: pointer; /* Pointer cursor */
+  font-size: 16px; /* Larger font size */
+}
+
+.btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Go Back Link */
+.btn-light {
+  background-color: #f8f9fa; /* Light background */
+  color: #007bff; /* Blue text */
+  text-decoration: none; /* Remove underline */
+  padding: 10px; /* Inner padding */
+  border-radius: 4px; /* Rounded corners */
+  display: inline-block; /* Inline block for better spacing */
+}
+
+.btn-light:hover {
+  background-color: #e2e6ea; /* Slightly darker on hover */
+}
+
+/* Loader and Message styles */
+.loader {
+  margin: 20px 0; /* Space above and below loader */
+  text-align: center; /* Center the loader */
+}
+
+.message {
+  padding: 12px; /* Inner padding */
+  border-radius: 4px; /* Rounded corners */
+  margin-bottom: 20px; /* Space below messages */
+  text-align: center; /* Center text in messages */
+}
+
+.message.danger {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .form-container {
+    padding: 20px; /* Less padding on smaller screens */
   }
-  
-  .product-edit-container h1 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #333333;
-    text-align: center;
+
+  h1 {
+    font-size: 20px; /* Smaller header on small screens */
   }
-  
-  .product-edit-container form {
-    margin-top: 30px;
-  }
-  
-  .product-edit-container form label {
-    font-weight: 600;
-    color: #555555;
-  }
-  
-  .product-edit-container form input[type="text"],
-  .product-edit-container form input[type="number"],
-  .product-edit-container form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-    background-color: #f5f5f5;
-    font-size: 16px;
-    color: #333333;
-  }
-  
-  .product-edit-container form button {
-    padding: 12px 20px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 6px;
-    color: #ffffff;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-  }
-  
-  .product-edit-container form button:hover {
-    background-color: #0056b3;
-  }
-  
+}

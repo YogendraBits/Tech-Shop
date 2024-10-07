@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Button, Row, Col, Card } from 'react-bootstrap';
+import { Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
-import FormContainer from '../Components/formContainer';
 import { register } from '../actions/userActions';
+import './RegisterScreen.css'; // Custom CSS for side-by-side layout
 
 const RegisterScreen = ({ location, history }) => {
     const [name, setName] = useState('');
@@ -15,10 +15,8 @@ const RegisterScreen = ({ location, history }) => {
     const [message, setMessage] = useState(null);
 
     const dispatch = useDispatch();
-
     const userRegister = useSelector(state => state.userRegister);
     const { loading, error, userInfo } = userRegister;
-
     const redirect = location.search ? location.search.split('=')[1] : '/';
 
     useEffect(() => {
@@ -37,76 +35,88 @@ const RegisterScreen = ({ location, history }) => {
     };
 
     return (
-        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-            <Card style={{ maxWidth: '500px', width: '100%' }}>
+        <div className="register-screen">
+            <Card className="modern-card">
                 <Card.Body>
-                    <h2 className="text-center mb-4">Sign Up</h2>
+                    <h2 className="text-center mb-4">Create an Account</h2>
                     {message && <Message variant="danger">{message}</Message>}
                     {error && <Message variant="danger">{error}</Message>}
                     {loading && <Loader />}
                     <Form onSubmit={submitHandler}>
-                        <Form.Group controlId="name">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control
-                                type="name"
-                                placeholder="Enter your name"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="email">
-                            <Form.Label>Email Address</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="password">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="confirmPassword">
-                            <Form.Label>Confirm Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Confirm your password"
-                                value={confirmPassword}
-                                onChange={e => setConfirmPassword(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          className="w-100 mt-3"
-                          style={{
-                              borderRadius: '10px',
-                              fontWeight: 'bold',
-                              letterSpacing: '0.5px',
-                              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                          }}
-                      >
-                          Register
-                      </Button>
 
+                        {/* Side-by-side fields for Name and Email */}
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group controlId="name">
+                                    <Form.Label className="form-label">Full Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter full name"
+                                        value={name}
+                                        onChange={e => setName(e.target.value)}
+                                        className="modern-input"
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="email">
+                                    <Form.Label className="form-label">Email Address</Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        placeholder="Enter email"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        className="modern-input"
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+
+                        {/* Side-by-side fields for Password and Confirm Password */}
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group controlId="password">
+                                    <Form.Label className="form-label">Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Enter password"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        className="modern-input"
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="confirmPassword">
+                                    <Form.Label className="form-label">Confirm Password</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Confirm password"
+                                        value={confirmPassword}
+                                        onChange={e => setConfirmPassword(e.target.value)}
+                                        className="modern-input"
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            className="w-100 mt-3 modern-button"
+                        >
+                            Sign Up
+                        </Button>
                     </Form>
                     <div className="mt-4 text-center">
-                      <p className="mb-2">Already Have An Account?</p>
-                      <Link
-                          to={redirect ? `/login?redirect=${redirect}` : '/login'}
-                          className="btn btn-outline-primary text-uppercase text-decoration-none"
-                          style={{ fontWeight: 'bold', letterSpacing: '0.5px' }}
-                      >
-                          Sign In
-                      </Link>
-                  </div>
-
+                        <p className="mb-2">Already have an account?</p>
+                        <Link
+                            to={redirect ? `/login?redirect=${redirect}` : '/login'}
+                            className="modern-link"
+                        >
+                            Sign In
+                        </Link>
+                    </div>
                 </Card.Body>
             </Card>
         </div>

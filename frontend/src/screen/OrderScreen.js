@@ -91,8 +91,8 @@ const OrderScreen = ({ match, history }) => {
       <Message variant='danger'>{error}</Message>
     ) : (
       <>
-        <Button onClick={history.goBack} variant="light" className="mb-3">
-        <i className="fas fa-arrow-left mr-2"></i> Go Back
+        <Button onClick={() => history.push('/')}  variant="light" className="mb-3">
+        <i className="fas fa-arrow-left mr-2"></i> Home
       </Button>
         <h1><span style={{ fontSize: '20px'}}>Order Id: {order._id}</span></h1>
           

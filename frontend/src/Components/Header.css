@@ -1,104 +1,111 @@
 /* Header.css */
 
-/* Common Styles */
-.navbar-nav .nav-link,
-.dropdown-item {
-    transition: color 0.3s ease, background-color 0.3s ease; /* Smooth color transition */
+.he-header-container {
+    background-color: #2c3e50; /* Dark navy background */
+    padding: 10px 0; /* Padding for the header */
+    max-width: 1200px; /* Set a maximum width for the header */
+    margin: 0 auto; /* Center the header */
 }
 
-/* Navbar */
-.navbar-custom {
-    background-color: white;
-    padding: 30px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+.he-custom-navbar {
+    border: none; /* Remove borders */
 }
 
-.navbar-brand-custom {
-    color: #344036 !important;
-    font-weight: bold;
-    margin-right: 2rem;
+.he-brand-container {
+    margin-right: auto; /* Align brand to the left */
 }
 
-.navbar-brand-custom:hover {
-    color: #0a0a0b !important;
+.he-brand-name {
+    font-size: 1.5rem; /* Increase font size */
+    font-weight: bold; /* Make the brand name bold */
+    color: #ecf0f1; /* Light color for the brand name */
+    text-transform: uppercase; /* Uppercase for a modern touch */
 }
 
-.navbar-toggler {
-    border-color: #343a40;
+.he-search-box-container {
+    flex-grow: 1; /* Allow search box to take up available space */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center search box */
 }
 
-.navbar-toggler-icon {
-    background-color: #1a88f5;
+.he-nav-links {
+    align-items: center; /* Center items vertically */
 }
 
-/* Navbar Links */
-.navbar-nav .nav-link {
-    color: #344035 !important;
-    font-weight: 500;
+.he-nav-link {
+    color: #ecf0f1; /* Light color for nav links */
+    font-weight: 500; /* Medium weight */
+    margin: 0 15px; /* Spacing between links */
+    position: relative; /* For positioning wishlist count */
 }
 
-.navbar-nav .nav-link:hover {
-    color: #0a7ff5 !important;
+.he-nav-link:hover {
+    color: #3498db; /* Highlight color on hover */
 }
 
-/* Dropdown */
-.navbar-nav .dropdown-menu {
-    background-color: white;
+.he-wishlist-count {
+    position: absolute; /* Position the count badge */
+    top: -10px; /* Adjust position to be above the icon */
+    right: -8px; /* Adjust position to align with the icon */
+    background-color: #e74c3c; /* Red background for count */
+    color: white; /* White text color */
+    border-radius: 50%; /* Circular shape */
+    padding: 2px 6px; /* Padding for the badge */
+    font-size: 0.75rem; /* Smaller font size */
+    display: flex; /* Center the count */
+    justify-content: center; /* Center the count */
+    align-items: center; /* Center the count */
 }
 
-.dropdown-item {
-    color: #343a40 !important;
+.he-user-name {
+    color: #ecf0f1; /* Light color for user name */
 }
 
-.dropdown-item:hover,
-.dropdown-item:focus {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: #212529 !important;
+.modal-content {
+    border-radius: 8px; /* Rounded corners for modal */
 }
 
-.dropdown-item.active,
-.dropdown-item:active {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: #98dd0d !important;
+.modal-header {
+    border-bottom: none; /* Remove default border */
 }
 
-/* Search bar */
-.navbar-search-container {
-    flex-grow: 1;
-    margin-left: 3rem;
-    position: relative; /* Position for the search button */
+.modal-title {
+    font-weight: 600; /* Bold title */
 }
 
-.navbar-search-input {
-    padding: 0.5rem;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    width: 200px; /* Adjust width as needed */
-    outline: none; /* Remove outline */
+.modal-body {
+    font-size: 1rem; /* Standard font size for body */
+    color: #34495e; /* Darker text for readability */
 }
 
-.navbar-search-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #1a88f5; /* Button background color */
-    color: white; /* Button text color */
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.modal-footer .btn-secondary {
+    background-color: #7f8c8d; /* Grey for cancel button */
+    border: none; /* Remove border */
 }
 
-.navbar-search-button:hover {
-    background-color: #0a7ff5; /* Darker color on hover */
+.modal-footer .btn-danger {
+    background-color: #e74c3c; /* Red for logout button */
+    border: none; /* Remove border */
 }
 
-/* Responsive */
+.modal-footer .btn-secondary:hover,
+.modal-footer .btn-danger:hover {
+    opacity: 0.8; /* Slightly fade buttons on hover */
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .navbar-nav .nav-link,
-    .dropdown-item {
-        color: #fff !important;
+    .he-nav-link {
+        margin: 0 10px; /* Reduce spacing on smaller screens */
+    }
+
+    .he-brand-name {
+        font-size: 1.3rem; /* Slightly smaller on mobile */
+    }
+
+    .he-wishlist-count {
+        top: -10px; /* Adjust for smaller screen */
+        right: -8px; /* Adjust for smaller screen */
     }
 }

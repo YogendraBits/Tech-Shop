@@ -1,21 +1,44 @@
-import {createStore , combineReducers , applyMiddleware} from 'redux'
-import thunk from  'redux-thunk'
-import {composeWithDevTools} from "redux-devtools-extension"
-import {productListReducer , productDetailsReducer, productDeleteReducer, productCreateReducer , productUpdateReducer ,productReviewCreateReducer,productTopRatedReducer } from './reducers/productReducres'
-import { cartReducer } from './reducers/cartReducers'
-import { userLoginReducer , userRegisterReducer , userDetailsReducer , userUpdateProfileReducer,  userListReducer , userDeleteReducer,
-userUpdateReducer} from './reducers/userReducers'
-import { orderCreateReducer , orderDetailsReducer , orderPayReducer , orderListMyReducer , orderListReducer , orderDeliverReducer} from './reducers/orderReducers'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from "redux-devtools-extension";
+import {
+    productListReducer,
+    productDetailsReducer,
+    productDeleteReducer,
+    productCreateReducer,
+    productUpdateReducer,
+    productReviewCreateReducer,
+    productTopRatedReducer
+} from './reducers/productReducres';
+import { cartReducer } from './reducers/cartReducers';
+import {
+    userLoginReducer,
+    userRegisterReducer,
+    userDetailsReducer,
+    userUpdateProfileReducer,
+    userListReducer,
+    userDeleteReducer,
+    userUpdateReducer
+} from './reducers/userReducers';
+import {
+    orderCreateReducer,
+    orderDetailsReducer,
+    orderPayReducer,
+    orderListMyReducer,
+    orderListReducer,
+    orderDeliverReducer
+} from './reducers/orderReducers';
+import { wishlistReducer } from './reducers/wishlistReducers'; 
 
-const reducer=combineReducers({
+const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
     productDelete: productDeleteReducer,
     productCreate: productCreateReducer,
     productUpdate: productUpdateReducer,
     productReviewCreate: productReviewCreateReducer,
-    productTopRated:productTopRatedReducer,
-    cart : cartReducer,
+    productTopRated: productTopRatedReducer,
+    cart: cartReducer,
     userLogin: userLoginReducer,
     userRegister: userRegisterReducer,
     userDetails: userDetailsReducer,
@@ -29,25 +52,41 @@ const reducer=combineReducers({
     orderDeliver: orderDeliverReducer,
     orderListMy: orderListMyReducer,
     orderList: orderListReducer,
+    wishlist: wishlistReducer, // Include the wishlist reducer
+});
 
+// Load cart items from localStorage
+const cartItemsFromStorage = localStorage.getItem('cartItems') 
+    ? JSON.parse(localStorage.getItem('cartItems')) 
+    : [];
 
-})
-// cartItems
-const cartItemsFromStorage= localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')):[]
-// LoginInfo
-const userInfoFromStorage= localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')):null
-// Shipping address
-const shippingAddressFromStorage= localStorage.getItem('shippingAddress') ? JSON.parse(localStorage.getItem('shippingAddress')):{}
+// Load user info from localStorage
+const userInfoFromStorage = localStorage.getItem('userInfo') 
+    ? JSON.parse(localStorage.getItem('userInfo')) 
+    : null;
 
-const initialState= {
-    cart:{
-        cartItems:cartItemsFromStorage,
-        shippingAddress:shippingAddressFromStorage
+// Load shipping address from localStorage
+const shippingAddressFromStorage = localStorage.getItem('shippingAddress') 
+    ? JSON.parse(localStorage.getItem('shippingAddress')) 
+    : {};
+
+// Initial state with userInfo from Google login if applicable
+const initialState = {
+    cart: {
+        cartItems: cartItemsFromStorage,
+        shippingAddress: shippingAddressFromStorage
     },
-    userLogin: { userInfo:userInfoFromStorage }
+    userLogin: { userInfo: userInfoFromStorage },
+    wishlist: { wishlistitems: [] }, // Initialize wishlist state without localStorage
 };
 
-const middleware=[thunk]
-const store=createStore(reducer, initialState , composeWithDevTools(applyMiddleware(...middleware)));
+const middleware = [thunk];
 
-export default store
+// Create Redux store with reducers, initial state, and middleware
+const store = createStore(
+    reducer, 
+    initialState, 
+    composeWithDevTools(applyMiddleware(...middleware))
+);
+
+export default store;
