@@ -43,7 +43,10 @@ const Product = ({ product }) => {
                 </Link>
                 <div>
                     <Card.Text as="div" className="mb-2">
-                        <Rating value={product.rating} text={`${product.numReviews} reviews`} />
+                        <Rating value={product.rating} />
+                    </Card.Text>
+                    <Card.Text as="div" className="mb-2">
+                        {`${product.numReviews} reviews`}
                     </Card.Text>
                     <Card.Text as="h5" className="mb-3">
                         <Badge pill bg="info">${product.price}</Badge>

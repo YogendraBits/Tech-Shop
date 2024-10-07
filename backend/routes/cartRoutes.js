@@ -22,7 +22,5 @@ router.route('/:id')
   .get(protect, getCartById)
   .put(protect, updateCartItem)
 
-router.route('/:id/item/:itemId')
-  .delete(protect, deleteCartItem)
-
-export default router
+router.route('/:cartId/item/:itemId').delete(protect, deleteCartItem); 
+export default router 
