@@ -52,7 +52,7 @@ const ProductScreen = ({ history, match }) => {
     dispatch(addToCart(product._id, qty));
 
     // Optionally navigate to the cart page after the item is added
-    history.push(`/cart/${match.params.id}?qty=${qty}`);
+    // history.push(`/cart/${match.params.id}?qty=${qty}`);
   };
 
 

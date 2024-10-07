@@ -1,35 +1,101 @@
-.cart-container {
-    width: 80%;
-    margin: auto;
+.cart-main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.product-section {
+    margin-bottom: 20px;
+}
+
+.cart-header {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.empty-cart {
+    text-align: center;
+}
+
+.empty-cart-header {
+    font-size: 1.5rem;
+    color: #666;
+}
+
+.shop-now-btn, .checkout-btn, .remove-btn, .update-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.shop-now-btn:hover, 
+.checkout-btn:hover, 
+.remove-btn:hover, 
+.update-btn:hover {
+    background-color: #0056b3;
 }
 
 .cart-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
     display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.item-details {
+    display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
 }
 
-.cart-item-details {
-    flex-grow: 1;
+.item-image {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
 }
 
-.cart-total {
-    font-size: 1.5em;
-    margin-top: 20px;
+.quantity-controller {
+    display: flex;
+    align-items: center;
 }
 
-.checkout-button {
-    padding: 10px 20px;
-    font-size: 1em;
+.quantity-btn {
     background-color: #28a745;
     color: white;
     border: none;
+    padding: 8px;
+    margin: 0 5px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-.checkout-button:hover {
-    background-color: #218838;
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.quantity-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.total-section {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 2px solid #007bff;
+}
+
+.total-amount {
+    font-size: 1.5rem;
+    margin: 10px 0;
 }

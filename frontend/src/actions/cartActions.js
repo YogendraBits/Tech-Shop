@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CART_ADD_ITEM ,CART_LOAD_ITEMS, CART_REMOVE_ITEM, CART_SAVE_PAYMENT_METHOD, CART_SAVE_SHIPPING_ADDRESS } from "../constants/cartConstants";
+import { CART_ADD_ITEM ,CART_LOAD_ITEMS,CART_UPDATE_ITEM, CART_REMOVE_ITEM, CART_SAVE_PAYMENT_METHOD, CART_SAVE_SHIPPING_ADDRESS } from "../constants/cartConstants";
 
 
 export const loadCart = () => async (dispatch, getState) => {
@@ -110,8 +110,37 @@ export const removeFromCart = (itemId) => async (dispatch, getState) => {
     }
 };
 
+// Action to update the cart item
+export const updateCartItem = (itemId, quantity) => async (dispatch, getState) => {
+    try {
+        // Get the token from state
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
+        // Set config with headers
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`, // Pass the token in Authorization header
+            },
+        };
 
+        // Make PUT request to update the cart item
+        const { data } = await axios.put(`/api/cart/${itemId}`, { qty: quantity }, config);
+
+        dispatch({
+            type: CART_UPDATE_ITEM,
+            payload: data,
+        });
+
+        // Optionally, update local storage
+        localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
+    } catch (error) {
+        console.error("Error updating cart item:", error.response?.data?.message || error.message);
+        throw new Error(error.response?.data?.message || 'Failed to update item quantity.');
+    }
+};
 
 export const saveShippingAddress =(data) => (dispatch ) => {
 

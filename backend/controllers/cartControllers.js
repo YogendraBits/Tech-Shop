@@ -45,23 +45,36 @@ const getCartById = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Update cart item quantity
+// @desc    Update cart item
 // @route   PUT /api/cart/:id
 // @access  Private
 const updateCartItem = asyncHandler(async (req, res) => {
-  const { cartItems } = req.body;
+  console.log("Request body:", req.body); // Log request body
+  console.log("User ID:", req.user._id); // Log user ID
 
-  const cart = await Cart.findById(req.params.id);
+  const cart = await Cart.findOne({ user: req.user._id });
 
   if (cart) {
-    cart.cartItems = cartItems || cart.cartItems;
-    const updatedCart = await cart.save();
-    res.json(updatedCart);
+      console.log("Cart found:", cart); // Log found cart
+      const item = cart.cartItems.find(item => item._id.toString() === req.params.id);
+      console.log("Item to update:", item); // Log item to update
+
+      if (item) {
+          item.qty = Number(req.body.qty); // Update the quantity
+          await cart.save(); // Save changes to the cart
+          res.json(cart); // Return updated cart
+      } else {
+          res.status(404);
+          throw new Error('Item not found in cart');
+      }
   } else {
-    res.status(404);
-    throw new Error('Cart not found');
+      res.status(404);
+      throw new Error('Cart not found');
   }
 });
+
+
+
 
 // @desc    Delete cart item
 // @route   DELETE /api/cart/:cartId/item/:itemId
@@ -90,7 +103,7 @@ const deleteCartItem = asyncHandler(async (req, res) => {
 // @route   GET /api/cart/mycart
 // @access  Private
 const getMyCart = asyncHandler(async (req, res) => {
-  let cart = await Cart.findOne({ user: req.user._id });
+  let cart = await Cart.findOne({ user: req.user._id }).populate('cartItems.product', 'name image price');
 
   // If cart does not exist, create a new empty cart for the user
   if (!cart) {
@@ -103,6 +116,7 @@ const getMyCart = asyncHandler(async (req, res) => {
 
   res.json(cart);
 });
+
 
 
 // @desc    Get all carts
