@@ -60,7 +60,7 @@ const Header = ({ history }) => {
                                 </Nav.Link>
                             </LinkContainer>
                             <Nav.Link onClick={toggleChat} className="he-nav-link">
-                                <span><i className="fas fa-comments"></i> Gemini</span>
+                                <span><i className="fas fa-microchip"></i>AI</span>
                             </Nav.Link>
                             {userInfo ? (
                                 <NavDropdown title={<span className="he-user-name">{userInfo.name}</span>} id="user-dropdown">

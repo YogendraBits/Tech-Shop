@@ -64,7 +64,7 @@ const Chat = () => {
                         <hr />
                     </div>
                 ))}
-                {loading && <p className="loading-indicator">Loading...</p>}
+                {loading && <p className="loading-indicator"></p>}
                 <div ref={chatEndRef} />
             </div>
             <div className="input-area">

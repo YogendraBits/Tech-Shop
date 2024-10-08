@@ -12,7 +12,10 @@ import cartRoutes from './routes/cartRoutes.js'; // Import Cart routes
 import wishlistRoutes from './routes/wishlistRoutes.js'; // Import wishlist routes
 import { notFound, errorHandler } from './middlewear/errorMiddlewear.js';
 
-import { GoogleGenerativeAI } from "@google/generative-ai"; // Add this import
+import { GoogleGenerativeAI } from "@google/generative-ai"; // for Gemini
+import groqRoutes from './routes/groqRoutes.js'; // Import the route
+
+
 dotenv.config();
 connectDB();
 const app = express();
@@ -31,7 +34,7 @@ app.use("/api/cart", cartRoutes); // Use Cart routes
 app.use("/api/wishlist", wishlistRoutes); // Use wishlist routes
 
 app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
-
+app.use("/api/groq", groqRoutes); 
 
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);

@@ -16,13 +16,13 @@
     overflow-y: auto;
 }
 
-/* User Message */
 .user-message {
     background-color: #d1e7dd;
     color: #0f5132;
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 10px;
+    margin-left: 140px;
     max-width: 70%;
     align-self: flex-end;
     position: relative;
@@ -35,7 +35,7 @@
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 10px;
-    max-width: 70%;
+    max-width: 90%;
     align-self: flex-start;
     position: relative;
 }
@@ -77,10 +77,40 @@
 /* Loading Indicator */
 .loading-indicator {
     text-align: center;
-    color: #007bff;
+    color: #007bff; /* Primary color */
     font-weight: bold;
-    margin: 10px 0; /* Adjusted margin for better spacing */
+    margin: 10px 10px; /* Adjusted margin for better spacing */
+    font-size: 1.5em; /* Increased font size for better visibility */
+    position: relative; /* For absolute positioning of the spinner */
 }
+
+/* Spinner animation */
+.loading-indicator::after {
+    content: '';
+    display: inline-block;
+    width: 1em; /* Size of the spinner */
+    height: 1em; /* Size of the spinner */
+    border: 2px solid rgba(0, 123, 255, 0.5); /* Border color */
+    border-top-color: #007bff; /* Spinner color */
+    border-radius: 50%; /* Circular shape */
+    animation: spin 0.75s linear infinite; /* Animation properties */
+    position: absolute; /* Positioning the spinner */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust position to center */
+    top: 50%; /* Center vertically */
+    margin-top: -0.75em; /* Adjust for height */
+}
+
+/* Keyframes for the spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg); /* Start rotation */
+    }
+    100% {
+        transform: rotate(360deg); /* End rotation */
+    }
+}
+
 
 
 /* Responsive Design */
