@@ -57,13 +57,18 @@ const ProductScreen = ({ history, match }) => {
 
 
 
-  const addToWishlistHandler = () => {
+  const addToWishlistHandler = async () => {
     if (userInfo) {
-      dispatch(addTowishlist(product._id)); // Dispatch the action to add to wishlist
+        try {
+            await dispatch(addTowishlist(product._id, qty)); // Dispatch the action to add to wishlist with quantity
+        } catch (error) {
+            alert('Failed to add item to wishlist. Please try again.');
+        }
     } else {
-      alert('Please log in to add items to your wishlist.');
+        alert('Please log in to add items to your wishlist.');
     }
   };
+
 
   const submitReviewHandler = (e) => {
     e.preventDefault();

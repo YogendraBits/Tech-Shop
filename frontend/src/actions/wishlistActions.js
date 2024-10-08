@@ -39,18 +39,19 @@ export const fetchWishlist = () => async (dispatch, getState) => {
 };
 
 // Add an item to the wishlist
-export const addTowishlist = (productId) => async (dispatch, getState) => {
+export const addTowishlist = (productId,qty) => async (dispatch, getState) => {
     const { userInfo } = getState().userLogin; // Ensure you have user login info
 
     if (!userInfo) {
         console.error('User not logged in');
         return; // Prevent action if user is not logged in
     }
-
+    
     try {
         // Make an API call to add the product to the wishlist in the database
         const { data } = await axios.post('/api/wishlist', {
             productId,
+            quantity: qty,
         }, {
             headers: {
                 Authorization: `Bearer ${userInfo.token}`, // Include the token for authentication
@@ -59,10 +60,13 @@ export const addTowishlist = (productId) => async (dispatch, getState) => {
 
         dispatch({
             type: WISHLIST_ADD_ITEM,
-            payload: data.items, // Assuming your API returns the updated wishlist items
+            payload: data.wishlistitems, // Assuming your API returns the updated wishlist items
+            
         });
+        
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.error('Failed to add item to wishlist', error);
     }
 };

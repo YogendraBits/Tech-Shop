@@ -23,6 +23,11 @@ const wishlistitemSchema = new mongoose.Schema({
         type: Number, // Add this if you want to store product price
         required: true,
     },
+    quantity: {
+        type: Number, // Quantity of the product in the wishlist
+        required: true,
+        default: 1, // Set a default value for quantity
+    },
     dateAdded: {
         type: Date,
         default: Date.now,

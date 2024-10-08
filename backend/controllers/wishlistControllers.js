@@ -6,7 +6,7 @@ import Product from '../models/productModel.js'; // Import the Product model
 // @route   POST /api/wishlist
 // @access  Private
 export const addTowishlist = asyncHandler(async (req, res) => {
-    const { productId } = req.body;
+    const { productId, quantity } = req.body;
 
     // Validate the product ID
     if (!productId) {
@@ -37,6 +37,7 @@ export const addTowishlist = asyncHandler(async (req, res) => {
             name: product.name, // Add product name
             image: product.image, // Add product image URL
             price: product.price, // Add product price
+            quantity, // Add quantity
         });
 
         // Save the item to the database

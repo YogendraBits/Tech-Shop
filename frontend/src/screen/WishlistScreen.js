@@ -19,51 +19,39 @@ const WishlistScreen = () => {
     const [addedToCart, setAddedToCart] = useState({});
     const [quantity, setQuantity] = useState({});
 
-    // Fetch wishlist items when the component mounts and when wishlistitems change
     useEffect(() => {
         dispatch(fetchWishlist());
     }, [dispatch]);
 
-    // Effect to check which wishlist items are already in the cart
     useEffect(() => {
-        const cartItems = cart.cartItems.map(item => item.product); // Get array of product IDs from cart
+        const cartItems = cart.cartItems.map(item => item.product); 
         const initialAddedToCart = {};
         const initialQuantity = {};
 
         wishlistitems.forEach(item => {
             if (cartItems.includes(item.productId)) {
-                initialAddedToCart[item.productId] = true; // Mark item as added to cart
+                initialAddedToCart[item.productId] = true; 
             }
-            initialQuantity[item.productId] = 1; // Default quantity for wishlist items
+            initialQuantity[item.productId] = item.quantity; 
         });
-
-        setAddedToCart(initialAddedToCart); // Set initial state
-        setQuantity(initialQuantity); // Set initial quantity state
+        setAddedToCart(initialAddedToCart); 
+        setQuantity(initialQuantity); 
     }, [wishlistitems, cart.cartItems]);
 
-    const handleAddToCart = (productId) => {
-        dispatch(addToCart(productId, quantity[productId])); // Add selected quantity of the item to the cart
-        // setAddedToCart((prev) => ({ ...prev, [productId]: true })); // Update local state to show the item has been added
+    const handleAddToCart = (productId, quantity) => {
+        dispatch(addToCart(productId, quantity)); 
+        setAddedToCart((prev) => ({ ...prev, [productId]: true }));
     };
 
-    const handleRemoveFromwishlist = async (id) => {
-        await dispatch(removeFromwishlist(id)); // Remove item from wishlist
-        dispatch(fetchWishlist()); // Re-fetch wishlist items to get the latest state
+    const handleRemoveFromwishlist = (id) => {
+        dispatch(removeFromwishlist(id)).then(() => {
+            window.location.reload(); // Reload the window after item is removed
+        });
     };
 
     const goToCart = () => {
-        history.push('/cart'); // Redirect to the cart page
+        history.push('/cart'); 
     };
-
-    // Listen for history changes and fetch wishlist when the component is active
-    useEffect(() => {
-        const unlisten = history.listen(() => {
-            dispatch(fetchWishlist()); // Fetch wishlist whenever this component is opened
-        });
-        return () => {
-            unlisten(); // Cleanup the listener on unmount
-        };
-    }, [dispatch, history]);
 
     return (
         <div className="wis-screen">
@@ -97,11 +85,11 @@ const WishlistScreen = () => {
                                 <Col md={3} className="wis-item-actions d-flex align-items-center justify-content-between">
                                     <Form.Control
                                         type="number"
-                                        value={quantity[item.productId] || 1}
-                                        onChange={(e) => setQuantity({ ...quantity, [item.productId]: e.target.value })}
+                                        value={item.quantity}
                                         className="wis-quantity-input"
                                         min={1}
                                         max={item.countInStock}
+                                        onChange={(e) => setQuantity((prev) => ({ ...prev, [item.productId]: e.target.value }))}
                                     />
                                     {addedToCart[item.productId] ? (
                                         <Button variant="success" onClick={goToCart} className="wis-added-button">
@@ -111,7 +99,7 @@ const WishlistScreen = () => {
                                         <Button
                                             type="button"
                                             variant="light"
-                                            onClick={() => handleAddToCart(item.productId._id)}
+                                            onClick={() => handleAddToCart(item.productId._id, item.quantity)}
                                             className="wis-add-button"
                                         >
                                             Add to Cart
@@ -120,7 +108,7 @@ const WishlistScreen = () => {
                                     <Button
                                         type="button"
                                         variant="danger"
-                                        onClick={() => handleRemoveFromwishlist(item._id)} // Pass _id
+                                        onClick={() => handleRemoveFromwishlist(item._id)} 
                                         className="wis-remove-button"
                                     >
                                         <FaTrash />

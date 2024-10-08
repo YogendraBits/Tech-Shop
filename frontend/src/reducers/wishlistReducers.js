@@ -19,13 +19,13 @@ export const wishlistReducer = (state = initialState, action) => {
       const newItem = action.payload; // This now contains the updated list of wishlist items from the API response
 
       // Check if the new item already exists in the wishlist
-      const exists = state.wishlistitems.find(x => x.product === newItem.product); // Ensure this matches your schema
+      const exists = state.wishlistitems.find(x => x.productId === newItem.productId); // Ensure this matches your schema
 
       if (exists) {
         return {
           ...state,
           wishlistitems: state.wishlistitems.map(x => 
-            x.product === exists.product ? newItem : x // Update the existing item
+            x.productId === exists.productId ? { ...x, quantity: newItem.quantity } : x // Update the existing item
           ),
         };
       } else {
