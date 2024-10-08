@@ -38,3 +38,5 @@ async function fetchAllItemsFromCollection(collectionName) {
 
 // Call the function with the desired collection name
 fetchAllItemsFromCollection('carts'); // Change 'wishlistitems' to your desired collection name
+
+{item.product._id}

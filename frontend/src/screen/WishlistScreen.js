@@ -70,7 +70,7 @@ const WishlistScreen = () => {
                         <ListGroup.Item key={item._id} className="wis-list-item">
                             <Row>
                                 <Col md={3}>
-                                    <Link to={`/product/${item.productId}`}>
+                                    <Link to={`/product/${item.productId._id}`}>
                                         <img 
                                             src={item.image} 
                                             alt={item.name} 
@@ -79,7 +79,7 @@ const WishlistScreen = () => {
                                     </Link>
                                 </Col>
                                 <Col md={3}>
-                                    <Link to={`/product/${item.productId}`}>
+                                    <Link to={`/product/${item.productId._id}`}>
                                         <strong className="wis-item-name">{item.name}</strong>
                                     </Link>
                                 </Col>

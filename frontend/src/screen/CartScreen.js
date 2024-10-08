@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCart, removeFromCart, updateCartItem } from '../actions/cartActions'; 
+import { Link } from 'react-router-dom'; // Import Link
 import './CartScreen.css'; 
 
 const CartScreen = ({ history }) => {
@@ -39,7 +40,6 @@ const CartScreen = ({ history }) => {
         try {
             if (quantity < 1) return; // Prevent negative quantities
             await dispatch(updateCartItem(itemId, quantity)); // Update item quantity in the database
-
             window.location.reload();
         } catch (err) {
             setError('Failed to update item quantity.');
@@ -78,9 +78,13 @@ const CartScreen = ({ history }) => {
                     cartItems.map(item => (
                         <div key={item._id} className="cart-item">
                             <div className="item-details">
-                                <img src={item.image} alt={item.name} className="item-image" />
-                                <div>
+                                <Link to={`/product/${item.product._id}`}>
+                                    <img src={item.image} alt={item.name} className="item-image" />
+                                </Link>
+                                <Link to={`/product/${item.product._id}`}>
                                     <h2 className="item-name">{item.name}</h2>
+                                </Link>
+                                <div>
                                     <p className="item-price">Price: ${item.price.toFixed(2)}</p>
                                     <p className="item-subtotal">
                                         Subtotal: ${(item.price * quantities[item._id]).toFixed(2)}

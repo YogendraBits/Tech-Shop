@@ -12,6 +12,7 @@ import cartRoutes from './routes/cartRoutes.js'; // Import Cart routes
 import wishlistRoutes from './routes/wishlistRoutes.js'; // Import wishlist routes
 import { notFound, errorHandler } from './middlewear/errorMiddlewear.js';
 
+import { GoogleGenerativeAI } from "@google/generative-ai"; // Add this import
 dotenv.config();
 connectDB();
 const app = express();
@@ -30,6 +31,22 @@ app.use("/api/cart", cartRoutes); // Use Cart routes
 app.use("/api/wishlist", wishlistRoutes); // Use wishlist routes
 
 app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
+
+
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+app.post("/api/chat", async (req, res) => {
+  const { prompt } = req.body;
+
+  try {
+      const result = await model.generateContent(prompt);
+      res.json({ response: result.response.text() });
+  } catch (error) {
+      console.error("Error generating content:", error);
+      res.status(500).json({ error: "Error generating content" });
+  }
+});
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));

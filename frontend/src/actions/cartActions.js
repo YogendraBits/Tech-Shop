@@ -72,7 +72,6 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
         }
     } catch (error) {
         console.error('Error adding item to cart:', error);
-        // Optionally, dispatch an error action here if you want to handle it in the UI
     }
 };
 
