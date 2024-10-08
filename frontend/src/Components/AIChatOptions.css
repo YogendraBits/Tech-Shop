@@ -1,0 +1,36 @@
+.ai-chat-options {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    align-items: center; /* Vertically center buttons */
+}
+
+.regular-chat-button,
+.groq-chat-button {
+    background-color: #007bff; /* Blue for Regular Chat */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 150px;  /* Set a specific width for both */
+    height: 40px;  /* Set a specific height for both */
+}
+
+.groq-chat-button {
+    background-color: #28a745; /* Green for Groq */
+}
+
+.close-button {
+    background-color: #dc3545; /* Red */
+    color: white;
+    border: none;
+    padding: 12; /* Remove padding for smaller button */
+    border-radius: 5px;
+    cursor: pointer;
+    width: 25px;   /* Set a smaller width */
+    height: 20px;  /* Set a smaller height */
+    margin-left: auto; /* Push to the right */
+    font-size: 18px; /* Adjust font size for better visibility */
+    line-height: 5px; /* Center the "×" vertically */
+    text-align: center; /* Center the "×" horizontally */
+}

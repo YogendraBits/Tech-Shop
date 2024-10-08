@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import './Chat.css';
+import './gemini.css';
 
 const Chat = () => {
     const [message, setMessage] = useState("");

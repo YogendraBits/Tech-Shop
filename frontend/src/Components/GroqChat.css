@@ -1,0 +1,126 @@
+/* GroqChat Window */
+.groq-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #e9ecef;
+    border: 1px solid #adb5bd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Groq Chat Messages */
+.groq-chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Groq User Message */
+.groq-user-message {
+    background-color: #cfe2ff;
+    color: #084298;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-left: 140px;
+    max-width: 70%;
+    align-self: flex-end;
+    position: relative;
+}
+
+/* Groq AI Message */
+.groq-ai-message {
+    background-color: #ffe8cc;
+    color: #8c2f00;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-width: 90%;
+    align-self: flex-start;
+    position: relative;
+}
+
+/* Input Container for GroqChat */
+.groq-input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #ffffff;
+    border-top: 1px solid #adb5bd;
+}
+
+/* Input Field in GroqChat */
+.groq-input-field {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #adb5bd;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+/* Send Button in GroqChat */
+.groq-send-button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Send Button Hover Effect for GroqChat */
+.groq-send-button:hover {
+    background-color: #0a95b8;
+}
+
+/* Loading Indicator in GroqChat */
+.groq-loading-indicator {
+    text-align: center;
+    color: #0dcaf0; /* Primary color for GroqChat */
+    font-weight: bold;
+    margin: 10px 10px;
+    font-size: 1.5em;
+    position: relative;
+}
+
+/* Spinner animation in GroqChat */
+.groq-loading-indicator::after {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(13, 202, 240, 0.5);
+    border-top-color: #0dcaf0;
+    border-radius: 50%;
+    animation: groq-spin 0.75s linear infinite;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
+    margin-top: -0.75em;
+}
+
+/* Keyframes for Groq spinner animation */
+@keyframes groq-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design for GroqChat */
+@media (max-width: 600px) {
+    .groq-chat-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+    
+    .groq-user-message, .groq-ai-message {
+        max-width: 90%;
+    }
+}

@@ -43,7 +43,7 @@ const WishlistScreen = () => {
 
     const handleAddToCart = (productId) => {
         dispatch(addToCart(productId, quantity[productId])); // Add selected quantity of the item to the cart
-        setAddedToCart((prev) => ({ ...prev, [productId]: true })); // Update local state to show the item has been added
+        // setAddedToCart((prev) => ({ ...prev, [productId]: true })); // Update local state to show the item has been added
     };
 
     const handleRemoveFromwishlist = async (id) => {
@@ -54,6 +54,16 @@ const WishlistScreen = () => {
     const goToCart = () => {
         history.push('/cart'); // Redirect to the cart page
     };
+
+    // Listen for history changes and fetch wishlist when the component is active
+    useEffect(() => {
+        const unlisten = history.listen(() => {
+            dispatch(fetchWishlist()); // Fetch wishlist whenever this component is opened
+        });
+        return () => {
+            unlisten(); // Cleanup the listener on unmount
+        };
+    }, [dispatch, history]);
 
     return (
         <div className="wis-screen">
@@ -101,7 +111,7 @@ const WishlistScreen = () => {
                                         <Button
                                             type="button"
                                             variant="light"
-                                            onClick={() => handleAddToCart(item.productId)}
+                                            onClick={() => handleAddToCart(item.productId._id)}
                                             className="wis-add-button"
                                         >
                                             Add to Cart

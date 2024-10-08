@@ -90,13 +90,13 @@ const CartScreen = ({ history }) => {
                                         Subtotal: ${(item.price * quantities[item._id]).toFixed(2)}
                                     </p>
                                     <div className="quantity-controller">
-                                        <button 
+                                        {/* <button 
                                             onClick={() => handleQuantityChange(item._id, Math.max(1, quantities[item._id] - 1))} 
                                             disabled={quantities[item._id] <= 1}
                                             className="quantity-btn"
                                         >
                                             -
-                                        </button>
+                                        </button> */}
                                         <input 
                                             type="number" 
                                             value={quantities[item._id]} 
@@ -104,12 +104,12 @@ const CartScreen = ({ history }) => {
                                             min="1"
                                             className="quantity-input"
                                         />
-                                        <button 
+                                        {/* <button 
                                             onClick={() => handleQuantityChange(item._id, quantities[item._id] + 1)} 
                                             className="quantity-btn"
                                         >
                                             +
-                                        </button>
+                                        </button> */}
                                         <button 
                                             onClick={() => updateQuantityHandler(item._id, quantities[item._id])} 
                                             className="update-btn"

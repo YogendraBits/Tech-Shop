@@ -35,6 +35,27 @@
     transition: background-color 0.3s;
 }
 
+.remove-btn {
+    background-color: #f53f08;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.update-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
 .shop-now-btn:hover, 
 .checkout-btn:hover, 
 .remove-btn:hover, 

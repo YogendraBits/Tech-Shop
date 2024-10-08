@@ -5,12 +5,14 @@ import { Navbar, Nav, Container, NavDropdown, Modal, Button } from "react-bootst
 import { logout } from "../actions/userActions";
 import SearchBox from './SearchBox';
 import { withRouter } from 'react-router-dom';
-import Chat from './chat'; // Import your Chat component
+import Chat from './gemini'; // Regular Chat component
+import GroqChat from './GroqChat'; // Groq Chat component
+import AIChatOptions from './AIChatOptions'; // AI chat options component
 import './Header.css'; // Import the CSS file for additional styling
 
 const Header = ({ history }) => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [showChat, setShowChat] = useState(false); // State for chat visibility
+    const [selectedChatType, setSelectedChatType] = useState(null); // State to track selected chat type
     const dispatch = useDispatch();
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
@@ -27,8 +29,16 @@ const Header = ({ history }) => {
         setShowLogoutModal(false);
     };
 
-    const toggleChat = () => {
-        setShowChat(!showChat);
+    const handleAIButtonClick = () => {
+        setSelectedChatType('regular'); // Set default chat type when AI button is clicked
+    };
+
+    const handleSelectChatType = (type) => {
+        setSelectedChatType(type);
+    };
+
+    const handleCloseChat = () => {
+        setSelectedChatType(null); // Reset selected chat type
     };
 
     return (
@@ -59,8 +69,8 @@ const Header = ({ history }) => {
                                     </span>
                                 </Nav.Link>
                             </LinkContainer>
-                            <Nav.Link onClick={toggleChat} className="he-nav-link">
-                                <span><i className="fas fa-microchip"></i>AI</span>
+                            <Nav.Link onClick={handleAIButtonClick} className="he-nav-link">
+                                <span><i className="fas fa-microchip"></i> AI</span>
                             </Nav.Link>
                             {userInfo ? (
                                 <NavDropdown title={<span className="he-user-name">{userInfo.name}</span>} id="user-dropdown">
@@ -94,13 +104,16 @@ const Header = ({ history }) => {
                 </Container>
             </Navbar>
 
-            {/* Chat Popup */}
-            {showChat && (
+            {/* AI Chat Options and Chat Window */}
+            {selectedChatType !== null && (
                 <div className="chat-popup">
-                    <Chat />
-                    <button className="close-chat" onClick={toggleChat}>
-                        &times; {/* Close icon */}
-                    </button>
+                    <AIChatOptions onSelect={handleSelectChatType} onClose={handleCloseChat} />
+                    <div className="chat-content">
+                        {selectedChatType === 'regular' ? <Chat /> : <GroqChat />}
+                    </div>
+                    {/* <button className="close-chat" onClick={handleCloseChat}>
+                        &times; 
+                    </button> */} 
                 </div>
             )}
 
