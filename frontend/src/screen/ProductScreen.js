@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
-import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap";
+import { Row, Col, Image, ListGroup, Card, Button, Form, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from '../Components/Rating';
 import { listProductDetails, createProductReview, updateProductReview, deleteProductReview } from '../actions/productActions'; 
@@ -18,6 +18,10 @@ const ProductScreen = ({ history, match }) => {
   const [rating, setRating] = useState(0); 
   const [comment, setComment] = useState(''); 
   const [editReviewId, setEditReviewId] = useState(null); // Track which review is being edited
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete confirmation modal
+  const [reviewToDelete, setReviewToDelete] = useState(null); // Track which review is selected for deletion
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success message modal
+  const [successMessage, setSuccessMessage] = useState(''); // Message to display in success modal
 
   const dispatch = useDispatch();
 
@@ -35,12 +39,14 @@ const ProductScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (successProductReview) {
-      alert('Review Submitted!');
+      setSuccessMessage('Review Submitted!'); // Set the success message
+      setShowSuccessModal(true); // Show the success modal
       resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     if (successDeleteReview) {
-      alert('Review Deleted!');
+      setSuccessMessage('Review Deleted!');
+      setShowSuccessModal(true); // Show the success modal after deletion
       dispatch({ type: PRODUCT_DELETE_REVIEW_RESET });
     }
     dispatch(listProductDetails(match.params.id));
@@ -71,17 +77,17 @@ const ProductScreen = ({ history, match }) => {
   const submitReviewHandler = (e) => {
     e.preventDefault();
     if (editReviewId) {
-        dispatch(updateProductReview(match.params.id, editReviewId, { rating, comment }))
-            .then(() => {
-                dispatch(listProductDetails(match.params.id));
-                resetForm();
-            });
+      dispatch(updateProductReview(match.params.id, editReviewId, { rating, comment }))
+        .then(() => {
+          dispatch(listProductDetails(match.params.id));
+          resetForm();
+        });
     } else {
-        dispatch(createProductReview(match.params.id, { rating, comment }))
-            .then(() => {
-                dispatch(listProductDetails(match.params.id));
-                resetForm();
-            });
+      dispatch(createProductReview(match.params.id, { rating, comment }))
+        .then(() => {
+          dispatch(listProductDetails(match.params.id));
+          resetForm();
+        });
     }
   };
 
@@ -92,9 +98,24 @@ const ProductScreen = ({ history, match }) => {
   };
 
   const handleDeleteReview = (reviewId) => {
-    if (window.confirm('Are you sure you want to delete this review?')) {
-      dispatch(deleteProductReview(match.params.id, reviewId));
+    setReviewToDelete(reviewId); // Set the review ID to delete
+    setShowDeleteModal(true); // Show the modal
+  };
+
+  const confirmDeleteReview = () => {
+    if (reviewToDelete) {
+      dispatch(deleteProductReview(match.params.id, reviewToDelete));
+      setShowDeleteModal(false); // Close the delete confirmation modal
     }
+  };
+
+  const cancelDeleteReview = () => {
+    setShowDeleteModal(false); // Close the delete confirmation modal
+    setReviewToDelete(null); // Clear the review ID
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false); // Close the success modal
   };
 
   return (
@@ -268,6 +289,35 @@ const ProductScreen = ({ history, match }) => {
               </Card>
             </Col>
           </Row>
+
+          {/* Delete Confirmation Modal */}
+          <Modal show={showDeleteModal} onHide={cancelDeleteReview}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Are you sure you want to delete this review?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={cancelDeleteReview}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={confirmDeleteReview}>
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Success Message Modal */}
+          <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Success</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{successMessage}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleSuccessModalClose}>
+                OK
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </>
       )}
     </>
