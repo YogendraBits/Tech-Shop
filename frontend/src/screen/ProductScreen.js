@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from '../Components/Rating';
-import { listProductDetails, createProductReview, updateProductReview } from '../actions/productActions'; 
+import { listProductDetails, createProductReview, updateProductReview, deleteProductReview } from '../actions/productActions'; 
 import { addTowishlist } from '../actions/wishlistActions'; 
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
-import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'; 
+import { PRODUCT_CREATE_REVIEW_RESET, PRODUCT_DELETE_REVIEW_RESET } from '../constants/productConstants'; 
 import { addToCart } from '../actions/cartActions';
 import './ProductScreen.css';
 
@@ -30,14 +30,21 @@ const ProductScreen = ({ history, match }) => {
   const productReviewCreate = useSelector((state) => state.productReviewCreate);
   const { success: successProductReview, error: errorProductReview } = productReviewCreate;
 
+  const productReviewDelete = useSelector((state) => state.productReviewDelete);
+  const { success: successDeleteReview } = productReviewDelete;
+
   useEffect(() => {
     if (successProductReview) {
       alert('Review Submitted!');
       resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
+    if (successDeleteReview) {
+      alert('Review Deleted!');
+      dispatch({ type: PRODUCT_DELETE_REVIEW_RESET });
+    }
     dispatch(listProductDetails(match.params.id));
-  }, [dispatch, match, successProductReview]);
+  }, [dispatch, match, successProductReview, successDeleteReview]);
 
   const resetForm = () => {
     setEditReviewId(null);
@@ -61,33 +68,33 @@ const ProductScreen = ({ history, match }) => {
     }
   };
 
-
-const submitReviewHandler = (e) => {
+  const submitReviewHandler = (e) => {
     e.preventDefault();
     if (editReviewId) {
-        // Pass the product ID and review ID
         dispatch(updateProductReview(match.params.id, editReviewId, { rating, comment }))
             .then(() => {
-                // Reload product details after successfully updating review
                 dispatch(listProductDetails(match.params.id));
-                resetForm(); // Reset the form if needed
+                resetForm();
             });
     } else {
         dispatch(createProductReview(match.params.id, { rating, comment }))
             .then(() => {
-                // Reload product details after successfully creating review
                 dispatch(listProductDetails(match.params.id));
-                resetForm(); // Reset the form if needed
+                resetForm();
             });
     }
-};
-
-
+  };
 
   const handleEditReview = (review) => {
     setEditReviewId(review._id);
     setRating(review.rating);
     setComment(review.comment);
+  };
+
+  const handleDeleteReview = (reviewId) => {
+    if (window.confirm('Are you sure you want to delete this review?')) {
+      dispatch(deleteProductReview(match.params.id, reviewId));
+    }
   };
 
   return (
@@ -174,39 +181,46 @@ const submitReviewHandler = (e) => {
 
           {/* Review Section */}
           <Row className="mt-4">
-          <Col md={6}>
-            <Card className="p-4 mb-4 shadow-sm">
-              <h2 className="mb-3">Reviews</h2>
-              {product.reviews.length === 0 && <Message>No Reviews</Message>}
-              <ListGroup variant="flush">
-                {product.reviews.map((review) => (
-                  <ListGroup.Item key={review._id} className="border-0 mb-3">
-                    <div className="p-3 border rounded bg-light">
-                      <div>
-                        <strong>{review.name}</strong>
+            <Col md={6}>
+              <Card className="p-4 mb-4 shadow-sm">
+                <h2 className="mb-3">Reviews</h2>
+                {product.reviews.length === 0 && <Message>No Reviews</Message>}
+                <ListGroup variant="flush">
+                  {product.reviews.map((review) => (
+                    <ListGroup.Item key={review._id} className="border-0 mb-3">
+                      <div className="p-3 border rounded bg-light">
+                        <div>
+                          <strong>{review.name}</strong>
+                        </div>
+                        <div className="d-flex align-items-center mt-1"> {/* Flex container for stars, edit, and delete buttons */}
+                          <Rating value={review.rating} />
+                          {userInfo && userInfo._id === review.user && (
+                            <>
+                              <Button
+                                variant="link"
+                                onClick={() => handleEditReview(review)}
+                                className="ed-button ml-2"
+                              >
+                                <FontAwesomeIcon icon={faEdit} />
+                              </Button>
+                              <Button
+                                variant="link"
+                                onClick={() => handleDeleteReview(review._id)}
+                                className="ed-button text-danger ml-2"
+                              >
+                                <FontAwesomeIcon icon={faTrash} />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                        <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
+                        <p className="mt-2">{review.comment}</p>
                       </div>
-                      <div className="d-flex align-items-center mt-1"> {/* Flex container for stars and edit button */}
-                        <Rating value={review.rating} />
-                        {userInfo && userInfo._id === review.user && (
-                          <Button
-                            variant="link"
-                            onClick={() => handleEditReview(review)}
-                            className="ed-button ml-2" // Use ed-button class for custom styling
-                          >
-                            <FontAwesomeIcon icon={faEdit} />
-                          </Button>
-                        )}
-                      </div>
-                      <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
-                      <p className="mt-2">{review.comment}</p>
-                    </div>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card>
-          </Col>
-
-          
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card>
+            </Col>
 
             <Col md={6}>
               <Card className="p-3">

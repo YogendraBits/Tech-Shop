@@ -24,7 +24,10 @@ import {
     PRODUCT_UPDATE_REVIEW_REQUEST,
     PRODUCT_UPDATE_REVIEW_SUCCESS,
     PRODUCT_UPDATE_REVIEW_FAIL,
-    PRODUCT_UPDATE_REVIEW_RESET,
+
+    PRODUCT_DELETE_REVIEW_REQUEST,
+    PRODUCT_DELETE_REVIEW_SUCCESS,
+    PRODUCT_DELETE_REVIEW_FAIL,
 
 } from '../constants/productConstants'
 import axios from 'axios'
@@ -270,4 +273,30 @@ export const listProductDetails = (id) => async (dispatch) =>{
     }
 };
 
-  
+export const deleteProductReview = (productId, reviewId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_DELETE_REVIEW_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.delete(`/api/products/${productId}/reviews/${reviewId}`, config);
+
+    dispatch({ type: PRODUCT_DELETE_REVIEW_SUCCESS });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_DELETE_REVIEW_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

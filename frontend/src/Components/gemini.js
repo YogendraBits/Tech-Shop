@@ -68,7 +68,7 @@ const Chat = () => {
                             <strong>User:</strong> {res.user}
                         </div>
                         <div className="ai-message">
-                            <strong>AI:</strong> {res.ai}
+                            <strong>Gemini:</strong> {res.ai}
                         </div>
                         <hr />
                     </div>
@@ -87,7 +87,7 @@ const Chat = () => {
                     className="input-field"
                 />
                 <button onClick={handleSend} disabled={loading} className="send-button">
-                    Send
+                    {loading ? 'Sending...' : 'Send'}
                 </button>
             </div>
         </div>
