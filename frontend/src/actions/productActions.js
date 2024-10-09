@@ -140,9 +140,6 @@ export const listProductDetails = (id) => async (dispatch) =>{
     }
   }
 
-
-
-
   
   export const updateProduct = ( product ) => async (dispatch, getState) => {
     try {

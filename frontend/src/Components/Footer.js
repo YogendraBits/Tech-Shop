@@ -1,46 +1,36 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import './Footer.css'; // Import the CSS file for additional styling
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import './Footer.css'; // New CSS styling
 
 const Footer = () => {
-    const names = ['Trupti', 'Gaurav', 'Ishank', 'Rahaf', 'Yogendra'];
-    const [showNamesTile, setShowNamesTile] = useState(false);
-
-    const toggleNamesTile = () => {
-        setShowNamesTile(!showNamesTile);
-    };
-
     return (
-        <footer className="foot-footer-container">
-            <Container>
-                <Row>
-                    <Col>
-                        <p className="foot-footer-text">
-                            <span className="foot-copy-text"> &copy; 2024 </span> 
-                            <a 
-                                href="https://github.com/YogendraBits/FSADProject" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="foot-footer-link">
-                                Tech-Store
-                            </a>
-                            <Button variant="link" className="foot-heart-button" onClick={toggleNamesTile}>
-                                ❤️
-                            </Button>
-                        </p>
-                    </Col>
-                </Row>
-            </Container>
-            {showNamesTile && (
-                <div className="foot-name-tile">
-                    <button onClick={toggleNamesTile} className="foot-close-button">×</button>
-                    <h3 className="foot-heading">Meet the Team</h3>
-                    {names.map((name, index) => (
-                        <p key={index} className="foot-name">{name}</p>
-                    ))}
+        <footer className="new-footer">
+            <div className="footer-content">
+                <div className="footer-brand">
+                    <h1>Tech-Store</h1>
+                    <p>Your one-stop tech shop</p>
                 </div>
-            )}
+                <div className="footer-links">
+                    <a href="#about">About Us</a>
+                    <a href="#support">Support</a>
+                    <a href="#careers">Careers</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div className="footer-social">
+                    <h5>Follow Us</h5>
+                    <div className="social-icons">
+                        <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div className="footer-bottom">
+                    <p>&copy; 2024 Tech-Store. All rights reserved.</p>
+                </div>
+            </div>
+            
         </footer>
+
     );
 };
 

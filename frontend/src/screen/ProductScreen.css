@@ -1,0 +1,38 @@
+.btn-block {
+    display: block;        /* Makes the button a block-level element */
+    width: 100%;          /* Ensures the button takes the full width of its parent */
+    margin: 0;            /* Removes default margin */
+    padding: 0.5rem 1rem; /* Adds padding for a better touch area */
+    border: none;         /* Removes border */
+    border-radius: 0.25rem; /* Optional: rounded corners */
+    font-size: 1rem;      /* Sets font size */
+    text-align: center;   /* Centers the text inside the button */
+    cursor: pointer;      /* Changes the cursor to pointer on hover */
+  }
+  
+  .btn-block:hover {
+    opacity: 0.8;         /* Changes opacity on hover for visual feedback */
+  }
+  
+  .card {
+    border: 1px solid #e1e1e1; /* Light border around the card */
+    border-radius: 0.5rem; /* Rounded corners for the card */
+  }
+  
+  .card h2 {
+    font-size: 1.75rem; /* Larger font size for the heading */
+    font-weight: 600; /* Bold heading for emphasis */
+  }
+  
+  .list-group-item {
+    border-radius: 0.25rem; /* Rounded corners for list items */
+  }
+  
+  .bg-light {
+    transition: background-color 0.3s ease; /* Smooth background transition */
+  }
+  .list-group-item:hover .bg-light {
+    background-color: #e2e6ea; /* Change background on hover */
+  }
+  
+  

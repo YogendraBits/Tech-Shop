@@ -2,20 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Rating from '../Components/Rating';
-import { listProductDetails, createProductReview } from '../actions/productActions'; // Re-added the review action
-import { addTowishlist } from '../actions/wishlistActions'; // Fixed the naming typo
+import { listProductDetails, createProductReview } from '../actions/productActions'; 
+import { addTowishlist } from '../actions/wishlistActions'; 
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
-import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'; // Re-added the review reset constant
+import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'; 
 import { addToCart } from '../actions/cartActions';
+import './ProductScreen.css';
 
 const ProductScreen = ({ history, match }) => {
   const [qty, setQty] = useState(1);
-  const [rating, setRating] = useState(0); // State for review rating
-  const [comment, setComment] = useState(''); // State for review comment
+  const [rating, setRating] = useState(0); 
+  const [comment, setComment] = useState(''); 
 
   const dispatch = useDispatch();
 
@@ -25,56 +24,38 @@ const ProductScreen = ({ history, match }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const productReviewCreate = useSelector((state) => state.productReviewCreate); // Added review state
-  const { success: successProductReview, error: errorProductReview } = productReviewCreate; // Extracting review state
+  const productReviewCreate = useSelector((state) => state.productReviewCreate);
+  const { success: successProductReview, error: errorProductReview } = productReviewCreate;
 
   useEffect(() => {
     if (successProductReview) {
-      alert('Review Submitted!'); // Notify user upon successful submission
-      setRating(0); // Reset rating
-      setComment(''); // Reset comment
-      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET }); // Reset the review submission state
+      alert('Review Submitted!');
+      setRating(0);
+      setComment('');
+      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     dispatch(listProductDetails(match.params.id));
   }, [dispatch, match, successProductReview]);
 
-    const addToCartHandler = () => {
-    const cartItem = {
-        product: product._id,
-        name: product.name,
-        image: product.image,
-        price: product.price,
-        countInStock: product.countInStock,
-        qty,
-    };
-
-    // Dispatch the action to save the cart item to the database
+  const addToCartHandler = () => {
     dispatch(addToCart(product._id, qty));
-
-    // Optionally navigate to the cart page after the item is added
-    // history.push(`/cart/${match.params.id}?qty=${qty}`);
   };
-
-
 
   const addToWishlistHandler = async () => {
     if (userInfo) {
-        try {
-            await dispatch(addTowishlist(product._id, qty)); // Dispatch the action to add to wishlist with quantity
-        } catch (error) {
-            alert('Failed to add item to wishlist. Please try again.');
-        }
+      try {
+        await dispatch(addTowishlist(product._id, qty));
+      } catch (error) {
+        alert('Failed to add item to wishlist. Please try again.');
+      }
     } else {
-        alert('Please log in to add items to your wishlist.');
+      alert('Please log in to add items to your wishlist.');
     }
   };
 
-
   const submitReviewHandler = (e) => {
     e.preventDefault();
-    dispatch(
-      createProductReview(match.params.id, { rating, comment }) // Dispatch review submission action
-    );
+    dispatch(createProductReview(match.params.id, { rating, comment }));
   };
 
   return (
@@ -92,7 +73,7 @@ const ProductScreen = ({ history, match }) => {
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />
             </Col>
-            <Col md={3}>
+            <Col md={6}>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <h2>{product.name}</h2>
@@ -103,18 +84,8 @@ const ProductScreen = ({ history, match }) => {
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
                 <ListGroup.Item>Description: {product.description}</ListGroup.Item>
               </ListGroup>
-            </Col>
-            <Col md={3}>
-              <Card>
+              <Card className="mt-3">
                 <ListGroup variant="flush">
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Price:</Col>
-                      <Col>
-                        <strong>${product.price}</strong>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
                   <ListGroup.Item>
                     <Row>
                       <Col>Status:</Col>
@@ -142,23 +113,27 @@ const ProductScreen = ({ history, match }) => {
                     </ListGroup.Item>
                   )}
                   <ListGroup.Item>
-                    <Button
-                      className="btn-block"
-                      onClick={addToCartHandler}
-                      type="button"
-                      disabled={product.countInStock === 0}
-                    >
-                      Add to Cart
-                    </Button>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Button
-                      className="btn-block"
-                      onClick={addToWishlistHandler} // Always calls addToWishlistHandler
-                      type="button"
-                    >
-                      Add to Wishlist
-                    </Button>
+                    <Row>
+                      <Col>
+                        <Button
+                          className="btn-block"
+                          onClick={addToCartHandler}
+                          type="button"
+                          disabled={product.countInStock === 0}
+                        >
+                          Add to Cart
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          className="btn-block"
+                          onClick={addToWishlistHandler}
+                          type="button"
+                        >
+                          Add to Wishlist
+                        </Button>
+                      </Col>
+                    </Row>
                   </ListGroup.Item>
                 </ListGroup>
               </Card>
@@ -166,65 +141,82 @@ const ProductScreen = ({ history, match }) => {
           </Row>
 
           {/* Review Section */}
-          <Row>
-            <Col md={6}>
-              <h2>Reviews</h2>
+          <Row className="mt-4">
+          <Col md={6}>
+            <Card className="p-4 mb-4 shadow-sm">
+              <h2 className="mb-3">Reviews</h2>
               {product.reviews.length === 0 && <Message>No Reviews</Message>}
               <ListGroup variant="flush">
                 {product.reviews.map((review) => (
-                  <ListGroup.Item key={review._id}>
-                    <strong>{review.name}</strong>
-                    <Rating value={review.rating} />
-                    <p>{review.createdAt.substring(0, 10)}</p>
-                    <p>{review.comment}</p>
+                  <ListGroup.Item key={review._id} className="border-0 mb-3">
+                    <div className="p-3 border rounded bg-light">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <strong>{review.name}</strong>
+                          <Rating value={review.rating} />
+                        </div>
+                        <div>
+                          <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
+                        </div>
+                      </div>
+                      <p className="mt-2">{review.comment}</p>
+                    </div>
                   </ListGroup.Item>
                 ))}
-                <ListGroup.Item>
-                  <h2>Write a Customer Review</h2>
-                  {errorProductReview && (
-                    <Message variant="danger">{errorProductReview}</Message>
-                  )}
-                  {userInfo ? (
-                    <Form onSubmit={submitReviewHandler}>
-                      <Form.Group controlId="rating">
-                        <Form.Label>Rating</Form.Label>
-                        <Form.Control
-                          as="select"
-                          value={rating}
-                          onChange={(e) => setRating(Number(e.target.value))}
-                        >
-                          <option value="">Select...</option>
-                          <option value="1">1 - Poor</option>
-                          <option value="2">2 - Fair</option>
-                          <option value="3">3 - Good</option>
-                          <option value="4">4 - Very Good</option>
-                          <option value="5">5 - Excellent</option>
-                        </Form.Control>
-                      </Form.Group>
-                      <Form.Group controlId="comment">
-                        <Form.Label>Comment</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          row="3"
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
-                        ></Form.Control>
-                      </Form.Group>
-                      <Button
-                        type="submit"
-                        variant="primary"
-                      >
-                        Submit
-                      </Button>
-                    </Form>
-                  ) : (
-                    <Message>
-                      Please <Link to="/login">sign in</Link> to write a review{' '}
-                    </Message>
-                  )}
-                </ListGroup.Item>
               </ListGroup>
+            </Card>
+          </Col>
+
+
+            <Col md={6}>
+              <Card className="p-3">
+                <h2>Write a Customer Review</h2>
+                {errorProductReview && (
+                  <Message variant="danger">{errorProductReview}</Message>
+                )}
+                {userInfo ? (
+                  <Form onSubmit={submitReviewHandler}>
+                    <Form.Group controlId="rating">
+                      <Form.Label>Rating</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={rating}
+                        onChange={(e) => setRating(Number(e.target.value))}
+                        className="mb-3"
+                      >
+                        <option value="">Select...</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                      </Form.Control>
+                    </Form.Group>
+                    <Form.Group controlId="comment">
+                      <Form.Label>Comment</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows="4"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        className="mb-3"
+                      />
+                    </Form.Group>
+                    <Button type="submit" variant="primary" className="btn-block">
+                      Submit
+                    </Button>
+                  </Form>
+                ) : (
+                  <Message>
+                    Please <Link to="/login">sign in</Link> to write a review{' '}
+                  </Message>
+                )}
+              </Card>
             </Col>
+
+
+
+
           </Row>
         </>
       )}

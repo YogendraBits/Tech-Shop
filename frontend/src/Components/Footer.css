@@ -1,82 +1,120 @@
-/* Footer.css */
+/* Compact modern design for Footer */
 
-.foot-footer-container {
-    background-color: #f4f4f4; /* Light grey/off-white background */
-    color: #333;
-    padding: 20px 0;
-    text-align: center;
-    border-top: 2px solid #ccc;
-    position: relative;
-    z-index: 10;
+.new-footer {
+    background-color: #121212; /* Darker background for a modern feel */
+    color: #ffffff; /* White text for contrast */
+    padding: 10px 0; /* Reduced padding for height */
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Clean sans-serif font */
 }
 
-.foot-footer-text {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.5;
+.footer-content {
+    display: flex; /* Use Flexbox for layout */
+    justify-content: space-between; /* Space out children */
+    align-items: center; /* Center vertically */
+    max-width: 1200px; /* Set a maximum width */
+    margin: 0 auto; /* Center the content */
+    padding: 0 20px; /* Padding for content */
 }
 
-.foot-copy-text {
-    font-size: 1.2rem;
-    color: #555;
+.footer-brand {
+    display: flex; /* Use Flexbox for brand */
+    flex-direction: column; /* Stack brand title and subtitle */
 }
 
-.foot-footer-link {
-    color: #1a88f5;
-    font-size: 1.3rem;
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 10px;
-    transition: color 0.3s ease;
+.footer-brand h1 {
+    font-size: 1.5rem; /* Title font size */
+    font-weight: 700; /* Bold weight for visibility */
+    color: #00bfff; /* Bright cyan color */
+    margin: 0; /* Remove margin */
 }
 
-.foot-heart-button {
-    color: #ff1493;
-    font-size: 1.8rem;
-    margin-left: 10px;
-    padding-left: 0;
-    text-decoration: none;
-    transition: color 0.3s ease;
+.footer-brand p {
+    font-size: 0.8rem; /* Subtitle font size */
+    color: #bbb; /* Softer grey for the subtitle */
+    margin: 0; /* Remove margin */
 }
 
-.foot-name-tile {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #e0e0e0; /* Slightly darker grey for the modal */
-    color: #333;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    margin: 0 auto;
-    animation: fadeIn 0.3s ease;
+.footer-links {
+    display: flex; /* Flexbox for navigation links */
+    gap: 20px; /* Space between links */
 }
 
-.foot-close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: #ff1493;
+.footer-links a {
+    color: #ffffff; /* Link color */
+    font-size: 0.8rem; /* Smaller font size for links */
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease; /* Smooth transition for hover effects */
 }
 
-.foot-heading {
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #1a88f5;
+.footer-links a:hover {
+    color: #00bfff; /* Change color on hover */
 }
 
-.foot-name {
-    margin: 0.5rem 0;
-    font-size: 1.4rem;
-    color: #444;
+.footer-social {
+    display: flex; /* Flexbox for social section */
+    align-items: center; /* Center items vertically */
+    gap: 15px; /* Space between icons */
+}
+
+.footer-social h5 {
+    font-size: 0.9rem; /* Smaller heading size */
+    color: #ffffff; /* White text for visibility */
+    margin: 0; /* Remove margin */
+}
+
+.social-icons {
+    display: flex; /* Flexbox for social icons */
+    gap: 10px; /* Space between icons */
+}
+
+.social-icons a {
+    font-size: 1.3rem; /* Icon size */
+    color: #bbb; /* Default color for icons */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.social-icons a:hover {
+    color: #00bfff; /* Change color on hover */
+    transform: scale(1.1); /* Scale effect on hover */
+}
+
+.footer-bottom {
+    background-color: #121212; /* Slightly lighter background for contrast */
+    padding: 5px 0; /* Reduced padding */
+    text-align: center; /* Center text */
+    font-size: 0.7rem; /* Smaller font size for bottom text */
+    color: #f3ecec; /* Lighter grey for bottom text */
+}
+
+.footer-bottom p {
+    margin: 0; /* Remove margin */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .new-footer {
+        padding: 8px 0; /* Adjust padding for smaller screens */
+    }
+
+    .footer-content {
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+        align-items: flex-start; /* Align items to the start */
+    }
+
+    .footer-links {
+        margin: 10px 0; /* Space around links */
+        justify-content: center; /* Center links on small screens */
+    }
+
+    .footer-brand h1 {
+        font-size: 1.4rem; /* Further adjust for smaller screens */
+    }
+
+    .footer-links a {
+        font-size: 0.7rem; /* Adjust font size for smaller screens */
+    }
+
+    .social-icons a {
+        font-size: 1.2rem; /* Adjust size for smaller screens */
+    }
 }
