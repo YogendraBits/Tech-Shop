@@ -16,6 +16,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"; // for Gemini
 import groqRoutes from './routes/groqRoutes.js'; // Import the route
 
 
+
 dotenv.config();
 connectDB();
 const app = express();

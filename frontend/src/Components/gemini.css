@@ -13,34 +13,32 @@
 .chat-messages {
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto; /* Ensure scrolling works */
+}
+
+/* User and AI Messages */
+.user-message, .ai-message {
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    position: relative;
 }
 
 .user-message {
     background-color: #d1e7dd;
     color: #0f5132;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    margin-left: 140px;
-    max-width: 70%;
     align-self: flex-end;
-    position: relative;
+    margin-left: auto; /* Align right */
 }
 
-/* AI Message */
 .ai-message {
     background-color: #f8d7da;
     color: #721c24;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    max-width: 90%;
     align-self: flex-start;
-    position: relative;
 }
 
-/* Input Container */
+/* Input Area */
 .input-area {
     display: flex;
     padding: 10px;
@@ -69,49 +67,44 @@
     transition: background-color 0.3s;
 }
 
-/* Send Button Hover Effect */
 .send-button:hover {
-    background-color: #0056b3;
+    background-color: #f4e861;
 }
 
 /* Loading Indicator */
 .loading-indicator {
     text-align: center;
-    color: #007bff; /* Primary color */
+    color: #007bff;
     font-weight: bold;
-    margin: 10px 10px; /* Adjusted margin for better spacing */
-    font-size: 1.5em; /* Increased font size for better visibility */
-    position: relative; /* For absolute positioning of the spinner */
+    margin: 10px 10px;
+    font-size: 1.5em;
+    position: relative;
 }
 
-/* Spinner animation */
 .loading-indicator::after {
     content: '';
     display: inline-block;
-    width: 1em; /* Size of the spinner */
-    height: 1em; /* Size of the spinner */
-    border: 2px solid rgba(0, 123, 255, 0.5); /* Border color */
-    border-top-color: #007bff; /* Spinner color */
-    border-radius: 50%; /* Circular shape */
-    animation: spin 0.75s linear infinite; /* Animation properties */
-    position: absolute; /* Positioning the spinner */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust position to center */
-    top: 50%; /* Center vertically */
-    margin-top: -0.75em; /* Adjust for height */
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(0, 123, 255, 0.5);
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50%;
+    margin-top: -0.75em;
 }
 
-/* Keyframes for the spinner animation */
 @keyframes spin {
     0% {
-        transform: rotate(0deg); /* Start rotation */
+        transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg); /* End rotation */
+        transform: rotate(360deg);
     }
 }
-
-
 
 /* Responsive Design */
 @media (max-width: 600px) {

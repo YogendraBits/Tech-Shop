@@ -7,17 +7,27 @@ const Chat = () => {
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef(null);
 
+    // Load chat history from local storage
+    useEffect(() => {
+        const savedResponses = localStorage.getItem("chatHistory");
+        if (savedResponses) {
+            setResponses(JSON.parse(savedResponses));
+        }
+    }, []);
+
+    // Save chat history to local storage
+    useEffect(() => {
+        localStorage.setItem("chatHistory", JSON.stringify(responses));
+    }, [responses]);
+
     const handleSend = async () => {
         if (!message) return;
 
-        setLoading(true); // Set loading to true when sending message
-
+        setLoading(true);
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: message }),
             });
 
@@ -34,15 +44,14 @@ const Chat = () => {
         } catch (error) {
             console.error("Error fetching response:", error);
         } finally {
-            setLoading(false); // Reset loading state
+            setLoading(false);
         }
     };
 
-    // Define the handleKeyDown function here
     const handleKeyDown = (event) => {
         if (event.key === "Enter" && !loading) {
-            event.preventDefault(); // Prevent default action (new line)
-            handleSend(); // Call handleSend if Enter is pressed
+            event.preventDefault();
+            handleSend();
         }
     };
 
@@ -72,12 +81,14 @@ const Chat = () => {
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={handleKeyDown} // Added onKeyDown event handler
+                    onKeyDown={handleKeyDown}
                     placeholder="Type your message..."
                     disabled={loading}
                     className="input-field"
                 />
-                <button onClick={handleSend} disabled={loading} className="send-button">Send</button>
+                <button onClick={handleSend} disabled={loading} className="send-button">
+                    Send
+                </button>
             </div>
         </div>
     );

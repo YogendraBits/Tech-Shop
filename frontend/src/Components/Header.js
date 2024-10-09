@@ -42,38 +42,34 @@ const Header = ({ history }) => {
     };
 
     return (
-        <header className="he-header-container">
-            <Navbar expand="lg" variant="dark" className="he-custom-navbar">
+        <header className="header-container">
+            <Navbar expand="lg" className="header-navbar">
                 <Container>
-                    <LinkContainer to="/" className="he-brand-container">
-                        <Navbar.Brand className="he-brand-name">Tech-Store</Navbar.Brand>
+                    <LinkContainer to="/" className="header-brand-container">
+                        <Navbar.Brand className="header-brand-name">Home</Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls="navbar-nav" />
                     <Navbar.Collapse id="navbar-nav">
-                        <div className="he-search-box-container">
+                        <div className="header-search-box-container">
                             <SearchBox history={history} />
                         </div>
-                        <Nav className="he-nav-links">
+                        <Nav className="header-nav-links">
                             <LinkContainer to="/cart">
-                                <Nav.Link className="he-nav-link">
-                                    <span><i className="fas fa-shopping-cart"></i> Cart</span>
+                                <Nav.Link className="header-nav-link">
+                                    <i className="fas fa-shopping-cart"></i>
                                 </Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/wishlist">
-                                <Nav.Link className="he-nav-link">
-                                    <span>
-                                        <i className="fas fa-heart"></i> Wishlist
-                                        {wishlistitems.length > 0 && (
-                                            <span className="he-wishlist-count">{wishlistitems.length}</span>
-                                        )}
-                                    </span>
+                                <Nav.Link className="header-nav-link">
+                                    <i className="fas fa-heart"></i>
                                 </Nav.Link>
                             </LinkContainer>
-                            <Nav.Link onClick={handleAIButtonClick} className="he-nav-link">
-                                <span><i className="fas fa-microchip"></i> AI</span>
+                            <Nav.Link onClick={handleAIButtonClick} className="header-nav-link">
+                                <i className="fas fa-microchip"></i>
+                                <span> AI</span>
                             </Nav.Link>
                             {userInfo ? (
-                                <NavDropdown title={<span className="he-user-name">{userInfo.name}</span>} id="user-dropdown">
+                                <NavDropdown title={<span className="header-user-name">{userInfo.name}</span>} id="user-dropdown">
                                     <LinkContainer to="/profile">
                                         <NavDropdown.Item>Profile</NavDropdown.Item>
                                     </LinkContainer>
@@ -81,8 +77,9 @@ const Header = ({ history }) => {
                                 </NavDropdown>
                             ) : (
                                 <LinkContainer to="/login">
-                                    <Nav.Link className="he-nav-link">
-                                        <span><i className="fas fa-user"></i> Sign In</span>
+                                    <Nav.Link className="header-nav-link">
+                                        <i className="fas fa-user"></i>
+                                        <span> Sign In</span>
                                     </Nav.Link>
                                 </LinkContainer>
                             )}
@@ -106,14 +103,11 @@ const Header = ({ history }) => {
 
             {/* AI Chat Options and Chat Window */}
             {selectedChatType !== null && (
-                <div className="chat-popup">
+                <div className="header-chat-popup">
                     <AIChatOptions onSelect={handleSelectChatType} onClose={handleCloseChat} />
-                    <div className="chat-content">
+                    <div className="header-chat-content">
                         {selectedChatType === 'regular' ? <Chat /> : <GroqChat />}
                     </div>
-                    {/* <button className="close-chat" onClick={handleCloseChat}>
-                        &times; 
-                    </button> */} 
                 </div>
             )}
 

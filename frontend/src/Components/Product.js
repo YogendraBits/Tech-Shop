@@ -25,6 +25,13 @@ const Product = ({ product }) => {
 
     const cardStyle = isHovered ? hoverCardStyle : defaultCardStyle;
 
+    // Styles for the fixed-size image
+    const imageStyle = {
+        width: '100%', // Ensures the image takes the full width of the container
+        height: '200px', // Fixed height
+        objectFit: 'cover', // Ensures the image covers the container without distortion
+    };
+
     return (
         <Card
             className="my-3 p-3 rounded border-0 shadow"
@@ -33,7 +40,12 @@ const Product = ({ product }) => {
             onMouseLeave={handleMouseLeave}
         >
             <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <Card.Img src={product.image} variant="top" className="rounded-top" />
+                <Card.Img 
+                    src={product.image} 
+                    variant="top" 
+                    className="rounded-top" 
+                    style={imageStyle} // Apply the fixed size style
+                />
             </Link>
             <Card.Body className="d-flex flex-column justify-content-between">
                 <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>

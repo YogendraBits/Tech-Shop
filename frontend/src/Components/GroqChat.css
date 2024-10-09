@@ -1,4 +1,4 @@
-/* GroqChat Window */
+/* Groq Chat Window */
 .groq-chat-container {
     display: flex;
     flex-direction: column;
@@ -13,35 +13,32 @@
 .groq-chat-messages {
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto; /* Ensure scrolling works */
 }
 
-/* Groq User Message */
+/* Groq User and AI Messages */
+.groq-user-message, .groq-ai-message {
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    position: relative;
+}
+
 .groq-user-message {
     background-color: #cfe2ff;
-    color: #084298;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    margin-left: 140px;
-    max-width: 70%;
-    align-self: flex-end;
-    position: relative;
+    color: #1e3a8a;
+    align-self: flex-end; /* Align right */
+    margin-left: auto; /* Align right */
 }
 
-/* Groq AI Message */
 .groq-ai-message {
-    background-color: #ffe8cc;
-    color: #8c2f00;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    max-width: 90%;
+    background-color: #f8d7da;
+    color: #721c24;
     align-self: flex-start;
-    position: relative;
 }
 
-/* Input Container for GroqChat */
+/* Groq Input Area */
 .groq-input-area {
     display: flex;
     padding: 10px;
@@ -49,7 +46,7 @@
     border-top: 1px solid #adb5bd;
 }
 
-/* Input Field in GroqChat */
+/* Groq Input Field */
 .groq-input-field {
     flex: 1;
     padding: 10px;
@@ -59,7 +56,7 @@
     font-size: 16px;
 }
 
-/* Send Button in GroqChat */
+/* Groq Send Button */
 .groq-send-button {
     padding: 10px 15px;
     background-color: #28a745;
@@ -70,49 +67,21 @@
     transition: background-color 0.3s;
 }
 
-/* Send Button Hover Effect for GroqChat */
 .groq-send-button:hover {
-    background-color: #0a95b8;
+    background-color: #f4e861;
 }
 
-/* Loading Indicator in GroqChat */
+/* Groq Loading Indicator */
 .groq-loading-indicator {
     text-align: center;
-    color: #0dcaf0; /* Primary color for GroqChat */
+    color: #007bff;
     font-weight: bold;
     margin: 10px 10px;
     font-size: 1.5em;
     position: relative;
 }
 
-/* Spinner animation in GroqChat */
-.groq-loading-indicator::after {
-    content: '';
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    border: 2px solid rgba(13, 202, 240, 0.5);
-    border-top-color: #0dcaf0;
-    border-radius: 50%;
-    animation: groq-spin 0.75s linear infinite;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50%;
-    margin-top: -0.75em;
-}
-
-/* Keyframes for Groq spinner animation */
-@keyframes groq-spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Responsive Design for GroqChat */
+/* Responsive Design for Groq */
 @media (max-width: 600px) {
     .groq-chat-container {
         width: 100%;

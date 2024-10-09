@@ -13,30 +13,14 @@ const WishlistScreen = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const wishlist = useSelector((state) => state.wishlist);
-    const cart = useSelector((state) => state.cart);
-    const { wishlistitems, loading, error } = wishlist;
+    const { wishlistitems = [], loading, error } = wishlist; // Default to empty array
 
     const [addedToCart, setAddedToCart] = useState({});
-    const [quantity, setQuantity] = useState({});
 
     useEffect(() => {
         dispatch(fetchWishlist());
     }, [dispatch]);
 
-    useEffect(() => {
-        const cartItems = cart.cartItems.map(item => item.product); 
-        const initialAddedToCart = {};
-        const initialQuantity = {};
-
-        wishlistitems.forEach(item => {
-            if (cartItems.includes(item.productId)) {
-                initialAddedToCart[item.productId] = true; 
-            }
-            initialQuantity[item.productId] = item.quantity; 
-        });
-        setAddedToCart(initialAddedToCart); 
-        setQuantity(initialQuantity); 
-    }, [wishlistitems, cart.cartItems]);
 
     const handleAddToCart = (productId, quantity) => {
         dispatch(addToCart(productId, quantity)); 
@@ -45,7 +29,7 @@ const WishlistScreen = () => {
 
     const handleRemoveFromwishlist = (id) => {
         dispatch(removeFromwishlist(id)).then(() => {
-            window.location.reload(); // Reload the window after item is removed
+            window.location.reload();
         });
     };
 
@@ -64,59 +48,61 @@ const WishlistScreen = () => {
                 <Message className="wis-empty-message">Your wishlist is empty</Message>
             ) : (
                 <ListGroup className="wis-list-group">
-                    {wishlistitems.map((item) => (
-                        <ListGroup.Item key={item._id} className="wis-list-item">
-                            <Row>
-                                <Col md={3}>
-                                    <Link to={`/product/${item.productId._id}`}>
-                                        <img 
-                                            src={item.image} 
-                                            alt={item.name} 
-                                            className="wis-item-image" 
+                    {wishlistitems.map((item) => {
+                        if (!item) return null; // Guard against undefined items
+                        return (
+                            <ListGroup.Item key={item._id} className="wis-list-item">
+                                <Row>
+                                    <Col md={3}>
+                                        <Link to={`/product/${item.productId?._id}`}>
+                                            <img 
+                                                src={item.image} 
+                                                alt={item.name} 
+                                                className="wis-item-image" 
+                                            />
+                                        </Link>
+                                    </Col>
+                                    <Col md={3}>
+                                        <Link to={`/product/${item.productId?._id}`}>
+                                            <strong className="wis-item-name">{item.name}</strong>
+                                        </Link>
+                                    </Col>
+                                    <Col md={3} className="wis-item-price">${item.price}</Col>
+                                    <Col md={3} className="wis-item-actions d-flex align-items-center justify-content-between">
+                                        <Form.Control
+                                            type="number"
+                                            value={item.quantity}
+                                            className="wis-quantity-input"
+                                            min={1}
+                                            max={item.countInStock}
                                         />
-                                    </Link>
-                                </Col>
-                                <Col md={3}>
-                                    <Link to={`/product/${item.productId._id}`}>
-                                        <strong className="wis-item-name">{item.name}</strong>
-                                    </Link>
-                                </Col>
-                                <Col md={3} className="wis-item-price">${item.price}</Col>
-                                <Col md={3} className="wis-item-actions d-flex align-items-center justify-content-between">
-                                    <Form.Control
-                                        type="number"
-                                        value={item.quantity}
-                                        className="wis-quantity-input"
-                                        min={1}
-                                        max={item.countInStock}
-                                        onChange={(e) => setQuantity((prev) => ({ ...prev, [item.productId]: e.target.value }))}
-                                    />
-                                    {addedToCart[item.productId] ? (
-                                        <Button variant="success" onClick={goToCart} className="wis-added-button">
-                                            Go to Cart
-                                        </Button>
-                                    ) : (
+                                        {addedToCart[item.productId?._id] ? (
+                                            <Button variant="success" onClick={goToCart} className="wis-added-button">
+                                                Go to Cart
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                variant="light"
+                                                onClick={() => handleAddToCart(item.productId._id, item.quantity)}
+                                                className="wis-add-button"
+                                            >
+                                                Add to Cart
+                                            </Button>
+                                        )}
                                         <Button
                                             type="button"
-                                            variant="light"
-                                            onClick={() => handleAddToCart(item.productId._id, item.quantity)}
-                                            className="wis-add-button"
+                                            variant="danger"
+                                            onClick={() => handleRemoveFromwishlist(item._id)} 
+                                            className="wis-remove-button"
                                         >
-                                            Add to Cart
+                                            <FaTrash />
                                         </Button>
-                                    )}
-                                    <Button
-                                        type="button"
-                                        variant="danger"
-                                        onClick={() => handleRemoveFromwishlist(item._id)} 
-                                        className="wis-remove-button"
-                                    >
-                                        <FaTrash />
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    ))}
+                                    </Col>
+                                </Row>
+                            </ListGroup.Item>
+                        );
+                    })}
                 </ListGroup>
             )}
         </div>

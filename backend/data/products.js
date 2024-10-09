@@ -12,13 +12,13 @@ const products = [
         numReviews: 12,
     },
     {
-        name: 'iPhone 11 Pro 256GB Memory',
-        image: '/images/phone.jpg',
+        name: 'iPhone 16 Pro max 256GB Memory',
+        image: '/images/iphone16promax.jpg',
         description:
-            'Introducing the iPhone 11 Pro. A transformative triple-camera system that adds tons of capability without complexity. An unprecedented leap in battery life',
+        "The iPhone 16 Pro Max is a powerhouse of technology, offering a stunning 6.9-inch Super Retina XDR display with ProMotion for smooth scrolling and dynamic content. Powered by the A18 Bionic chip, it delivers lightning-fast performance for demanding tasks and games.The triple camera system, featuring a 48MP main sensor, 12MP ultrawide, and 12MP telephoto lenses, captures stunning photos and videos in various lighting conditions.With advanced features like LiDAR scanner for enhanced augmented reality experiences and a longer-lasting battery, the iPhone 16 Pro Max is designed to meet the needs of power users and enthusiasts alike.",
         brand: 'Apple',
         category: 'Electronics',
-        price: 599.99,
+        price: 1199.00,
         countInStock: 7,
         rating: 4.0,
         numReviews: 8,
@@ -60,8 +60,8 @@ const products = [
         numReviews: 10,
     },
     {
-        name: 'Amazon Echo Dot 3rd Generation',
-        image: '/images/alexa.jpg',
+        name: 'Amazon Echo 4th Generation',
+        image: '/images/Amazon-Echo-4th-gen.jpg',
         description:
         'Meet Echo Dot - Our most popular smart speaker with a fabric design. It is our most compact smart speaker that fits perfectly into small space',
         brand: 'Amazon',

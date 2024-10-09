@@ -6,7 +6,7 @@ import Loader from './Loader';
 import Message from './Message';
 import { listTopProducts } from '../actions/productActions';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import './CarouselStyles.css'; // Import the custom CSS
+import './ProductCarousel.css'; // Import the custom CSS
 
 const ProductCarousel = () => {
     const dispatch = useDispatch();
@@ -70,19 +70,25 @@ export default ProductCarousel;
 
 const styles = {
     carouselContainer: {
-        marginBottom: '20px',
+        width: '100vw',  // Full viewport width
+        marginLeft: '0', // Center the carousel horizontally
+        marginRight: 'auto',
+        maxWidth: '100%', // Ensures it doesn't overflow beyond the screen
+        padding: '0', // Remove padding to get full width
     },
     carouselItem: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        width: '100%', // Full width for each item
     },
     link: {
         textDecoration: 'none',
         color: 'inherit',
         display: 'flex',
         alignItems: 'center',
+        width: '100%', // Ensure link spans full width
     },
     contentContainer: {
         flex: '1',
@@ -108,7 +114,7 @@ const styles = {
     },
     image: {
         maxWidth: '100%',
-        maxHeight: '100%',
+        maxHeight: '400px', // Limit the max height for images
         objectFit: 'cover',
         borderRadius: '10px',
     },
