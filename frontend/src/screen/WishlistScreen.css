@@ -16,6 +16,7 @@
     text-align: center;
     font-size: 1.25rem;
     color: #6c757d; /* Grey color for empty message */
+    margin-bottom: 20px;
 }
 
 .wis-list-group {
@@ -53,7 +54,7 @@
 .wis-item-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around; /* Space out actions evenly */
 }
 
 .wis-quantity-input {
@@ -61,10 +62,13 @@
     border-radius: 4px;
 }
 
-.wis-added-button,
-.wis-add-button,
-.wis-remove-button {
-    border-radius: 4px;
+.wis-button {
+    border-radius: 50%; /* Round buttons for a more modern look */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .wis-added-button {
@@ -91,4 +95,48 @@
 
 .wis-added-button:hover {
     background-color: #218838; /* Darker green on hover */
+}
+
+.wis-empty-message {
+    text-align: center;
+    font-size: 1.5rem; /* Slightly larger font size */
+    color: #6c757d; /* Grey color for empty message */
+    margin-bottom: 20px;
+}
+
+.empty-wishlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    background-color: #f8f9fa; /* Light background */
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.empty-wishlist-icon {
+    font-size: 3rem; /* Larger icon */
+    color: #007bff; /* Bootstrap primary color */
+    margin-bottom: 20px;
+}
+
+.empty-wishlist-image {
+    width: 200px; /* Set a specific width */
+    margin-bottom: 20px; /* Space between image and text */
+}
+
+.empty-button {
+    border-radius: 25px; /* Rounded button */
+    padding: 10px 20px; /* Padding for button */
+    font-size: 1rem; /* Font size for button */
+    color: white; /* Text color */
+    background-color: #007bff; /* Primary color */
+    border: none; /* Remove border */
+    transition: background-color 0.3s; /* Transition effect */
+}
+
+.empty-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }

@@ -64,7 +64,7 @@ const CartScreen = ({ history }) => {
             {error && <div className="error-notification">{error}</div>}
             {cartItems.length === 0 ? (
                 <div className="empty-cart">
-                    <h2>🛑 Cart is Empty</h2>
+                    <h2>🛑 is Empty</h2>
                     <button onClick={shopNowHandler} className="shop-now-btn">🛍️ Shop Now</button>
                 </div>
             ) : (

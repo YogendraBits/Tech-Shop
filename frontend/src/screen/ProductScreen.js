@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'; // Import plus and minus icons
 import { Link } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Form, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,11 +17,11 @@ const ProductScreen = ({ history, match }) => {
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0); 
   const [comment, setComment] = useState(''); 
-  const [editReviewId, setEditReviewId] = useState(null); // Track which review is being edited
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete confirmation modal
-  const [reviewToDelete, setReviewToDelete] = useState(null); // Track which review is selected for deletion
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success message modal
-  const [successMessage, setSuccessMessage] = useState(''); // Message to display in success modal
+  const [editReviewId, setEditReviewId] = useState(null); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [reviewToDelete, setReviewToDelete] = useState(null); 
+  const [showSuccessModal, setShowSuccessModal] = useState(false); 
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const dispatch = useDispatch();
 
@@ -39,14 +39,14 @@ const ProductScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (successProductReview) {
-      setSuccessMessage('Review Submitted!'); // Set the success message
-      setShowSuccessModal(true); // Show the success modal
+      setSuccessMessage('Review Submitted!'); 
+      setShowSuccessModal(true); 
       resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     if (successDeleteReview) {
       setSuccessMessage('Review Deleted!');
-      setShowSuccessModal(true); // Show the success modal after deletion
+      setShowSuccessModal(true); 
       dispatch({ type: PRODUCT_DELETE_REVIEW_RESET });
     }
     dispatch(listProductDetails(match.params.id));
@@ -98,24 +98,36 @@ const ProductScreen = ({ history, match }) => {
   };
 
   const handleDeleteReview = (reviewId) => {
-    setReviewToDelete(reviewId); // Set the review ID to delete
-    setShowDeleteModal(true); // Show the modal
+    setReviewToDelete(reviewId); 
+    setShowDeleteModal(true); 
   };
 
   const confirmDeleteReview = () => {
     if (reviewToDelete) {
       dispatch(deleteProductReview(match.params.id, reviewToDelete));
-      setShowDeleteModal(false); // Close the delete confirmation modal
+      setShowDeleteModal(false); 
     }
   };
 
   const cancelDeleteReview = () => {
-    setShowDeleteModal(false); // Close the delete confirmation modal
-    setReviewToDelete(null); // Clear the review ID
+    setShowDeleteModal(false); 
+    setReviewToDelete(null); 
   };
 
   const handleSuccessModalClose = () => {
-    setShowSuccessModal(false); // Close the success modal
+    setShowSuccessModal(false); 
+  };
+
+  const incrementQty = () => {
+    if (qty < product.countInStock) {
+      setQty(qty + 1);
+    }
+  };
+
+  const decrementQty = () => {
+    if (qty > 1) {
+      setQty(qty - 1);
+    }
   };
 
   return (
@@ -139,8 +151,16 @@ const ProductScreen = ({ history, match }) => {
                   <h2>{product.name}</h2>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <Rating value={product.rating} text={`${product.numReviews} reviews`} />
+                  <Row>
+                    <Col md={6}>
+                      <Rating value={product.rating} />
+                    </Col>
+                    <Col md={6}>
+                      <span>No. of Reviews: {product.numReviews}</span>
+                    </Col>
+                  </Row>
                 </ListGroup.Item>
+
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
                 <ListGroup.Item>Description: {product.description}</ListGroup.Item>
               </ListGroup>
@@ -155,20 +175,18 @@ const ProductScreen = ({ history, match }) => {
                   {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
-                        <Col>Qty</Col>
                         <Col>
-                          <Form.Control
-                            as="select"
-                            value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))}
-                          >
-                            {[...Array(product.countInStock).keys()].map((x) => (
-                              <option key={x + 1} value={x + 1}>
-                                {x + 1}
-                              </option>
-                            ))}
-                          </Form.Control>
+                          Quantity:
                         </Col>
+                        <Col className="qty-display d-flex align-items-center justify-content-center">
+                          <Button variant="light" onClick={decrementQty} disabled={qty <= 1}>
+                            <FontAwesomeIcon icon={faMinus} />
+                          </Button>
+                          <span className="qty-number mx-3">{qty}</span>
+                          <Button variant="light" onClick={incrementQty} disabled={qty >= product.countInStock}>
+                            <FontAwesomeIcon icon={faPlus} />
+                          </Button>
+                        </Col>               
                       </Row>
                     </ListGroup.Item>
                   )}
@@ -202,46 +220,65 @@ const ProductScreen = ({ history, match }) => {
 
           {/* Review Section */}
           <Row className="mt-4">
+
+
             <Col md={6}>
-              <Card className="p-4 mb-4 shadow-sm">
-                <h2 className="mb-3">Reviews</h2>
-                {product.reviews.length === 0 && <Message>No Reviews</Message>}
-                <ListGroup variant="flush">
-                  {product.reviews.map((review) => (
-                    <ListGroup.Item key={review._id} className="border-0 mb-3">
-                      <div className="p-3 border rounded bg-light">
-                        <div>
-                          <strong>{review.name}</strong>
-                        </div>
-                        <div className="d-flex align-items-center mt-1"> {/* Flex container for stars, edit, and delete buttons */}
-                          <Rating value={review.rating} />
-                          {userInfo && userInfo._id === review.user && (
-                            <>
-                              <Button
-                                variant="link"
-                                onClick={() => handleEditReview(review)}
-                                className="ed-button ml-2"
-                              >
-                                <FontAwesomeIcon icon={faEdit} />
-                              </Button>
-                              <Button
-                                variant="link"
-                                onClick={() => handleDeleteReview(review._id)}
-                                className="ed-button text-danger ml-2"
-                              >
-                                <FontAwesomeIcon icon={faTrash} />
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                        <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
-                        <p className="mt-2">{review.comment}</p>
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card>
-            </Col>
+  <Card className="p-4 mb-4 shadow-sm">
+    <h2 className="mb-3">Reviews</h2>
+    {product.reviews.length === 0 && <Message>No Reviews</Message>}
+    
+    {/* Review container with fixed height and scroll */}
+    <div className="review-container">
+      <ListGroup variant="flush">
+        {/* Sort reviews to display the logged-in user's review first */}
+        {[...product.reviews]
+          .sort((a, b) => (userInfo && a.user === userInfo._id ? -1 : 1))
+          .slice(0, 2) // Limit to 2 reviews
+          .map((review) => (
+            <ListGroup.Item key={review._id} className="border-0 mb-3">
+              <div className="p-3 border rounded bg-light">
+                <div>
+                  <strong>{review.name}</strong>
+                </div>
+                <div className="d-flex align-items-center mt-1">
+                  <Rating value={review.rating} />
+                  {userInfo && userInfo._id === review.user && (
+                    <>
+                      <Button
+                        variant="link"
+                        onClick={() => handleEditReview(review)}
+                        className="ed-button ml-2"
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </Button>
+                      <Button
+                        variant="link"
+                        onClick={() => handleDeleteReview(review._id)}
+                        className="ed-button text-danger ml-2"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
+                <p className="mt-2 review-comment">{review.comment}</p>
+              </div>
+            </ListGroup.Item>
+          ))}
+      </ListGroup>
+    </div>
+
+    {/* Optional: Add a button to show more reviews */}
+    {product.reviews.length > 2 && (
+      <Button variant="link" className="mt-2" onClick={() => {/* Logic to show more reviews */}}>
+        Show More Reviews
+      </Button>
+    )}
+  </Card>
+</Col>
+
+
 
             <Col md={6}>
               <Card className="p-3">

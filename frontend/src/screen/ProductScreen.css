@@ -1,51 +1,77 @@
 .btn-block {
-    display: block;        /* Makes the button a block-level element */
-    width: 100%;          /* Ensures the button takes the full width of its parent */
-    margin: 0;            /* Removes default margin */
-    padding: 0.5rem 1rem; /* Adds padding for a better touch area */
-    border: none;         /* Removes border */
-    border-radius: 0.25rem; /* Optional: rounded corners */
-    font-size: 1rem;      /* Sets font size */
-    text-align: center;   /* Centers the text inside the button */
-    cursor: pointer;      /* Changes the cursor to pointer on hover */
-  }
-  
-  .btn-block:hover {
-    opacity: 0.8;         /* Changes opacity on hover for visual feedback */
-  }
-  
-  .card {
-    border: 1px solid #e1e1e1; /* Light border around the card */
-    border-radius: 0.5rem; /* Rounded corners for the card */
-  }
-  
-  .card h2 {
-    font-size: 1.75rem; /* Larger font size for the heading */
-    font-weight: 600; /* Bold heading for emphasis */
-  }
-  
-  .list-group-item {
-    border-radius: 0.25rem; /* Rounded corners for list items */
-  }
-  
-  .bg-light {
-    transition: background-color 0.3s ease; /* Smooth background transition */
-  }
-  .list-group-item:hover .bg-light {
-    background-color: #e2e6ea; /* Change background on hover */
-  }
-  
+  display: block;        /* Makes the button a block-level element */
+  width: 100%;          /* Ensures the button takes the full width of its parent */
+  margin: 0;            /* Removes default margin */
+  padding: 0.5rem 1rem; /* Adds padding for a better touch area */
+  border: none;         /* Removes border */
+  border-radius: 0.25rem; /* Optional: rounded corners */
+  font-size: 1rem;      /* Sets font size */
+  text-align: center;   /* Centers the text inside the button */
+  cursor: pointer;      /* Changes the cursor to pointer on hover */
+}
 
-  .ed-button {
-    font-size: 1.2rem; /* Adjust size as needed */
-    color: #6de90e; /* Default color for the icon */
-    padding: 0; /* Remove padding to keep it aligned */
-    display: flex; /* Align center */
-    align-items: center; /* Center the icon vertically */
-  }
-  
-  .ed-button:hover {
-    color: #f37907; /* Change color on hover */
-    text-decoration: none; /* Remove underline on hover */
-  }
-  
+.btn-block:hover {
+  opacity: 0.8;         /* Changes opacity on hover for visual feedback */
+}
+
+.card {
+  border: 1px solid #e1e1e1; /* Light border around the card */
+  border-radius: 0.5rem; /* Rounded corners for the card */
+}
+
+.card h2 {
+  font-size: 1.75rem; /* Larger font size for the heading */
+  font-weight: 600; /* Bold heading for emphasis */
+}
+
+.list-group-item {
+  border-radius: 0.25rem; /* Rounded corners for list items */
+}
+
+.bg-light {
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+.list-group-item:hover .bg-light {
+  background-color: #e2e6ea; /* Change background on hover */
+}
+
+
+.ed-button {
+  font-size: 1.2rem; /* Adjust size as needed */
+  color: #6de90e; /* Default color for the icon */
+  padding: 0; /* Remove padding to keep it aligned */
+  display: flex; /* Align center */
+  align-items: center; /* Center the icon vertically */
+  margin: 10px;
+}
+
+.ed-button:hover {
+  color: #f37907; /* Change color on hover */
+  text-decoration: none; /* Remove underline on hover */
+}
+
+
+.qty-display button {
+  margin: 0 10px; /* Adds equal margin on both sides of the buttons */
+}
+
+.qty-display .qty-number {
+  padding: 0 10px; /* Ensures the quantity number also has space on both sides */
+}
+
+
+.review-comment {
+  max-height: 100px; /* Set a maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  padding: 5px; /* Optional padding for aesthetics */
+  border: 1px solid #ccc; /* Optional border */
+  border-radius: 4px; /* Optional rounded corners */
+  background-color: #f9f9f9; /* Optional background color */
+}
+
+.review-container {
+  max-height: 300px; /* Set your desired height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-bottom: 20px; /* Optional margin for spacing */
+}

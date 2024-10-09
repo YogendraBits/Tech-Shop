@@ -6,21 +6,21 @@ import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { addToCart } from '../actions/cartActions';
 import { removeFromwishlist, fetchWishlist } from '../actions/wishlistActions';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaShoppingCart, FaHeartBroken} from 'react-icons/fa'; 
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'; // Add this to your imports
 import './WishlistScreen.css';
 
 const WishlistScreen = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const wishlist = useSelector((state) => state.wishlist);
-    const { wishlistitems = [], loading, error } = wishlist; // Default to empty array
+    const { wishlistitems = [], loading, error } = wishlist; 
 
     const [addedToCart, setAddedToCart] = useState({});
 
     useEffect(() => {
         dispatch(fetchWishlist());
     }, [dispatch]);
-
 
     const handleAddToCart = (productId, quantity) => {
         dispatch(addToCart(productId, quantity)); 
@@ -37,6 +37,10 @@ const WishlistScreen = () => {
         history.push('/cart'); 
     };
 
+    const goToHome = () => {
+        history.push('/'); 
+    };
+
     return (
         <div className="wis-screen">
             <h1 className="wis-title">Your Wishlist</h1>
@@ -45,11 +49,19 @@ const WishlistScreen = () => {
             ) : error ? (
                 <Message variant="danger">{error}</Message>
             ) : wishlistitems.length === 0 ? (
-                <Message className="wis-empty-message">Your wishlist is empty</Message>
+                <div className="empty-wishlist-container">
+                    <FaHeartBroken className="empty-wishlist-icon" />
+                    <Message className="wis-empty-message">
+                        Your wishlist is empty.
+                    </Message>
+                    <Button className="empty-button" onClick={goToHome}>
+                        Browse Products
+                    </Button>
+                </div>
             ) : (
                 <ListGroup className="wis-list-group">
                     {wishlistitems.map((item) => {
-                        if (!item) return null; // Guard against undefined items
+                        if (!item) return null; 
                         return (
                             <ListGroup.Item key={item._id} className="wis-list-item">
                                 <Row>
@@ -68,7 +80,7 @@ const WishlistScreen = () => {
                                         </Link>
                                     </Col>
                                     <Col md={3} className="wis-item-price">${item.price}</Col>
-                                    <Col md={3} className="wis-item-actions d-flex align-items-center justify-content-between">
+                                    <Col md={3} className="wis-item-actions">
                                         <Form.Control
                                             type="number"
                                             value={item.quantity}
@@ -77,24 +89,24 @@ const WishlistScreen = () => {
                                             max={item.countInStock}
                                         />
                                         {addedToCart[item.productId?._id] ? (
-                                            <Button variant="success" onClick={goToCart} className="wis-added-button">
-                                                Go to Cart
+                                            <Button variant="success" onClick={goToCart} className="wis-button wis-added-button">
+                                                <FaShoppingCart />
                                             </Button>
                                         ) : (
                                             <Button
                                                 type="button"
                                                 variant="light"
                                                 onClick={() => handleAddToCart(item.productId._id, item.quantity)}
-                                                className="wis-add-button"
+                                                className="wis-button wis-add-button"
                                             >
-                                                Add to Cart
+                                                <FaShoppingCart />
                                             </Button>
                                         )}
                                         <Button
                                             type="button"
                                             variant="danger"
                                             onClick={() => handleRemoveFromwishlist(item._id)} 
-                                            className="wis-remove-button"
+                                            className="wis-button wis-remove-button"
                                         >
                                             <FaTrash />
                                         </Button>
