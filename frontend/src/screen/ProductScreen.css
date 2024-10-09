@@ -35,4 +35,17 @@
     background-color: #e2e6ea; /* Change background on hover */
   }
   
+
+  .ed-button {
+    font-size: 1.2rem; /* Adjust size as needed */
+    color: #6de90e; /* Default color for the icon */
+    padding: 0; /* Remove padding to keep it aligned */
+    display: flex; /* Align center */
+    align-items: center; /* Center the icon vertically */
+  }
+  
+  .ed-button:hover {
+    color: #f37907; /* Change color on hover */
+    text-decoration: none; /* Remove underline on hover */
+  }
   

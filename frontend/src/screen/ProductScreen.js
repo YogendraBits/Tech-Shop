@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from '../Components/Rating';
-import { listProductDetails, createProductReview } from '../actions/productActions'; 
+import { listProductDetails, createProductReview, updateProductReview } from '../actions/productActions'; 
 import { addTowishlist } from '../actions/wishlistActions'; 
 import Loader from '../Components/Loader';
 import Message from '../Components/Message';
@@ -15,6 +17,7 @@ const ProductScreen = ({ history, match }) => {
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0); 
   const [comment, setComment] = useState(''); 
+  const [editReviewId, setEditReviewId] = useState(null); // Track which review is being edited
 
   const dispatch = useDispatch();
 
@@ -30,12 +33,17 @@ const ProductScreen = ({ history, match }) => {
   useEffect(() => {
     if (successProductReview) {
       alert('Review Submitted!');
-      setRating(0);
-      setComment('');
+      resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     dispatch(listProductDetails(match.params.id));
   }, [dispatch, match, successProductReview]);
+
+  const resetForm = () => {
+    setEditReviewId(null);
+    setRating(0);
+    setComment('');
+  };
 
   const addToCartHandler = () => {
     dispatch(addToCart(product._id, qty));
@@ -53,9 +61,33 @@ const ProductScreen = ({ history, match }) => {
     }
   };
 
-  const submitReviewHandler = (e) => {
+
+const submitReviewHandler = (e) => {
     e.preventDefault();
-    dispatch(createProductReview(match.params.id, { rating, comment }));
+    if (editReviewId) {
+        // Pass the product ID and review ID
+        dispatch(updateProductReview(match.params.id, editReviewId, { rating, comment }))
+            .then(() => {
+                // Reload product details after successfully updating review
+                dispatch(listProductDetails(match.params.id));
+                resetForm(); // Reset the form if needed
+            });
+    } else {
+        dispatch(createProductReview(match.params.id, { rating, comment }))
+            .then(() => {
+                // Reload product details after successfully creating review
+                dispatch(listProductDetails(match.params.id));
+                resetForm(); // Reset the form if needed
+            });
+    }
+};
+
+
+
+  const handleEditReview = (review) => {
+    setEditReviewId(review._id);
+    setRating(review.rating);
+    setComment(review.comment);
   };
 
   return (
@@ -150,15 +182,22 @@ const ProductScreen = ({ history, match }) => {
                 {product.reviews.map((review) => (
                   <ListGroup.Item key={review._id} className="border-0 mb-3">
                     <div className="p-3 border rounded bg-light">
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <strong>{review.name}</strong>
-                          <Rating value={review.rating} />
-                        </div>
-                        <div>
-                          <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
-                        </div>
+                      <div>
+                        <strong>{review.name}</strong>
                       </div>
+                      <div className="d-flex align-items-center mt-1"> {/* Flex container for stars and edit button */}
+                        <Rating value={review.rating} />
+                        {userInfo && userInfo._id === review.user && (
+                          <Button
+                            variant="link"
+                            onClick={() => handleEditReview(review)}
+                            className="ed-button ml-2" // Use ed-button class for custom styling
+                          >
+                            <FontAwesomeIcon icon={faEdit} />
+                          </Button>
+                        )}
+                      </div>
+                      <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
                       <p className="mt-2">{review.comment}</p>
                     </div>
                   </ListGroup.Item>
@@ -167,10 +206,11 @@ const ProductScreen = ({ history, match }) => {
             </Card>
           </Col>
 
+          
 
             <Col md={6}>
               <Card className="p-3">
-                <h2>Write a Customer Review</h2>
+                <h2>{editReviewId ? 'Edit Your Review' : 'Write a Customer Review'}</h2>
                 {errorProductReview && (
                   <Message variant="danger">{errorProductReview}</Message>
                 )}
@@ -203,20 +243,16 @@ const ProductScreen = ({ history, match }) => {
                       />
                     </Form.Group>
                     <Button type="submit" variant="primary" className="btn-block">
-                      Submit
+                      {editReviewId ? 'Update' : 'Submit'}
                     </Button>
                   </Form>
                 ) : (
                   <Message>
-                    Please <Link to="/login">sign in</Link> to write a review{' '}
+                    Please <Link to="/login">sign in</Link> to write a review
                   </Message>
                 )}
               </Card>
             </Col>
-
-
-
-
           </Row>
         </>
       )}

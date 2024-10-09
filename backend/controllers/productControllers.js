@@ -155,4 +155,40 @@ const getTopProducts = asyncHandle(async (req, res) => {
   res.json(products)
 })
 
-export { getProducts, getProductById , deleteProduct , updateProduct, createProduct,createProductReview,getTopProducts}
+
+//@desc       Update a product review
+//@route      PUT /api/products/:id/reviews/:reviewId
+//@access     Private
+const updateProductReview = asyncHandle(async (req, res) => {
+  const { rating, comment } = req.body;
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    const review = product.reviews.find((r) => r._id.toString() === req.params.reviewId);
+
+    if (review) {
+      // Update the review
+      review.rating = rating;
+      review.comment = comment;
+
+      // Recalculate the product rating
+      product.numReviews = product.reviews.length;
+      product.rating =
+        product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+
+      await product.save();
+      res.status(200).json({ message: 'Review updated' });
+    } else {
+      res.status(404);
+      throw new Error('Review not found');
+    }
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
+
+
+
+export { getProducts, getProductById , deleteProduct , updateProduct, createProduct,createProductReview,getTopProducts,updateProductReview}

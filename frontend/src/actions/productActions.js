@@ -21,6 +21,11 @@ import {
     PRODUCT_TOP_SUCCESS,
     PRODUCT_TOP_FAIL,
 
+    PRODUCT_UPDATE_REVIEW_REQUEST,
+    PRODUCT_UPDATE_REVIEW_SUCCESS,
+    PRODUCT_UPDATE_REVIEW_FAIL,
+    PRODUCT_UPDATE_REVIEW_RESET,
+
 } from '../constants/productConstants'
 import axios from 'axios'
 
@@ -238,3 +243,31 @@ export const listProductDetails = (id) => async (dispatch) =>{
       })
     }
   }
+
+  export const updateProductReview = (productId, reviewId, reviewData) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: PRODUCT_UPDATE_REVIEW_REQUEST });
+
+        const {
+            userLogin: { userInfo },
+        } = getState();
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+
+        // Updated endpoint to include productId
+        const { data } = await axios.put(`/api/products/${productId}/reviews/${reviewId}`, reviewData, config);
+
+        dispatch({ type: PRODUCT_UPDATE_REVIEW_SUCCESS, payload: data });
+    } catch (error) {
+        dispatch({
+            type: PRODUCT_UPDATE_REVIEW_FAIL,
+            payload: error.response && error.response.data.message ? error.response.data.message : error.message,
+        });
+    }
+};
+
+  
