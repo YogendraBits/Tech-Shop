@@ -7,11 +7,19 @@
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative; /* To position the delete button */
 }
 
 .section-title {
   font-size: 24px;
-  margin-bottom: 30px;
+  margin-bottom: 20px; /* Adjusted margin for better spacing */
+}
+
+.delete-button {
+  position: absolute; /* Positioning the delete button */
+  top: 20px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
+
 }
 
 .orders-table-wrapper {

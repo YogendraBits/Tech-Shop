@@ -248,3 +248,36 @@ export const updateUser = (user) => async (dispatch, getState) => {
     }
 };
 
+export const deleteUserAccount = () => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: USER_DELETE_REQUEST,
+        });
+
+        const { userLogin: { userInfo } } = getState();
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+
+        // Delete the logged-in user's account using their ID
+        await axios.delete(`/api/users/profile`, config);
+
+        dispatch({
+            type: USER_DELETE_SUCCESS,
+        });
+
+        // Log out the user after account deletion
+        dispatch(logout());
+
+    } catch (error) {
+        dispatch({
+            type: USER_DELETE_FAIL,
+            payload: error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message,
+        });
+    }
+};

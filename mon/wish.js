@@ -37,4 +37,4 @@ async function fetchAllItemsFromCollection(collectionName) {
 }
 
 // Call the function with the desired collection name
-fetchAllItemsFromCollection('orders'); // Change 'wishlistitems' to your desired collection name
+fetchAllItemsFromCollection('wishlistitems'); // Change 'wishlistitems' to your desired collection name

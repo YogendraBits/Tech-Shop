@@ -207,6 +207,35 @@ const updateUser = asyncHandle(async(req,res)=>{
     }
 })
 
+//@dec       Delete own user account
+//@route     DELETE /api/users/profile
+//@access    Private
+const deleteOwnAccount = asyncHandle(async (req, res) => {
+    const userId = req.user._id; // Get the logged-in user's ID
+
+    // First, find the user
+    const user = await User.findById(userId);
+
+    if (user) {
+        // Delete all addresses associated with this user
+        await Address.deleteMany({ user: userId });
+
+        // Delete all cart items associated with this user
+        await Cart.deleteMany({ user: userId });
+
+        // Delete all wishlist items associated with this user
+        await Wishlist.deleteMany({ userId: userId });
+
+        // Now delete the user
+        await user.remove();
+        res.send({ message: "Your account has been deleted successfully" });
+    } else {
+        res.status(404);
+        throw new Error("User Not Found");
+    }
+});
 
 
-export  {authUsers , registerUser ,getUserProfile, updateUserProfile , getUser , deleteUser ,getUserById ,updateUser}
+
+
+export  {authUsers , registerUser ,getUserProfile, updateUserProfile , getUser , deleteUser ,getUserById ,updateUser,deleteOwnAccount}
