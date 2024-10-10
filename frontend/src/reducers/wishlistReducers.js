@@ -8,40 +8,24 @@ const initialState = {
 
 export const wishlistReducer = (state = initialState, action) => {
   switch (action.type) {
-    case WISHLIST_REQUEST:
-        return { ...state, loading: true };
-    case WISHLIST_SUCCESS:
-        return { loading: false, wishlistitems: action.payload };
-    case WISHLIST_FAIL:
-        return { loading: false, error: action.payload };
-    
-    case WISHLIST_ADD_ITEM:
-      const newItem = action.payload; // This now contains the updated list of wishlist items from the API response
-
-      // Check if the new item already exists in the wishlist
-      const exists = state.wishlistitems.find(x => x.productId === newItem.productId); // Ensure this matches your schema
-
-      if (exists) {
-        return {
-          ...state,
-          wishlistitems: state.wishlistitems.map(x => 
-            x.productId === exists.productId ? { ...x, quantity: newItem.quantity } : x // Update the existing item
-          ),
-        };
-      } else {
-        return {
-          ...state,
-          wishlistitems: [...state.wishlistitems, newItem], // Add the new item
-        };
-      }
+      case WISHLIST_REQUEST:
+          return { ...state, loading: true };
+      case WISHLIST_SUCCESS:
+          return { loading: false, wishlistitems: action.payload };
+      case WISHLIST_FAIL:
+          return { loading: false, error: action.payload };
       
-    case WISHLIST_REMOVE_ITEM:
-      return {
-        ...state,
-        wishlistitems: state.wishlistitems.filter(x => x.product !== action.payload), // Remove item by product ID
-      };
-
-    default:
-      return state; // Return the current state if no actions match
+      case WISHLIST_ADD_ITEM:
+          return { ...state, wishlistitems: action.payload }; // Update with new list
+      
+      case WISHLIST_REMOVE_ITEM:
+          return {
+              ...state,
+              wishlistitems: state.wishlistitems.filter(item => item._id !== action.payload),
+          };
+        
+      default:
+          return state;
   }
 };
+

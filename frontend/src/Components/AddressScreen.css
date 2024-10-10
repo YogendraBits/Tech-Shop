@@ -1,0 +1,117 @@
+.address-screen-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.address-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.address-list {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+    max-height: 400px;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+.address-form-container {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.address-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.address-details {
+    flex: 1;
+}
+
+.address-actions {
+    display: flex;
+    align-items: center;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 1.5em;
+    margin-left: 10px;
+}
+
+.icon-button:hover {
+    color: #0056b3;
+}
+
+.address-form-container form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.address-form-container input {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.address-form-container button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.address-form-container button:hover {
+    background-color: #0056b3;
+}
+
+.login-prompt {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.login-prompt h2 {
+    margin-bottom: 10px;
+}
+
+.login-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}

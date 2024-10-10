@@ -20,6 +20,8 @@ import ProductEditScreen from './screen/ProductEditScreen';
 import OrderListScreen from './screen/OrderListScreen';
 import WishlistScreen from './screen/WishlistScreen'; 
 import AboutUs from './Components/AboutUs';
+import AddressScreen from './Components/AddressScreen';
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
         <Header />
         <main className="py-3">
           <Container>
+            <Route path='/address' component={AddressScreen} />
             <Route path='/AboutUs' component={AboutUs} />
             <Route path='/wishlist' component={WishlistScreen} />
             <Route path="/shipping" component={ShippingScreen} />

@@ -159,9 +159,6 @@ export const updateCartItem = (itemId, quantity) => async (dispatch, getState) =
             type: CART_UPDATE_ITEM,
             payload: data,
         });
-
-        // Optionally, update local storage
-        localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
     } catch (error) {
         console.error("Error updating cart item:", error.response?.data?.message || error.message);
         throw new Error(error.response?.data?.message || 'Failed to update item quantity.');

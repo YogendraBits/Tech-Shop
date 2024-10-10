@@ -1,8 +1,6 @@
-.wis-wishlist-screen {
+.wis-screen {
     padding: 20px;
     background-color: #f8f9fa; /* Light background */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .wis-title {
@@ -12,61 +10,61 @@
     text-align: center;
 }
 
-.wis-empty-message {
-    text-align: center;
-    font-size: 1.25rem;
-    color: #6c757d; /* Grey color for empty message */
-    margin-bottom: 20px;
-}
-
 .wis-list-group {
     margin-top: 20px;
 }
 
 .wis-list-item {
-    background-color: #ffffff; /* White background for list items */
+    display: flex; /* Use flexbox for tile layout */
+    justify-content: center; /* Center content */
+    margin-bottom: 20px; /* Space between tiles */
+}
+
+.wis-tile {
+    background-color: #ffffff; /* White background for tiles */
     border: 1px solid #dee2e6; /* Light border */
-    border-radius: 8px;
-    margin-bottom: 10px;
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Padding inside tile */
+    width: 100%; /* Full width of the column */
+    max-width: 300px; /* Maximum width for tiles */
+    text-align: center; /* Center all text */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
     transition: box-shadow 0.3s; /* Smooth shadow transition */
 }
 
-.wis-list-item:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Hover effect */
+.wis-tile:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
 }
 
 .wis-item-image {
-    width: 100%; /* Responsive image */
-    border-radius: 8px 0 0 8px; /* Rounded corners for image */
+    width: 100%; /* Image takes full width of tile */
+    height: 150px; /* Fixed height for uniformity */
+    object-fit: cover; /* Cover the image */
+    border-radius: 8px; /* Rounded corners for image */
+}
+
+.wis-item-info {
+    margin: 10px 0; /* Space above and below item info */
 }
 
 .wis-item-name {
     font-weight: bold;
     color: #007bff; /* Bootstrap primary color */
     text-decoration: none;
-}
-
-.wis-item-price {
-    font-size: 1.25rem;
-    color: #28a745; /* Green for price */
+    margin-bottom: 5px; /* Space below name */
 }
 
 .wis-item-actions {
-    display: flex;
-    align-items: center;
+    display: flex; /* Use flexbox for actions */
     justify-content: space-around; /* Space out actions evenly */
+    margin-top: 10px; /* Space above actions */
 }
 
-.wis-quantity-input {
-    width: 60px; /* Fixed width for quantity input */
-    border-radius: 4px;
-}
-
-.wis-button {
+.wis-button,wis-quantity-display {
     border-radius: 50%; /* Round buttons for a more modern look */
-    width: 40px;
-    height: 40px;
-    display: flex;
+    width: 35px; /* Adjusted width */
+    height: 35px; /* Adjusted height */
+    display: flex; /* Center icon */
     align-items: center;
     justify-content: center;
 }
@@ -97,13 +95,6 @@
     background-color: #218838; /* Darker green on hover */
 }
 
-.wis-empty-message {
-    text-align: center;
-    font-size: 1.5rem; /* Slightly larger font size */
-    color: #6c757d; /* Grey color for empty message */
-    margin-bottom: 20px;
-}
-
 .empty-wishlist-container {
     display: flex;
     flex-direction: column;
@@ -120,11 +111,6 @@
     font-size: 3rem; /* Larger icon */
     color: #007bff; /* Bootstrap primary color */
     margin-bottom: 20px;
-}
-
-.empty-wishlist-image {
-    width: 200px; /* Set a specific width */
-    margin-bottom: 20px; /* Space between image and text */
 }
 
 .empty-button {

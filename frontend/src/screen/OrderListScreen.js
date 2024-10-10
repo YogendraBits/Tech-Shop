@@ -35,9 +35,10 @@ const OrderListScreen = ({ history }) => {
     setSortCriteria(e.target.value);
   };
 
+  // Filter orders without excluding those with missing user data
   const filteredOrders = orders
-    ? orders.filter((order) =>
-        order.user && order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ? orders.filter((order) => 
+        !order.user || order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 
@@ -101,7 +102,7 @@ const OrderListScreen = ({ history }) => {
             {sortedOrders.map((order) => (
               <tr key={order._id}>
                 <td>{order._id}</td>
-                <td>{order.user && order.user.name}</td>
+                <td>{order.user ? order.user.name : 'Deleted User'}</td>
                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td>${order.totalPrice.toFixed(2)}</td>
                 <td>{order.isPaid ? 'Yes' : 'No'}</td>

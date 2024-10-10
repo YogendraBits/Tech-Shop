@@ -39,60 +39,58 @@ export const fetchWishlist = () => async (dispatch, getState) => {
 };
 
 // Add an item to the wishlist
-export const addTowishlist = (productId,qty) => async (dispatch, getState) => {
-    const { userInfo } = getState().userLogin; // Ensure you have user login info
+export const addTowishlist = (productId, qty) => async (dispatch, getState) => {
+    const { userInfo } = getState().userLogin;
 
     if (!userInfo) {
         console.error('User not logged in');
-        return; // Prevent action if user is not logged in
+        return;
     }
-    
+
     try {
-        // Make an API call to add the product to the wishlist in the database
         const { data } = await axios.post('/api/wishlist', {
             productId,
             quantity: qty,
         }, {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`, // Include the token for authentication
+                Authorization: `Bearer ${userInfo.token}`,
             },
         });
 
+        // Assuming API returns the updated wishlist
         dispatch({
             type: WISHLIST_ADD_ITEM,
-            payload: data.wishlistitems, // Assuming your API returns the updated wishlist items
-            
+            payload: data.wishlistitems, // Send the entire updated wishlist array
         });
-        
-
-    } 
-    catch (error) {
+    } catch (error) {
         console.error('Failed to add item to wishlist', error);
     }
 };
 
+
+
+
 // Remove an item from the wishlist
 export const removeFromwishlist = (itemId) => async (dispatch, getState) => {
-    const { userInfo } = getState().userLogin; // Ensure you have user login info
+    const { userInfo } = getState().userLogin;
 
     if (!userInfo) {
         console.error('User not logged in');
-        return; // Prevent action if user is not logged in
+        return;
     }
 
     try {
-        // Make an API call to remove the product from the wishlist in the database
         await axios.delete(`/api/wishlist/${itemId}`, {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`, // Include the token for authentication
+                Authorization: `Bearer ${userInfo.token}`,
             },
         });
 
+        // Dispatch remove action with the item ID directly to update the state
         dispatch({
             type: WISHLIST_REMOVE_ITEM,
-            payload: itemId, // Send the product ID to remove from state
+            payload: itemId,
         });
-
     } catch (error) {
         console.error('Failed to remove item from wishlist', error);
     }

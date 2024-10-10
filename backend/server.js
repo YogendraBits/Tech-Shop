@@ -14,7 +14,7 @@ import { notFound, errorHandler } from './middlewear/errorMiddlewear.js';
 
 import { GoogleGenerativeAI } from "@google/generative-ai"; // for Gemini
 import groqRoutes from './routes/groqRoutes.js'; // Import the route
-
+import addressRoutes from './routes/addressRoutes.js';
 
 
 dotenv.config();
@@ -36,7 +36,7 @@ app.use("/api/wishlist", wishlistRoutes); // Use wishlist routes
 
 app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
 app.use("/api/groq", groqRoutes); 
-
+app.use('/api/addresses', addressRoutes);
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

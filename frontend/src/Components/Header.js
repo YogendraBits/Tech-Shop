@@ -73,6 +73,9 @@ const Header = ({ history }) => {
                                     <LinkContainer to="/profile">
                                         <NavDropdown.Item>Profile</NavDropdown.Item>
                                     </LinkContainer>
+                                    <LinkContainer to="/address">
+                                        <NavDropdown.Item>Address</NavDropdown.Item>
+                                    </LinkContainer>
                                     <NavDropdown.Item onClick={() => setShowLogoutModal(true)}>Logout</NavDropdown.Item>
                                 </NavDropdown>
                             ) : (

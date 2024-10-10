@@ -7,7 +7,6 @@ import Loader from '../Components/Loader';
 import { addToCart } from '../actions/cartActions';
 import { removeFromwishlist, fetchWishlist } from '../actions/wishlistActions';
 import { FaTrash, FaShoppingCart, FaHeartBroken } from 'react-icons/fa'; 
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'; // Add this to your imports
 import './WishlistScreen.css';
 
 const WishlistScreen = () => {
@@ -35,7 +34,7 @@ const WishlistScreen = () => {
 
     const handleRemoveFromwishlist = (id) => {
         dispatch(removeFromwishlist(id)).then(() => {
-            window.location.reload();
+            // window.location.reload();
         });
     };
 
@@ -76,35 +75,25 @@ const WishlistScreen = () => {
                     </Button>
                 </div>
             ) : (
-                <ListGroup className="wis-list-group">
+                <Row className="wis-list-group">
                     {wishlistitems.map((item) => {
                         if (!item) return null; 
                         return (
-                            <ListGroup.Item key={item._id} className="wis-list-item">
-                                <Row>
-                                    <Col md={3}>
-                                        <Link to={`/product/${item.productId?._id}`}>
-                                            <img 
-                                                src={item.image} 
-                                                alt={item.name} 
-                                                className="wis-item-image" 
-                                            />
-                                        </Link>
-                                    </Col>
-                                    <Col md={3}>
+                            <Col xs={12} sm={6} md={4} key={item._id} className="wis-list-item">
+                                <div className="wis-tile">
+                                    <Link to={`/product/${item.productId?._id}`}>
+                                        <img 
+                                            src={item.image} 
+                                            alt={item.name} 
+                                            className="wis-item-image" 
+                                        />
+                                    </Link>
+                                    <div className="wis-item-info">
                                         <Link to={`/product/${item.productId?._id}`}>
                                             <strong className="wis-item-name">{item.name}</strong>
                                         </Link>
-                                    </Col>
-                                    <Col md={3} className="wis-item-price">${item.price}</Col>
-                                    <Col md={3} className="wis-item-actions">
-                                        <Form.Control
-                                            type="number"
-                                            value={item.quantity}
-                                            className="wis-quantity-input"
-                                            min={1}
-                                            max={item.countInStock}
-                                        />
+                                    </div>
+                                    <div className="wis-item-actions">
                                         {addedToCart[item.productId?._id] ? (
                                             <Button variant="success" onClick={goToCart} className="wis-button wis-added-button">
                                                 <FaShoppingCart />
@@ -119,6 +108,7 @@ const WishlistScreen = () => {
                                                 <FaShoppingCart />
                                             </Button>
                                         )}
+                                        <span className="wis-quantity-display">Qty: {item.quantity}</span>
                                         <Button
                                             type="button"
                                             variant="danger"
@@ -127,12 +117,12 @@ const WishlistScreen = () => {
                                         >
                                             <FaTrash />
                                         </Button>
-                                    </Col>
-                                </Row>
-                            </ListGroup.Item>
+                                    </div>
+                                </div>
+                            </Col>
                         );
                     })}
-                </ListGroup>
+                </Row>
             )}
         </div>
     );

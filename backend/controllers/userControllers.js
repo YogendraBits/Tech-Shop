@@ -1,6 +1,9 @@
 import asyncHandle from 'express-async-handler';
 import User from '../models/userModel.js'
 import generateToken from '../utils/generateToken.js'
+import Address from '../models/addressModel.js';
+import Cart from '../models/cartModel.js'; // Adjust the path as necessary
+import Wishlist from '../models/wishlistModel.js'; // Adjust the path as necessary
 
 
 
@@ -130,21 +133,32 @@ const getUser = asyncHandle(async(req,res)=>{
 })
 
 //@dec       Delete User
-//@route     Delete /api/users/:id
+//@route     DELETE /api/users/:id
 //@access    Private/admin 
+const deleteUser = asyncHandle(async (req, res) => {
+    const userId = req.params.id;
 
-const deleteUser = asyncHandle(async(req,res)=>{
- 
-    const user = await User.findById(req.params.id)
+    // First, find the user
+    const user = await User.findById(userId);
+
     if (user) {
-         await user.remove()
-         res.send({message:"User deleted successfully"})
-    }else{
-        res.status(404)
-        throw new Error("User Not Found")
-    }
-})
+        // Delete all addresses associated with this user
+        await Address.deleteMany({ user: userId });
 
+        // Delete all cart items associated with this user
+        await Cart.deleteMany({ user: userId });
+
+        // Delete all wishlist items associated with this user
+        await Wishlist.deleteMany({ userId: userId });
+
+        // Now delete the user
+        await user.remove();
+        res.send({ message: "User, addresses, cart, and wishlist deleted successfully" });
+    } else {
+        res.status(404);
+        throw new Error("User Not Found");
+    }
+});
 
 //@dec       GET Users by id
 //@route     GET /api/users/:id
@@ -169,13 +183,16 @@ const getUserById = asyncHandle(async(req,res)=>{
 //@access    Private/admin
 
 const updateUser = asyncHandle(async(req,res)=>{
- 
+    
     const user = await User.findById(req.params.id)
+
+    console.log('Updating user:', req.params.id, req.body);
+    console.log('Current user data:', user);
 
     if (user) {
         user.name =req.body.name || user.name
         user.email = req.body.email || user.email
-        user.isAdmin=req.body.isAdmin || user.isAdmin
+        user.isAdmin=req.body.isAdmin !== undefined ? req.body.isAdmin : user.isAdmin;
         const updatedUser = await user.save()
         res.json({ 
             _id: updatedUser._id,

@@ -33,6 +33,9 @@ import {
 } from './reducers/orderReducers';
 import { wishlistReducer } from './reducers/wishlistReducers'; 
 
+
+import { addressListReducer, addressCreateReducer, addressUpdateReducer, addressDeleteReducer } from './reducers/addressReducers.js';
+
 const reducer = combineReducers({
     productList: productListReducer,
     productDetails: productDetailsReducer,
@@ -58,7 +61,12 @@ const reducer = combineReducers({
     orderDeliver: orderDeliverReducer,
     orderListMy: orderListMyReducer,
     orderList: orderListReducer,
-    wishlist: wishlistReducer, // Include the wishlist reducer
+    wishlist: wishlistReducer, 
+
+    addressList: addressListReducer,
+    addressCreate: addressCreateReducer,
+    addressUpdate: addressUpdateReducer,
+    addressDelete: addressDeleteReducer,
 });
 
 // Load cart items from localStorage
