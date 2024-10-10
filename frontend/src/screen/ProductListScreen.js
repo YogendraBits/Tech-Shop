@@ -44,7 +44,7 @@ function ProductListScreen({ history, match }) {
   };
 
   const createProductHandler = () => {
-    history.push('/admin/product/create');
+    dispatch(createProduct());
   };
 
   return (

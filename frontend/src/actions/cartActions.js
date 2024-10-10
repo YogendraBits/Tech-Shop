@@ -19,6 +19,33 @@ export const loadCart = () => async (dispatch, getState) => {
     }
 };
 
+export const checkIfProductExistsInCart = (productId) => async (dispatch, getState) => {
+    const { userLogin: { userInfo } } = getState(); // Get user info from state
+
+    if (!userInfo) {
+        console.error('User not logged in');
+        return false;
+    }
+
+    try {
+        // Fetch the user's cart
+        const { data: cart } = await axios.get('/api/cart/mycart', {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`, // Include token for authorization
+            },
+        });
+
+        // Check if the product exists in the cart
+        const productExists = cart.cartItems.some(item => item.product.toString() === productId.toString());
+
+        return productExists;
+
+    } catch (error) {
+        console.error('Error checking if product exists in cart:', error);
+        return false;
+    }
+};
+
 
 // Add to Cart Action
 export const addToCart = (id, qty) => async (dispatch, getState) => {

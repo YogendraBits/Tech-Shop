@@ -1,0 +1,56 @@
+/* src/components/AboutUs.css */
+
+.about-us {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .team-container {
+    display: flex;
+    justify-content: space-between; /* Space out the team members */
+    flex-wrap: wrap; /* Allow wrapping to the next line on smaller screens */
+    margin-top: 20px;
+  }
+  
+  .team-member {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(20% - 20px); /* 5 members in a line with spacing */
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  
+  .team-member:hover {
+    transform: scale(1.05); /* Add a hover effect */
+  }
+  
+  .member-image {
+    width: 100px; /* Set a fixed width */
+    height: 100px; /* Set a fixed height */
+    border-radius: 50%; /* Make the image circular */
+    object-fit: cover; /* Ensure image covers the area */
+  }
+  
+  .member-name {
+    font-size: 1.2rem;
+    margin: 10px 0 5px 0; /* Spacing around the name */
+    overflow: hidden; /* Prevent overflow */
+    white-space: nowrap; /* Prevent line break */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  }
+  
+  .github-link {
+    text-decoration: none;
+    color: #007bff; /* Bootstrap primary color */
+  }
+  
+  .github-link:hover {
+    text-decoration: underline; /* Add underline on hover */
+  }
+  

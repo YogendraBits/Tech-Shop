@@ -22,6 +22,7 @@ const ProductScreen = ({ history, match }) => {
   const [reviewToDelete, setReviewToDelete] = useState(null); 
   const [showSuccessModal, setShowSuccessModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
+  const [showLoginModal, setShowLoginModal] = useState(false); // New state for login modal
 
   const dispatch = useDispatch();
 
@@ -59,7 +60,11 @@ const ProductScreen = ({ history, match }) => {
   };
 
   const addToCartHandler = () => {
-    dispatch(addToCart(product._id, qty));
+    if (userInfo) {
+      dispatch(addToCart(product._id, qty));
+    } else {
+      setShowLoginModal(true); // Show login modal
+    }
   };
 
   const addToWishlistHandler = async () => {
@@ -70,7 +75,7 @@ const ProductScreen = ({ history, match }) => {
         alert('Failed to add item to wishlist. Please try again.');
       }
     } else {
-      alert('Please log in to add items to your wishlist.');
+      setShowLoginModal(true); // Show login modal
     }
   };
 
@@ -116,6 +121,10 @@ const ProductScreen = ({ history, match }) => {
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false); 
+  };
+
+  const handleLoginModalClose = () => {
+    setShowLoginModal(false); 
   };
 
   const incrementQty = () => {
@@ -220,65 +229,53 @@ const ProductScreen = ({ history, match }) => {
 
           {/* Review Section */}
           <Row className="mt-4">
-
-
             <Col md={6}>
-  <Card className="p-4 mb-4 shadow-sm">
-    <h2 className="mb-3">Reviews</h2>
-    {product.reviews.length === 0 && <Message>No Reviews</Message>}
-    
-    {/* Review container with fixed height and scroll */}
-    <div className="review-container">
-      <ListGroup variant="flush">
-        {/* Sort reviews to display the logged-in user's review first */}
-        {[...product.reviews]
-          .sort((a, b) => (userInfo && a.user === userInfo._id ? -1 : 1))
-          .slice(0, 2) // Limit to 2 reviews
-          .map((review) => (
-            <ListGroup.Item key={review._id} className="border-0 mb-3">
-              <div className="p-3 border rounded bg-light">
-                <div>
-                  <strong>{review.name}</strong>
+              <Card className="p-4 mb-4 shadow-sm">
+                <h2 className="mb-3">Reviews</h2>
+                {product.reviews.length === 0 && <Message>No Reviews</Message>}
+                
+                {/* Review container with fixed height and scroll */}
+                <div className="review-container">
+                  <ListGroup variant="flush">
+                    {/* Render all reviews directly */}
+                    {product.reviews
+                      .sort((a, b) => (userInfo && a.user === userInfo._id ? -1 : 1))
+                      .map((review) => (
+                        <ListGroup.Item key={review._id} className="border-0 mb-3">
+                          <div className="p-3 border rounded bg-light">
+                            <div>
+                              <strong>{review.name}</strong>
+                            </div>
+                            <div className="d-flex align-items-center mt-1">
+                              <Rating value={review.rating} />
+                              {userInfo && userInfo._id === review.user && (
+                                <>
+                                  <Button
+                                    variant="link"
+                                    onClick={() => handleEditReview(review)}
+                                    className="ed-button ml-2"
+                                  >
+                                    <FontAwesomeIcon icon={faEdit} />
+                                  </Button>
+                                  <Button
+                                    variant="link"
+                                    onClick={() => handleDeleteReview(review._id)}
+                                    className="ed-button text-danger ml-2"
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                            <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
+                            <p className="mt-2 review-comment">{review.comment}</p>
+                          </div>
+                        </ListGroup.Item>
+                      ))}
+                  </ListGroup>
                 </div>
-                <div className="d-flex align-items-center mt-1">
-                  <Rating value={review.rating} />
-                  {userInfo && userInfo._id === review.user && (
-                    <>
-                      <Button
-                        variant="link"
-                        onClick={() => handleEditReview(review)}
-                        className="ed-button ml-2"
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </Button>
-                      <Button
-                        variant="link"
-                        onClick={() => handleDeleteReview(review._id)}
-                        className="ed-button text-danger ml-2"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </Button>
-                    </>
-                  )}
-                </div>
-                <small className="text-muted">{review.createdAt.substring(0, 10)}</small>
-                <p className="mt-2 review-comment">{review.comment}</p>
-              </div>
-            </ListGroup.Item>
-          ))}
-      </ListGroup>
-    </div>
-
-    {/* Optional: Add a button to show more reviews */}
-    {product.reviews.length > 2 && (
-      <Button variant="link" className="mt-2" onClick={() => {/* Logic to show more reviews */}}>
-        Show More Reviews
-      </Button>
-    )}
-  </Card>
-</Col>
-
-
+              </Card>
+            </Col>
 
             <Col md={6}>
               <Card className="p-3">
@@ -320,14 +317,27 @@ const ProductScreen = ({ history, match }) => {
                   </Form>
                 ) : (
                   <Message>
-                    Please <Link to="/login">sign in</Link> to write a review
+                    Please <Link to="/login">Log-in</Link> to write a Review
                   </Message>
                 )}
               </Card>
             </Col>
           </Row>
 
-          {/* Delete Confirmation Modal */}
+          {/* Success Modal for Reviews */}
+          <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Success</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{successMessage}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleSuccessModalClose}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Delete Review Modal */}
           <Modal show={showDeleteModal} onHide={cancelDeleteReview}>
             <Modal.Header closeButton>
               <Modal.Title>Confirm Deletion</Modal.Title>
@@ -343,16 +353,19 @@ const ProductScreen = ({ history, match }) => {
             </Modal.Footer>
           </Modal>
 
-          {/* Success Message Modal */}
-          <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>
+          {/* Login Modal */}
+          <Modal show={showLoginModal} onHide={handleLoginModalClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Success</Modal.Title>
+              <Modal.Title>Please Log In</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{successMessage}</Modal.Body>
+            <Modal.Body>You need to log in to add items to the cart or wishlist.</Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleSuccessModalClose}>
-                OK
+              <Button variant="secondary" onClick={handleLoginModalClose}>
+                Close
               </Button>
+              <Link to="/login">
+                <Button variant="primary">Log In</Button>
+              </Link>
             </Modal.Footer>
           </Modal>
         </>

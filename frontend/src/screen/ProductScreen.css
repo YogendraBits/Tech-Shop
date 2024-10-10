@@ -71,7 +71,8 @@
 }
 
 .review-container {
-  max-height: 300px; /* Set your desired height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  margin-bottom: 20px; /* Optional margin for spacing */
+  max-height: 300px; /* Adjust height as needed */
+  overflow-y: auto; /* Enables vertical scrolling */
+  margin-top: 1rem; /* Optional: Add some space above the reviews */
 }
+

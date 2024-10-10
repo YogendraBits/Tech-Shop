@@ -6,21 +6,27 @@ import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { addToCart } from '../actions/cartActions';
 import { removeFromwishlist, fetchWishlist } from '../actions/wishlistActions';
-import { FaTrash, FaShoppingCart, FaHeartBroken} from 'react-icons/fa'; 
+import { FaTrash, FaShoppingCart, FaHeartBroken } from 'react-icons/fa'; 
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'; // Add this to your imports
 import './WishlistScreen.css';
 
 const WishlistScreen = () => {
     const dispatch = useDispatch();
     const history = useHistory();
+    
+    // Get user and wishlist state from Redux
+    const userLogin = useSelector((state) => state.userLogin);
+    const { userInfo } = userLogin; 
     const wishlist = useSelector((state) => state.wishlist);
     const { wishlistitems = [], loading, error } = wishlist; 
 
     const [addedToCart, setAddedToCart] = useState({});
 
     useEffect(() => {
-        dispatch(fetchWishlist());
-    }, [dispatch]);
+        if (userInfo) {
+            dispatch(fetchWishlist()); // Fetch wishlist if logged in
+        }
+    }, [dispatch, userInfo]);
 
     const handleAddToCart = (productId, quantity) => {
         dispatch(addToCart(productId, quantity)); 
@@ -37,6 +43,10 @@ const WishlistScreen = () => {
         history.push('/cart'); 
     };
 
+    const goToLogin = () => {
+        history.push('/login'); // Redirect to login page
+    };
+
     const goToHome = () => {
         history.push('/'); 
     };
@@ -44,7 +54,14 @@ const WishlistScreen = () => {
     return (
         <div className="wis-screen">
             <h1 className="wis-title">Your Wishlist</h1>
-            {loading ? (
+            {!userInfo ? (
+                <div className="login-prompt">
+                    <Message>Please log in to see your wishlist.</Message>
+                    <Button className="login-button" onClick={goToLogin}>
+                        Log In
+                    </Button>
+                </div>
+            ) : loading ? (
                 <Loader />
             ) : error ? (
                 <Message variant="danger">{error}</Message>
