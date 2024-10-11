@@ -22,9 +22,19 @@ const WishlistScreen = () => {
     const [addedToCart, setAddedToCart] = useState({});
 
     useEffect(() => {
+        let isMounted = true; // track if component is mounted
+
         if (userInfo) {
-            dispatch(fetchWishlist()); // Fetch wishlist if logged in
+            dispatch(fetchWishlist()).then(() => {
+                if (!isMounted) return; // if unmounted, do not set state
+                // Handle any state updates here if necessary
+            });
         }
+
+        // Cleanup function
+        return () => {
+            isMounted = false; // set to false when unmounted
+        };
     }, [dispatch, userInfo]);
 
     const handleAddToCart = (productId, quantity) => {
@@ -34,7 +44,6 @@ const WishlistScreen = () => {
 
     const handleRemoveFromwishlist = (id) => {
         dispatch(removeFromwishlist(id)).then(() => {
-            // window.location.reload();
         });
     };
 

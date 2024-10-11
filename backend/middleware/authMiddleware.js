@@ -1,48 +1,44 @@
-import jwt from 'jsonwebtoken'
-import asyncHandler from 'express-async-handler'
+import jwt from 'jsonwebtoken';
+import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 
-const protect = asyncHandler (async (req, res, next)=>{
+const protect = asyncHandler(async (req, res, next) => {
+    let token;
 
-
-    let token 
-
-    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer ")){
-
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
         try {
-            
-            token=req.headers.authorization.split(" ")[1]
+            token = req.headers.authorization.split(" ")[1];
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            //  fetch id
-            req.user = await  User.findById(decoded.id).select("-password")
-            
+            // Verify token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // Fetch user by ID and exclude the password field
+            req.user = await User.findById(decoded.id).select("-password");
 
-            next()
+            // Check if user exists
+            if (!req.user) {
+                res.status(401);
+                throw new Error("Not authorized, user does not exist");
+            }
+
+            next();
         } catch (error) {
-            console.error(error)
-            res.status(401)
-            throw new Error("Not authorized , token failed")
+            console.error(error);
+            res.status(401);
+            throw new Error("Not authorized, token failed");
         }
+    } else {
+        res.status(401);
+        throw new Error("Not authorized, no token");
     }
-    if (!token) {
-        res.status(401)
-        throw new Error("Not Authorized Token")
+});
 
-         
-    }
-})
-
-const admin = (req, res, next)=>{
-
+const admin = (req, res, next) => {
     if (req.user && req.user.isAdmin) {
-
-        next()
-    }else{
-        res.status(401)
-        throw new Error("Not Authorized as an Admin")
+        next();
+    } else {
+        res.status(401);
+        throw new Error("Not authorized as an admin");
     }
+};
 
-}
-
-export {protect, admin}
+export { protect, admin };

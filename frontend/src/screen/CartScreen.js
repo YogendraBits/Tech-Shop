@@ -92,7 +92,7 @@ const CartScreen = ({ history }) => {
                                             <h2 className="item-name">{item.name}</h2>
                                             <p className="item-price">Price: ${item.price.toFixed(2)}</p>
                                             <p className="item-subtotal">
-                                                Subtotal: ${(item.price * quantities[item._id]).toFixed(2)}
+                                                Subtotal: ${(item.price * quantities[item._id] || 0).toFixed(2)}
                                             </p>
                                         </div>
                                     </Link>
@@ -102,7 +102,7 @@ const CartScreen = ({ history }) => {
                                         </button>
                                         <input
                                             type="number"
-                                            value={quantities[item._id]}
+                                            value={quantities[item._id] || 1}
                                             onChange={(e) => handleQuantityChange(item._id, Number(e.target.value))}
                                             min="1"
                                             className="quantity-input"

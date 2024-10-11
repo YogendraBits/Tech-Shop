@@ -39,18 +39,28 @@ const ProductScreen = ({ history, match }) => {
   const { success: successDeleteReview } = productReviewDelete;
 
   useEffect(() => {
+    let isMounted = true; // Flag to track the component's mount status
+
     if (successProductReview) {
       setSuccessMessage('Review Submitted!'); 
-      setShowSuccessModal(true); 
+      if (isMounted) {
+            setShowSuccessModal(true); 
+        }
       resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     if (successDeleteReview) {
       setSuccessMessage('Review Deleted!');
-      setShowSuccessModal(true); 
+      if (isMounted) {
+        setShowSuccessModal(true); 
+      }
       dispatch({ type: PRODUCT_DELETE_REVIEW_RESET });
     }
     dispatch(listProductDetails(match.params.id));
+    return () => {
+      isMounted = false; // Cleanup: set the flag to false on unmount
+    };
+    
   }, [dispatch, match, successProductReview, successDeleteReview]);
 
   const resetForm = () => {

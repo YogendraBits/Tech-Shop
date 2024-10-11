@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Carousel } from 'react-responsive-carousel';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,12 +10,18 @@ import './ProductCarousel.css'; // Import the custom CSS
 
 const ProductCarousel = () => {
     const dispatch = useDispatch();
-
+    const [isMounted, setIsMounted] = useState(true);
     const productTopRated = useSelector((state) => state.productTopRated);
     const { loading, error, products } = productTopRated;
 
     useEffect(() => {
-        dispatch(listTopProducts());
+        setIsMounted(true);
+        dispatch(listTopProducts()).then(() => {
+            if (!isMounted) return; // Prevent state updates if not mounted
+        });
+        return () => {
+            setIsMounted(false); // Set mounted state to false when unmounting
+        };
     }, [dispatch]);
 
     const renderTopReview = (product) => {
@@ -45,6 +51,7 @@ const ProductCarousel = () => {
                     interval={5000} 
                     stopOnHover={true} 
                     dynamicHeight={true}
+                    showThumbs={false}
                 >
                     {products.map((product) => (
                         <div key={product._id} style={styles.carouselItem}>
