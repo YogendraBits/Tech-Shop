@@ -15,19 +15,14 @@ async function listDatabasesAndCollections() {
         
         // List collections in the specified database
         const collections = await client.db(dbName).collections();
-        console.log(`Collections in the database "${dbName}":`);
         
         for (const collection of collections) {
-            console.log(` - Collection: ${collection.collectionName}`);
-
             // Fetch a sample document to infer schema
             const sampleDocument = await collection.findOne();
 
             if (sampleDocument) {
-                console.log('   Schema:');
                 // Display fields in the sample document
                 for (const [key, value] of Object.entries(sampleDocument)) {
-                    console.log(`     - ${key}: ${typeof value}`);
                 }
             } else {
                 console.log('   No documents found.');

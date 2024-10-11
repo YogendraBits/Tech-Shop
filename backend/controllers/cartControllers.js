@@ -49,15 +49,11 @@ const getCartById = asyncHandler(async (req, res) => {
 // @route   PUT /api/cart/:id
 // @access  Private
 const updateCartItem = asyncHandler(async (req, res) => {
-  console.log("Request body:", req.body); // Log request body
-  console.log("User ID:", req.user._id); // Log user ID
 
   const cart = await Cart.findOne({ user: req.user._id });
 
   if (cart) {
-      console.log("Cart found:", cart); // Log found cart
       const item = cart.cartItems.find(item => item._id.toString() === req.params.id);
-      console.log("Item to update:", item); // Log item to update
 
       if (item) {
           item.qty = Number(req.body.qty); // Update the quantity

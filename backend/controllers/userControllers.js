@@ -186,9 +186,6 @@ const updateUser = asyncHandle(async(req,res)=>{
     
     const user = await User.findById(req.params.id)
 
-    console.log('Updating user:', req.params.id, req.body);
-    console.log('Current user data:', user);
-
     if (user) {
         user.name =req.body.name || user.name
         user.email = req.body.email || user.email

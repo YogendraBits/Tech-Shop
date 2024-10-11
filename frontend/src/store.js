@@ -37,6 +37,7 @@ import { wishlistReducer } from './reducers/wishlistReducers';
 import { addressListReducer, addressCreateReducer, addressUpdateReducer, addressDeleteReducer } from './reducers/addressReducers.js';
 
 const reducer = combineReducers({
+
     productList: productListReducer,
     productDetails: productDetailsReducer,
     productDelete: productDeleteReducer,
@@ -48,6 +49,7 @@ const reducer = combineReducers({
     productReviewDelete: productReviewDeleteReducer,
 
     cart: cartReducer,
+
     userLogin: userLoginReducer,
     userRegister: userRegisterReducer,
     userDetails: userDetailsReducer,
@@ -55,12 +57,14 @@ const reducer = combineReducers({
     userList: userListReducer,
     userDelete: userDeleteReducer,
     userUpdate: userUpdateReducer,
+
     orderCreate: orderCreateReducer,
     orderDetails: orderDetailsReducer,
     orderPay: orderPayReducer,
     orderDeliver: orderDeliverReducer,
     orderListMy: orderListMyReducer,
     orderList: orderListReducer,
+
     wishlist: wishlistReducer, 
 
     addressList: addressListReducer,
@@ -69,10 +73,8 @@ const reducer = combineReducers({
     addressDelete: addressDeleteReducer,
 });
 
-// Load cart items from localStorage
-const cartItemsFromStorage = localStorage.getItem('cartItems') 
-    ? JSON.parse(localStorage.getItem('cartItems')) 
-    : [];
+
+const cartItemsFromStorage = [];
 
 // Load user info from localStorage
 const userInfoFromStorage = localStorage.getItem('userInfo') 
@@ -91,7 +93,7 @@ const initialState = {
         shippingAddress: shippingAddressFromStorage
     },
     userLogin: { userInfo: userInfoFromStorage },
-    wishlist: { wishlistitems: [] }, // Initialize wishlist state without localStorage
+    wishlist: { wishlistitems: [] },
 };
 
 const middleware = [thunk];

@@ -7,7 +7,7 @@ import {
   getMyCart, 
   getCarts 
 } from '../controllers/cartControllers.js'
-import { protect , admin } from '../middlewear/authMiddlewear.js'
+import { protect , admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 

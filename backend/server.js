@@ -8,12 +8,11 @@ import productsRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-import cartRoutes from './routes/cartRoutes.js'; // Import Cart routes
-import wishlistRoutes from './routes/wishlistRoutes.js'; // Import wishlist routes
-import { notFound, errorHandler } from './middlewear/errorMiddlewear.js';
-
-import { GoogleGenerativeAI } from "@google/generative-ai"; // for Gemini
-import groqRoutes from './routes/groqRoutes.js'; // Import the route
+import cartRoutes from './routes/cartRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import groqRoutes from './routes/groqRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
 
 
@@ -33,10 +32,11 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/cart", cartRoutes); // Use Cart routes
 app.use("/api/wishlist", wishlistRoutes); // Use wishlist routes
+app.use('/api/addresses', addressRoutes);
 
 app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
 app.use("/api/groq", groqRoutes); 
-app.use('/api/addresses', addressRoutes);
+
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

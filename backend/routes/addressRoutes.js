@@ -1,5 +1,5 @@
 import express from 'express';
-import { protect } from '../middlewear/authMiddlewear.js';
+import { protect } from '../middleware/authMiddleware.js';
 import {
     getAddresses,
     createAddress,

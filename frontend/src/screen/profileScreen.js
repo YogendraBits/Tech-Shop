@@ -49,7 +49,6 @@ const ProfileScreen = ({ history }) => {
     
 
   };
-  const [showLoginMessage, setShowLoginMessage] = useState(false);
 
   useEffect(() => {
     if (!userInfo) {
