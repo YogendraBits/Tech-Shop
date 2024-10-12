@@ -1,0 +1,41 @@
+/* Product.css */
+
+.product-card {
+    transition: transform 0.2s ease;
+    border: 0; /* Removes default border */
+}
+
+.product-card:hover {
+    transform: scale(1.05); /* Scale up on hover */
+}
+
+.product-image {
+    width: 100%; /* Full width */
+    height: 200px; /* Fixed height */
+    object-fit: cover; /* Cover without distortion */
+}
+
+.product-title {
+    height: 3rem; /* Fixed height */
+    overflow: hidden; /* Hide overflow text */
+}
+
+.product-price {
+    margin-bottom: 1rem; /* Add margin for spacing */
+}
+
+.skeleton-image {
+    height: 200px;
+    background-color: #e0e0e0;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton-title,
+.skeleton-rating,
+.skeleton-reviews,
+.skeleton-price {
+    height: 1rem;
+    background-color: #e0e0e0;
+    margin-bottom: 0.5rem;
+}

@@ -1,36 +1,86 @@
+.carouselContainer {
+    width: 100vw; /* Full viewport width */
+    margin-left: 0; /* Center the carousel horizontally */
+    margin-right: auto;
+    max-width: 100%; /* Ensures it doesn't overflow beyond the screen */
+    padding: 0; /* Remove padding to get full width */
+}
+
+.carouselItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Full width for each item */
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure link spans full width */
+}
+
+.contentContainer {
+    flex: 1;
+    text-align: left;
+    padding: 10px;
+    color: #101010; /* White color for text */
+}
+
+.title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.price {
+    font-size: 1rem;
+    margin: 0;
+    margin-left: 100px;
+}
+
+.review {
+    font-size: 1rem;
+    margin: 0;
+    margin-left: 100px;
+}
+
+.imageContainer {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.image {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Carousel navigation arrows styles */
 .carousel .control-prev.control-arrow:before,
 .carousel .control-next.control-arrow:before {
     border: solid grey;
     content: '';
     display: inline-block;
-    padding: 3px;
+    padding: 2px;
     border-width: 0 3px 3px 0;
-    height: 20px;
-    width: 20px;
+    /* height: 20px;
+    width: 20px; */
 }
 
 .carousel .control-prev.control-arrow:before {
     transform: rotate(135deg);
-    -webkit-transform: rotate(135deg);
     left: 15px;
 }
 
 .carousel .control-next.control-arrow:before {
     transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
     right: 15px;
 }
 
-.carousel .control-prev.control-arrow,
-.carousel .control-next.control-arrow {
-    background: none;
-    border: none;
-}
-
-.carousel .control-prev.control-arrow:hover:before,
-.carousel .control-next.control-arrow:hover:before {
-    border-color: darkgrey;
-}
 
 .carousel .slide {
     max-height: 500px; /* Limit the height of each slide */

@@ -38,7 +38,10 @@ app.use("/api/addresses", addressRoutes);
 app.use("/api/groq", groqRoutes);
 
 // PayPal Client ID endpoint
-app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID));
+app.get('/api/config/paypal', (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID);
+});
+
 
 // Google Generative AI integration
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);

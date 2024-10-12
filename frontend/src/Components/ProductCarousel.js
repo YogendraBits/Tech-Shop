@@ -28,14 +28,14 @@ const ProductCarousel = () => {
         if (product.reviews.length > 0) {
             const topReview = product.reviews[0];
             return (
-                <p style={{ ...styles.review, color: '#000' }}><strong>Top Review:</strong> {topReview.comment}</p>
+                <p className="review"><strong>Top Review:</strong> {topReview.comment}</p>
             );
         }
-        return <p style={{ ...styles.review, color: '#000' }}>No Reviews</p>;
+        return <p className="review">No Reviews</p>;
     };
 
     return (
-        <div style={styles.carouselContainer}>
+        <div className="carouselContainer">
             {loading ? (
                 <Loader />
             ) : error ? (
@@ -54,15 +54,15 @@ const ProductCarousel = () => {
                     showThumbs={false}
                 >
                     {products.map((product) => (
-                        <div key={product._id} style={styles.carouselItem}>
-                            <Link to={`/product/${product._id}`} style={styles.link}>
-                                <div style={styles.contentContainer}>
-                                    <h2 style={styles.title}>{product.name}</h2>
-                                    <p style={{ ...styles.price, color: '#000' }}>Price: ${product.price}</p>
+                        <div key={product._id} className="carouselItem">
+                            <Link to={`/product/${product._id}`} className="link">
+                                <div className="contentContainer">
+                                    <h2 className="title">{product.name}</h2>
+                                    <p className="price">Price: ${product.price}</p>
                                     {renderTopReview(product)}
                                 </div>
-                                <div style={styles.imageContainer}>
-                                    <img src={product.image} alt={product.name} style={styles.image} />
+                                <div className="imageContainer">
+                                    <img src={product.image} alt={product.name} className="image" />
                                 </div>
                             </Link>
                         </div>
@@ -74,55 +74,3 @@ const ProductCarousel = () => {
 };
 
 export default ProductCarousel;
-
-const styles = {
-    carouselContainer: {
-        width: '100vw',  // Full viewport width
-        marginLeft: '0', // Center the carousel horizontally
-        marginRight: 'auto',
-        maxWidth: '100%', // Ensures it doesn't overflow beyond the screen
-        padding: '0', // Remove padding to get full width
-    },
-    carouselItem: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%', // Full width for each item
-    },
-    link: {
-        textDecoration: 'none',
-        color: 'inherit',
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%', // Ensure link spans full width
-    },
-    contentContainer: {
-        flex: '1',
-        textAlign: 'left',
-        padding: '10px',
-        color: '#fff', // White color for text
-    },
-    title: {
-        fontSize: '1.5rem',
-        marginBottom: '5px',
-    },
-    price: {
-        fontSize: '1rem',
-        margin: '0',
-    },
-    review: {
-        fontSize: '1rem',
-        margin: '0',
-    },
-    imageContainer: {
-        flex: '1',
-        marginLeft: '20px',
-    },
-    image: {
-        maxWidth: '100%',
-        maxHeight: '400px', // Limit the max height for images
-        objectFit: 'cover',
-        borderRadius: '10px',
-    },
-};

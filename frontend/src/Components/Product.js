@@ -1,72 +1,94 @@
-import React, { useState } from 'react';
-import { Card, Badge } from "react-bootstrap";
+import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
+import { Card, Badge, Spinner } from "react-bootstrap";
 import Rating from "../Components/Rating";
 import { Link } from "react-router-dom";
+import './Product.css'; // Import the CSS file
+import { Helmet } from 'react-helmet';
 
-const Product = ({ product }) => {
-    const [isHovered, setIsHovered] = useState(false);
+// Skeleton loader component
+const SkeletonLoader = () => (
+    <Card className="my-3 p-3 shadow product-card">
+        <div className="skeleton-image" style={{ height: '200px', backgroundColor: '#e0e0e0', borderRadius: '0.25rem' }} />
+        <Card.Body>
+            <div className="skeleton-title" style={{ height: '1.5rem', backgroundColor: '#e0e0e0', marginBottom: '0.5rem' }} />
+            <div className="skeleton-rating" style={{ height: '1rem', backgroundColor: '#e0e0e0', marginBottom: '0.5rem' }} />
+            <div className="skeleton-reviews" style={{ height: '1rem', backgroundColor: '#e0e0e0', marginBottom: '0.5rem' }} />
+            <div className="skeleton-price" style={{ height: '1.5rem', backgroundColor: '#e0e0e0' }} />
+        </Card.Body>
+    </Card>
+);
 
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
+const Product = memo(({ product }) => {
+    const { _id, image, name, rating, numReviews, price } = product;
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Simulate data fetching (e.g., with a timeout)
+                await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate a network delay
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+        fetchData();
+    }, []);
 
-    const defaultCardStyle = {
-        transition: 'transform 0.2s ease',
-        transform: 'scale(1)',
-    };
+    if (loading) {
+        return <SkeletonLoader />;
+    }
 
-    const hoverCardStyle = {
-        transform: 'scale(1.05)',
-    };
-
-    const cardStyle = isHovered ? hoverCardStyle : defaultCardStyle;
-
-    // Styles for the fixed-size image
-    const imageStyle = {
-        width: '100%', // Ensures the image takes the full width of the container
-        height: '200px', // Fixed height
-        objectFit: 'cover', // Ensures the image covers the container without distortion
-    };
+    if (error) {
+        return <div>Error loading product: {error}</div>;
+    }
 
     return (
-        <Card
-            className="my-3 p-3 rounded border-0 shadow"
-            style={cardStyle}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <Card.Img 
-                    src={product.image} 
-                    variant="top" 
-                    className="rounded-top" 
-                    style={imageStyle} // Apply the fixed size style
-                />
-            </Link>
-            <Card.Body className="d-flex flex-column justify-content-between">
-                <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <Card.Title as="div" className="mb-2" style={{ height: '3rem', overflow: 'hidden' }}>
-                        <strong>{product.name}</strong>
+        <>
+            <Helmet>
+                <title>{name} - Your Store</title>
+                <meta name="description" content={`Buy ${name} for $${price}.`} />
+            </Helmet>
+            <Card className="my-3 p-3 shadow product-card">
+                <Link to={`/product/${_id}`} className="text-decoration-none text-inherit">
+                    <Card.Img 
+                        src={image} 
+                        alt={name} 
+                        variant="top" 
+                        className="rounded-top product-image" 
+                        loading="lazy" 
+                    />
+                    <Card.Title as="div" className="mb-2 product-title">
+                        <strong>{name}</strong>
                     </Card.Title>
                 </Link>
-                <div>
+                <Card.Body className="d-flex flex-column justify-content-between">
                     <Card.Text as="div" className="mb-2">
-                        <Rating value={product.rating} />
+                        <Rating value={rating} />
                     </Card.Text>
                     <Card.Text as="div" className="mb-2">
-                        {`${product.numReviews} reviews`}
+                        {`${numReviews} reviews`}
                     </Card.Text>
-                    <Card.Text as="h5" className="mb-3">
-                        <Badge pill bg="info">${product.price}</Badge>
+                    <Card.Text as="h5" className="mb-3 product-price">
+                        <Badge pill bg="info">${price}</Badge>
                     </Card.Text>
-                </div>
-            </Card.Body>
-        </Card>
+                </Card.Body>
+            </Card>
+        </>
     );
+});
+
+Product.propTypes = {
+    product: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        rating: PropTypes.number.isRequired,
+        numReviews: PropTypes.number.isRequired,
+        price: PropTypes.number.isRequired,
+    }).isRequired,
 };
 
 export default Product;

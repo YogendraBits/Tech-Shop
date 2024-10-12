@@ -46,6 +46,11 @@ const orderSchema = mongoose.Schema(
       required: true,
       default: 0.0,
     },
+    currency: {
+      type: String,
+      required: true,
+      default: 'USD', // Set default currency to USD
+    },
     totalPrice: {
       type: Number,
       required: true,

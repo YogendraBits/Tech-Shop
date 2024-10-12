@@ -236,9 +236,6 @@ const OrderScreen = ({ match, history }) => {
                 
   </Card>
 </Col>
-
-            
-            
       </Row>
     </>
   )
