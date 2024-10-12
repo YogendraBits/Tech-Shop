@@ -56,7 +56,7 @@ const AddressScreen = () => {
         setAddressToEdit(null);
         resetForm();
     };
-
+    
     const handleEditAddress = (address) => {
         setAddressToEdit(address);
         setAddress(address.address);
