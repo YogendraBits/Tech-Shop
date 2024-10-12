@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'; // Import plus and minus icons
-import { Link } from "react-router-dom";
+import { faEdit, faTrash, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Form, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from '../Components/Rating';
@@ -13,7 +13,9 @@ import { PRODUCT_CREATE_REVIEW_RESET, PRODUCT_DELETE_REVIEW_RESET } from '../con
 import { addToCart } from '../actions/cartActions';
 import './ProductScreen.css';
 
-const ProductScreen = ({ history, match }) => {
+const ProductScreen = () => {
+  const { id } = useParams(); // Use useParams to get the product ID
+  const navigate = useNavigate(); // Initialize useNavigate
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0); 
   const [comment, setComment] = useState(''); 
@@ -22,7 +24,7 @@ const ProductScreen = ({ history, match }) => {
   const [reviewToDelete, setReviewToDelete] = useState(null); 
   const [showSuccessModal, setShowSuccessModal] = useState(false); 
   const [successMessage, setSuccessMessage] = useState(''); 
-  const [showLoginModal, setShowLoginModal] = useState(false); // New state for login modal
+  const [showLoginModal, setShowLoginModal] = useState(false); 
 
   const dispatch = useDispatch();
 
@@ -39,13 +41,13 @@ const ProductScreen = ({ history, match }) => {
   const { success: successDeleteReview } = productReviewDelete;
 
   useEffect(() => {
-    let isMounted = true; // Flag to track the component's mount status
+    let isMounted = true;
 
     if (successProductReview) {
       setSuccessMessage('Review Submitted!'); 
       if (isMounted) {
-            setShowSuccessModal(true); 
-        }
+        setShowSuccessModal(true); 
+      }
       resetForm();
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
@@ -56,12 +58,11 @@ const ProductScreen = ({ history, match }) => {
       }
       dispatch({ type: PRODUCT_DELETE_REVIEW_RESET });
     }
-    dispatch(listProductDetails(match.params.id));
+    dispatch(listProductDetails(id)); // Use the product ID from useParams
     return () => {
-      isMounted = false; // Cleanup: set the flag to false on unmount
+      isMounted = false; // Cleanup
     };
-    
-  }, [dispatch, match, successProductReview, successDeleteReview]);
+  }, [dispatch, id, successProductReview, successDeleteReview]);
 
   const resetForm = () => {
     setEditReviewId(null);
@@ -73,7 +74,7 @@ const ProductScreen = ({ history, match }) => {
     if (userInfo) {
       dispatch(addToCart(product._id, qty));
     } else {
-      setShowLoginModal(true); // Show login modal
+      setShowLoginModal(true); 
     }
   };
 
@@ -85,22 +86,22 @@ const ProductScreen = ({ history, match }) => {
         alert('Failed to add item to wishlist. Please try again.');
       }
     } else {
-      setShowLoginModal(true); // Show login modal
+      setShowLoginModal(true); 
     }
   };
 
   const submitReviewHandler = (e) => {
     e.preventDefault();
     if (editReviewId) {
-      dispatch(updateProductReview(match.params.id, editReviewId, { rating, comment }))
+      dispatch(updateProductReview(id, editReviewId, { rating, comment }))
         .then(() => {
-          dispatch(listProductDetails(match.params.id));
+          dispatch(listProductDetails(id));
           resetForm();
         });
     } else {
-      dispatch(createProductReview(match.params.id, { rating, comment }))
+      dispatch(createProductReview(id, { rating, comment }))
         .then(() => {
-          dispatch(listProductDetails(match.params.id));
+          dispatch(listProductDetails(id));
           resetForm();
         });
     }
@@ -119,7 +120,7 @@ const ProductScreen = ({ history, match }) => {
 
   const confirmDeleteReview = () => {
     if (reviewToDelete) {
-      dispatch(deleteProductReview(match.params.id, reviewToDelete));
+      dispatch(deleteProductReview(id, reviewToDelete));
       setShowDeleteModal(false); 
     }
   };
@@ -151,7 +152,7 @@ const ProductScreen = ({ history, match }) => {
 
   return (
     <>
-      <Button onClick={history.goBack} variant="light" className="mb-3">
+      <Button onClick={() => navigate(-1)} variant="light" className="mb-3"> {/* Use navigate */}
         <i className="fas fa-arrow-left mr-2"></i> Go Back
       </Button>
       {loading ? (
@@ -179,7 +180,6 @@ const ProductScreen = ({ history, match }) => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
-
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
                 <ListGroup.Item>Description: {product.description}</ListGroup.Item>
               </ListGroup>
@@ -194,9 +194,7 @@ const ProductScreen = ({ history, match }) => {
                   {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
-                        <Col>
-                          Quantity:
-                        </Col>
+                        <Col>Quantity:</Col>
                         <Col className="qty-display d-flex align-items-center justify-content-center">
                           <Button variant="light" onClick={decrementQty} disabled={qty <= 1}>
                             <FontAwesomeIcon icon={faMinus} />
@@ -244,10 +242,8 @@ const ProductScreen = ({ history, match }) => {
                 <h2 className="mb-3">Reviews</h2>
                 {product.reviews.length === 0 && <Message>No Reviews</Message>}
                 
-                {/* Review container with fixed height and scroll */}
                 <div className="review-container">
                   <ListGroup variant="flush">
-                    {/* Render all reviews directly */}
                     {product.reviews
                       .sort((a, b) => (userInfo && a.user === userInfo._id ? -1 : 1))
                       .map((review) => (

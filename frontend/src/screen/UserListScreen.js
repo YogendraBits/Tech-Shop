@@ -6,10 +6,11 @@ import Message from '../Components/Message';
 import Loader from '../Components/Loader';
 import { listUsers, deleteUser } from '../actions/userActions';
 import './UserListScreen.css'; 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const UserListScreen = ({ history }) => {
+const UserListScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Use useNavigate for navigation
 
   const userList = useSelector((state) => state.userList);
   const { loading, error, users } = userList;
@@ -27,9 +28,9 @@ const UserListScreen = ({ history }) => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listUsers());
     } else {
-      history.push('/login');
+      navigate('/login'); // Use navigate for redirection
     }
-  }, [dispatch, history, successDelete, userInfo]);
+  }, [dispatch, navigate, successDelete, userInfo]);
 
   const handleDeleteClick = (id) => {
     setUserIdToDelete(id);

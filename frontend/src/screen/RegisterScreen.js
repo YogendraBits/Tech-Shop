@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate
 import { Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -7,7 +7,7 @@ import Loader from '../Components/Loader';
 import { register } from '../actions/userActions';
 import './RegisterScreen.css'; // Custom CSS for side-by-side layout
 
-const RegisterScreen = ({ location, history }) => {
+const RegisterScreen = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,15 +15,18 @@ const RegisterScreen = ({ location, history }) => {
     const [message, setMessage] = useState(null);
 
     const dispatch = useDispatch();
+    const location = useLocation(); // Get location
+    const navigate = useNavigate(); // Get navigate
+
     const userRegister = useSelector(state => state.userRegister);
     const { loading, error, userInfo } = userRegister;
-    const redirect = location.search ? location.search.split('=')[1] : '/';
+    const redirect = new URLSearchParams(location.search).get('redirect') || '/'; // Get redirect param
 
     useEffect(() => {
         if (userInfo) {
-            history.push(redirect);
+            navigate(redirect); // Use navigate to redirect
         }
-    }, [history, userInfo, redirect]);
+    }, [navigate, userInfo, redirect]);
 
     const submitHandler = e => {
         e.preventDefault();
@@ -44,7 +47,6 @@ const RegisterScreen = ({ location, history }) => {
                     {loading && <Loader />}
                     <Form onSubmit={submitHandler}>
 
-                        {/* Side-by-side fields for Name and Email */}
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="name">
@@ -72,7 +74,6 @@ const RegisterScreen = ({ location, history }) => {
                             </Col>
                         </Row>
 
-                        {/* Side-by-side fields for Password and Confirm Password */}
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="password">

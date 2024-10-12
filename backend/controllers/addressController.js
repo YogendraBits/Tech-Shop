@@ -69,8 +69,7 @@ const deleteAddress = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error('Not authorized');
     }
-
-    await addressToDelete.remove();
+    await Address.findByIdAndDelete(req.params.id);
     res.json({ message: 'Address removed' });
 });
 

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
-import FormContainer from '../Components/formContainer';
 import { listProductDetails, updateProduct } from '../actions/productActions';
 import { PRODUCT_UPDATE_RESET } from '../constants/productConstants';
 import './ProductEditScreen.css';
 
-const ProductEditScreen = ({ match, history }) => {
+const ProductEditScreen = ({ match }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const productId = match.params.id;
 
   const [name, setName] = useState('');
@@ -30,7 +30,7 @@ const ProductEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
-      history.push('/admin/productList');
+      navigate('/admin/productlist');
     } else {
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId));
@@ -44,7 +44,7 @@ const ProductEditScreen = ({ match, history }) => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, history, productId, product, successUpdate]);
+  }, [dispatch, navigate, productId, product, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();

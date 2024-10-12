@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
-import FormContainer from '../Components/formContainer';
+import formContainer from '../Components/formContainer';
 import { getUserDetails, updateUser } from '../actions/userActions';
 import { USER_UPDATE_RESET } from '../constants/userConstants';
 import './UserEditScreen.css';
 
-const UserEditScreen = ({ match, history }) => {
-  const userId = match.params.id;
+const UserEditScreen = () => {
+  const { id: userId } = useParams(); // Use useParams to get the user ID
+  const navigate = useNavigate(); // Use useNavigate for navigation
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ const UserEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });
-      history.push('/admin/userlist');
+      navigate('/admin/userlist'); // Use navigate for redirection
     } else {
       if (!user.name || user._id !== userId) {
         dispatch(getUserDetails(userId));
@@ -37,7 +38,7 @@ const UserEditScreen = ({ match, history }) => {
         setIsAdmin(user.isAdmin);
       }
     }
-  }, [dispatch, history, userId, user, successUpdate]);
+  }, [dispatch, userId, user, successUpdate, navigate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -45,7 +46,7 @@ const UserEditScreen = ({ match, history }) => {
   };
 
   return (
-    <FormContainer>
+    <formContainer>
       <Link to='/admin/userlist' className='btn btn-light my-3'>
         <i className='fas fa-arrow-left'></i> Go Back
       </Link>
@@ -65,7 +66,7 @@ const UserEditScreen = ({ match, history }) => {
               <Form.Group controlId='name'>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
-                  type='name'
+                  type='text'
                   placeholder='Enter name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -88,6 +89,7 @@ const UserEditScreen = ({ match, history }) => {
                   label='Is Admin'
                   checked={isAdmin}
                   onChange={(e) => setIsAdmin(e.target.checked)}
+                  className='form-check'
                 />
               </Form.Group>
 
@@ -98,7 +100,7 @@ const UserEditScreen = ({ match, history }) => {
           )}
         </div>
       </div>
-    </FormContainer>
+    </formContainer>
   );
 };
 

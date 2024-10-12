@@ -1,19 +1,18 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import CheckoutSteps from '../Components/CheckoutSteps';
 import { createOrder } from '../actions/orderActions';
 
-const PlaceOrderScreen = ({ history }) => {
+const PlaceOrderScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate function
   const cart = useSelector((state) => state.cart);
 
   // Calculate prices
-  const addDecimals = (num) => {
-    return (Math.round(num * 100) / 100).toFixed(2);
-  };
+  const addDecimals = (num) => (Math.round(num * 100) / 100).toFixed(2);
 
   cart.itemsPrice = addDecimals(
     cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
@@ -31,10 +30,10 @@ const PlaceOrderScreen = ({ history }) => {
 
   useEffect(() => {
     if (success) {
-      history.push(`/order/${order._id}`);
+      navigate(`/order/${order._id}`); // Use navigate for redirection
     }
     // eslint-disable-next-line
-  }, [history, success]);
+  }, [success, order, navigate]);
 
   const placeOrderHandler = () => {
     dispatch(
@@ -61,8 +60,7 @@ const PlaceOrderScreen = ({ history }) => {
               <p>
                 <strong>Address:</strong>
                 {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
-                {cart.shippingAddress.postalCode},{' '}
-                {cart.shippingAddress.country}
+                {cart.shippingAddress.postalCode}, {cart.shippingAddress.country}
               </p>
             </ListGroup.Item>
 
@@ -82,12 +80,7 @@ const PlaceOrderScreen = ({ history }) => {
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col md={2}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
+                          <Image src={item.image} alt={item.name} fluid rounded />
                         </Col>
                         <Col>
                           <Link to={`/product/${item.product}`}>
@@ -95,8 +88,7 @@ const PlaceOrderScreen = ({ history }) => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = $
-                          {item.qty * item.price}
+                          {item.qty} x ${item.price} = ${item.qty * item.price}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -143,7 +135,7 @@ const PlaceOrderScreen = ({ history }) => {
                 <Button
                   type="button"
                   className="btn-block"
-                  disabled={cart.cartItems === 0}
+                  disabled={cart.cartItems.length === 0}
                   onClick={placeOrderHandler}
                   style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}
                 >

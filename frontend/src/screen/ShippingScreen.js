@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import FormContainer from '../Components/formContainer';
+import formContainer from '../Components/formContainer';
 import CheckoutSteps from '../Components/CheckoutSteps';
 import { saveShippingAddress } from '../actions/cartActions';
 import { listAddresses } from '../actions/addressActions'; // Import the action to fetch addresses
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-function ShippingScreen({ history }) {
+function ShippingScreen() {
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const cart = useSelector((state) => state.cart);
     const { shippingAddress } = cart;
@@ -33,7 +35,7 @@ function ShippingScreen({ history }) {
 
         if (selectedAddr) {
             dispatch(saveShippingAddress(selectedAddr)); // Save the selected address
-            history.push('/payment');
+            navigate('/payment'); // Use navigate to go to the payment page
         }
     };
 
@@ -48,7 +50,7 @@ function ShippingScreen({ history }) {
                 <CheckoutSteps step1 step2 />
             </div>
             <div style={{ flex: '7', paddingLeft: '10px', minWidth: '500px' }}>
-                <FormContainer>
+                <formContainer>
                     <div style={{ background: '#fff', padding: '30px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', minWidth: '500px' }}>
                         <h1 style={{ textAlign: 'center', fontSize: '24px', color: '#333', marginBottom: '20px' }}>Shipping Information</h1>
 
@@ -77,7 +79,7 @@ function ShippingScreen({ history }) {
                                 <Button 
                                     variant="primary" 
                                     onClick={() => {
-                                        history.push('/address'); // Redirect to address management screen
+                                        navigate('/address'); // Use navigate to redirect to address management screen
                                     }}
                                 >
                                     Manage Addresses
@@ -88,7 +90,7 @@ function ShippingScreen({ history }) {
                             </div>
                         </Form>
                     </div>
-                </FormContainer>
+                </formContainer>
             </div>
         </div>
     );

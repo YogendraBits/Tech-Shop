@@ -4,16 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navbar, Nav, Container, NavDropdown, Modal, Button } from "react-bootstrap";
 import { logout } from "../actions/userActions";
 import SearchBox from './SearchBox';
-import { withRouter } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Chat from './gemini'; // Regular Chat component
 import GroqChat from './GroqChat'; // Groq Chat component
 import AIChatOptions from './AIChatOptions'; // AI chat options component
 import './Header.css'; // Import the CSS file for additional styling
 
-const Header = ({ history }) => {
+const Header = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [selectedChatType, setSelectedChatType] = useState(null); // State to track selected chat type
     const dispatch = useDispatch();
+    const navigate = useNavigate(); 
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
 
@@ -51,7 +52,7 @@ const Header = ({ history }) => {
                     <Navbar.Toggle aria-controls="navbar-nav" />
                     <Navbar.Collapse id="navbar-nav">
                         <div className="header-search-box-container">
-                            <SearchBox history={history} />
+                            <SearchBox />
                         </div>
                         <Nav className="header-nav-links">
                             <LinkContainer to="/cart">
@@ -134,4 +135,4 @@ const Header = ({ history }) => {
     );
 };
 
-export default withRouter(Header);
+export default Header;

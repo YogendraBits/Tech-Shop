@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form, Button, Row, Col, Table } from 'react-bootstrap';
+import { Form, Button, Row, Col, Table, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -10,19 +10,18 @@ import { USER_UPDATE_PROFILE_FAIL } from '../constants/userConstants';
 import './ProfileScreen.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Modal } from 'react-bootstrap'; // Add this import
+import { useNavigate } from 'react-router-dom';
 
-
-
-const ProfileScreen = ({ history }) => {
+const ProfileScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
@@ -35,8 +34,6 @@ const ProfileScreen = ({ history }) => {
 
   const orderListMy = useSelector((state) => state.orderListMy);
   const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
-  const [showModal, setShowModal] = useState(false); // Add this line
-
 
   const deleteAccountHandler = () => {
     setShowModal(true); // Show modal instead of direct confirmation
@@ -45,14 +42,12 @@ const ProfileScreen = ({ history }) => {
   const confirmDelete = () => {
     dispatch(deleteUserAccount(user._id));
     setShowModal(false);
-    // history.push('/register');
-    
-
+    navigate('/register'); // Navigate after account deletion
   };
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/register');
+      navigate('/register'); // Navigate to register if not logged in
       window.location.reload();
     } else {
       if (!user || !user.name || success) {
@@ -64,7 +59,7 @@ const ProfileScreen = ({ history }) => {
         setEmail(user.email);
       }
     }
-  }, [dispatch, history, userInfo, user, success]);
+  }, [dispatch, navigate, userInfo, user, success]);
 
   const submitHandler = useCallback((e) => {
     e.preventDefault();
@@ -85,25 +80,22 @@ const ProfileScreen = ({ history }) => {
             {error && <Message variant='danger'>{error}</Message>}
             {success && <Message variant='success'>Profile Updated</Message>}
             {loading && <Loader />}
-            
+
             {/* Delete Account Icon */}
-            {userInfo && !userInfo.isAdmin && ( // Check if user is not an admin
-            <OverlayTrigger
-              placement="top"
-              overlay={<Tooltip id="delete-tooltip">Delete Account</Tooltip>}
-            >
-              <FontAwesomeIcon
-                icon={faTrash}
-                className="delete-icon"
-                onClick={deleteAccountHandler}
-                style={{ cursor: 'pointer', color: 'red', position: 'absolute', top: '10px', right: '10px' }}
-              />
-            </OverlayTrigger>
-          )}
+            {userInfo && !userInfo.isAdmin && (
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip id="delete-tooltip">Delete Account</Tooltip>}
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  className="delete-icon"
+                  onClick={deleteAccountHandler}
+                  style={{ cursor: 'pointer', color: 'red', position: 'absolute', top: '10px', right: '10px' }}
+                />
+              </OverlayTrigger>
+            )}
 
-
-
-            
             <Form onSubmit={submitHandler}>
               <Form.Group controlId='name'>
                 <Form.Label>Name</Form.Label>
@@ -206,9 +198,9 @@ const ProfileScreen = ({ history }) => {
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        Dear User,
-
-        As you say goodbye, please know that you will be missed. For your privacy, all your data will be permanently deleted, and once removed, it cannot be recovered.
+          Dear User,
+          <br />
+          As you say goodbye, please know that you will be missed. For your privacy, all your data will be permanently deleted, and once removed, it cannot be recovered.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
@@ -219,7 +211,6 @@ const ProfileScreen = ({ history }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 };

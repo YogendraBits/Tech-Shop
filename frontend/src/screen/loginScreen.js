@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate
 import { Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -7,22 +7,24 @@ import Loader from '../Components/Loader';
 import { login } from '../actions/userActions';
 import './LoginScreen.css'; // Custom CSS to match modern look
 
-const LoginScreen = ({ location, history }) => {
+const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const dispatch = useDispatch();
+    const location = useLocation(); // Get location
+    const navigate = useNavigate(); // Get navigate
 
     const userLogin = useSelector(state => state.userLogin);
     const { loading, error, userInfo } = userLogin;
 
-    const redirect = location.search ? location.search.split('=')[1] : '/';
+    const redirect = new URLSearchParams(location.search).get('redirect') || '/'; // Get redirect param
 
     useEffect(() => {
         if (userInfo) {
-            history.push(redirect);
+            navigate(redirect); // Use navigate to redirect
         }
-    }, [history, userInfo, redirect]);
+    }, [navigate, userInfo, redirect]);
 
     const submitHandler = e => {
         e.preventDefault();
@@ -38,7 +40,6 @@ const LoginScreen = ({ location, history }) => {
                     {loading && <Loader />}
                     <Form onSubmit={submitHandler}>
 
-                        {/* Side-by-side fields for Email and Password */}
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="email">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Table, Form, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -7,11 +7,12 @@ import Loader from '../Components/Loader';
 import { listOrders } from '../actions/orderActions';
 import './OrderListScreen.css';
 
-const OrderListScreen = ({ history }) => {
+const OrderListScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState('');
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Get navigate function
 
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
@@ -23,9 +24,9 @@ const OrderListScreen = ({ history }) => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listOrders());
     } else {
-      history.push('/login');
+      navigate('/login'); // Use navigate for redirection
     }
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, navigate, userInfo]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -35,7 +36,6 @@ const OrderListScreen = ({ history }) => {
     setSortCriteria(e.target.value);
   };
 
-  // Filter orders without excluding those with missing user data
   const filteredOrders = orders
     ? orders.filter((order) => 
         !order.user || order.user.name.toLowerCase().includes(searchTerm.toLowerCase())

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCart, removeFromCart, updateCartItem } from '../actions/cartActions';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FaTrash, FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
 import './CartScreen.css';
 
-const CartScreen = ({ history }) => {
+const CartScreen = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Get navigate function
 
-    // Retrieve cart and user login state from Redux store
     const cart = useSelector(state => state.cart);
     const { cartItems } = cart;
     const userLogin = useSelector(state => state.userLogin);
@@ -41,7 +41,7 @@ const CartScreen = ({ history }) => {
         try {
             if (quantity < 1) return;
             await dispatch(updateCartItem(itemId, quantity));
-            window.location.reload();
+            // Consider removing the page reload
         } catch (err) {
             setError('Failed to update item quantity.');
         }
@@ -56,14 +56,14 @@ const CartScreen = ({ history }) => {
 
     const checkoutHandler = () => {
         if (!userInfo) {
-            history.push('/login?redirect=shipping');
+            navigate('/login?redirect=shipping'); // Use navigate for redirection
         } else {
-            history.push('/shipping');
+            navigate('/shipping');
         }
     };
 
     const shopNowHandler = () => {
-        history.push('/');
+        navigate('/'); // Use navigate for shop now
     };
 
     return (
@@ -73,7 +73,7 @@ const CartScreen = ({ history }) => {
             {!userInfo ? (
                 <div className="login-prompt">
                     <h5>Please log-in to add items to your cart.</h5>
-                    <button onClick={() => history.push('/login')} className="login-btn">Log In</button>
+                    <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
                 </div>
             ) : (
                 <>

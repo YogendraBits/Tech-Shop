@@ -7,10 +7,12 @@ import Loader from '../Components/Loader';
 import Paginate from '../Components/Paginate';
 import { listProducts, deleteProduct, createProduct } from '../actions/productActions';
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
+import { useNavigate, useParams } from 'react-router-dom'; // Import useNavigate and useParams
 import './ProductListScreen.css'; // Import CSS file for styling
 
-function ProductListScreen({ history, match }) {
-  const pageNumber = match.params.pageNumber || 1;
+function ProductListScreen() {
+  const { pageNumber = 1 } = useParams(); // Get pageNumber from URL parameters
+  const navigate = useNavigate(); // Initialize useNavigate
   const dispatch = useDispatch();
 
   const productList = useSelector((state) => state.productList);
@@ -28,14 +30,14 @@ function ProductListScreen({ history, match }) {
   useEffect(() => {
     dispatch({ type: PRODUCT_CREATE_RESET });
     if (!userInfo.isAdmin) {
-      history.push('/login');
+      navigate('/login');
     }
     if (successCreate) {
-      history.push(`/admin/product/${createdProduct._id}/edit`);
+      navigate(`/admin/product/${createdProduct._id}/edit`); // Use navigate
     } else {
       dispatch(listProducts('', pageNumber));
     }
-  }, [dispatch, history, userInfo, successDelete, successCreate, createdProduct, pageNumber]);
+  }, [dispatch, navigate, userInfo, successDelete, successCreate, createdProduct, pageNumber]);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are You Sure')) {

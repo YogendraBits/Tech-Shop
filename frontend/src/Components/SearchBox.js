@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const SearchBox = ({ history }) => {
+const SearchBox = () => {
     const [keyword, setKeyword] = useState('');
+    const navigate = useNavigate(); // Get navigate function
 
     const submitHandler = (e) => {
         e.preventDefault();
         if (keyword.trim()) {
-            history.push(`/search/${keyword}`);
+            navigate(`/search/${keyword}`); // Use navigate for redirection
         } else {
-            history.push('/');
+            navigate('/'); // Navigate to home if keyword is empty
         }
     };
 
@@ -25,24 +27,24 @@ const SearchBox = ({ history }) => {
                         onChange={(e) => setKeyword(e.target.value)}
                         placeholder='Search...'
                         style={{
-                            borderRadius: '30px 0 0 30px', // Rounded left side
+                            borderRadius: '30px 0 0 30px',
                             border: '2px solid #28a745',
-                            borderRight: 'none', // Remove right border to merge with button
-                            background: '#f4f4f4', // Light gray background for consistency
+                            borderRight: 'none',
+                            background: '#f4f4f4',
                             width: '100%',
-                            maxWidth: '300px', // Reduced width
-                            padding: '10px 15px', // Adjust padding
-                            fontSize: '0.9rem', // Adjust font size
+                            maxWidth: '300px',
+                            padding: '10px 15px',
+                            fontSize: '0.9rem',
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                             transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
                         }}
                         onFocus={(e) => {
                             e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-                            e.target.style.borderColor = '#28a745'; // Green border on focus
+                            e.target.style.borderColor = '#28a745';
                         }}
                         onBlur={(e) => {
                             e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                            e.target.style.borderColor = '#28a745'; // Maintain green border color
+                            e.target.style.borderColor = '#28a745';
                         }}
                     />
                 </Col>
@@ -52,10 +54,10 @@ const SearchBox = ({ history }) => {
                         variant='success'
                         className='w-100'
                         style={{
-                            borderRadius: '0 30px 30px 0', // Rounded right side
+                            borderRadius: '0 30px 30px 0',
                             padding: '10px',
-                            backgroundColor: '#28a745', // Matching button color
-                            color: '#fff', // White text for contrast
+                            backgroundColor: '#28a745',
+                            color: '#fff',
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                             transition: 'box-shadow 0.3s ease',
                         }}

@@ -4,45 +4,51 @@ import { createProduct } from '../actions/productActions';
 import { Button, Form, Col, Row, Card } from 'react-bootstrap';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
-import './ProductCreateScreen.css'; // Import your custom CSS file
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import './ProductCreateScreen.css';
 
-const ProductCreateScreen = ({ history }) => {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState(0);
-  const [image, setImage] = useState('');
-  const [brand, setBrand] = useState('');
-  const [category, setCategory] = useState('');
-  const [countInStock, setCountInStock] = useState(0);
-  const [description, setDescription] = useState('');
+const ProductCreateScreen = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    price: 0,
+    image: '',
+    brand: '',
+    category: '',
+    countInStock: 0,
+    description: '',
+  });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-
-  const fileInputRef = useRef(); // Create a ref for the file input
-
+  
+  const fileInputRef = useRef();
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const productCreate = useSelector((state) => state.productCreate);
-  const { loading, error, success } = productCreate;
+  const { loading, error, success } = useSelector((state) => state.productCreate);
 
   useEffect(() => {
     if (success) {
-      history.push('/admin/productlist');
+      navigate('/admin/productlist');
     }
-  }, [success, history]);
+  }, [success, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
+    const imageUrl = imageFile ? URL.createObjectURL(imageFile) : formData.image;
 
-    const imageUrl = imageFile ? URL.createObjectURL(imageFile) : image;
-
-    dispatch(createProduct({ name, price, image: imageUrl, brand, category, countInStock, description }));
+    dispatch(createProduct({ ...formData, image: imageUrl }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setImage(file.name);
+      setFormData((prevData) => ({ ...prevData, image: file.name }));
 
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
@@ -52,11 +58,10 @@ const ProductCreateScreen = ({ history }) => {
   const handleImageDelete = () => {
     setImageFile(null);
     setImagePreview('');
-    setImage('');
-    
-    // Clear the file input
+    setFormData((prevData) => ({ ...prevData, image: '' }));
+
     if (fileInputRef.current) {
-      fileInputRef.current.value = null; // Reset the file input
+      fileInputRef.current.value = null;
     }
   };
 
@@ -74,8 +79,9 @@ const ProductCreateScreen = ({ history }) => {
                 <Form.Control
                   type="text"
                   placeholder="Enter product name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
@@ -86,8 +92,9 @@ const ProductCreateScreen = ({ history }) => {
                 <Form.Control
                   type="number"
                   placeholder="Enter product price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
@@ -102,7 +109,7 @@ const ProductCreateScreen = ({ history }) => {
                   accept="image/*"
                   onChange={handleImageChange}
                   className="form-control-file"
-                  ref={fileInputRef} // Attach the ref to the input
+                  ref={fileInputRef}
                 />
                 {imagePreview && (
                   <>
@@ -120,8 +127,9 @@ const ProductCreateScreen = ({ history }) => {
                 <Form.Control
                   type="text"
                   placeholder="Enter brand"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
@@ -134,8 +142,9 @@ const ProductCreateScreen = ({ history }) => {
                 <Form.Control
                   type="text"
                   placeholder="Enter category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
@@ -146,8 +155,9 @@ const ProductCreateScreen = ({ history }) => {
                 <Form.Control
                   type="number"
                   placeholder="Enter count in stock"
-                  value={countInStock}
-                  onChange={(e) => setCountInStock(e.target.value)}
+                  name="countInStock"
+                  value={formData.countInStock}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
@@ -159,8 +169,9 @@ const ProductCreateScreen = ({ history }) => {
               as="textarea"
               rows={3}
               placeholder="Enter product description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
               required
             />
           </Form.Group>

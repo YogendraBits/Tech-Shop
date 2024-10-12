@@ -152,7 +152,7 @@ const deleteUser = asyncHandle(async (req, res) => {
         await Wishlist.deleteMany({ userId: userId });
 
         // Now delete the user
-        await user.remove();
+        await User.findByIdAndDelete(userId);
         res.send({ message: "User, addresses, cart, and wishlist deleted successfully" });
     } else {
         res.status(404);
@@ -224,7 +224,7 @@ const deleteOwnAccount = asyncHandle(async (req, res) => {
         await Wishlist.deleteMany({ userId: userId });
 
         // Now delete the user
-        await user.remove();
+        await User.findByIdAndDelete(userId);
         res.send({ message: "Your account has been deleted successfully" });
     } else {
         res.status(404);
