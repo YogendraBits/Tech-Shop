@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listAddresses, deleteAddress, createAddress, updateAddress } from '../actions/addressActions.js';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import './AddressScreen.css'; // Import the CSS file
 
 const AddressScreen = () => {
@@ -21,6 +21,7 @@ const AddressScreen = () => {
     const [city, setCity] = useState('');
     const [postalCode, setPostalCode] = useState('');
     const [country, setCountry] = useState('');
+    const [loadingLocation, setLoadingLocation] = useState(false); // New loading state
 
     useEffect(() => {
         if (userInfo) {
@@ -64,6 +65,44 @@ const AddressScreen = () => {
         setCountry(address.country);
     };
 
+    // Function to get the current location
+    const getCurrentLocation = () => {
+        setLoadingLocation(true);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+    
+                try {
+                    // Fetch the address details from your backend API
+                    const response = await fetch(`/api/geocode?latitude=${latitude}&longitude=${longitude}`);
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        // Set the address fields
+                        setAddress(`${data.road} ${data._normalized_city}`.trim());
+                        setCity(data.state_district || '');
+                        setPostalCode(data.postcode || '');
+                        setCountry(data.country || '');
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error("Error fetching the geocoding data: ", error);
+                    alert("Unable to retrieve address details.");
+                } finally {
+                    setLoadingLocation(false);
+                }
+            }, (error) => {
+                console.error("Error getting location: ", error);
+                alert("Unable to retrieve your location.");
+                setLoadingLocation(false);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+            setLoadingLocation(false);
+        }
+    };
+    
     return (
         <div className="address-screen-container">
             {userInfo ? (
@@ -113,6 +152,7 @@ const AddressScreen = () => {
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                                 required
+                                disabled={loadingLocation} // Disable input during loading
                             />
                             <input
                                 type="text"
@@ -120,6 +160,7 @@ const AddressScreen = () => {
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
                                 required
+                                disabled={loadingLocation} // Disable input during loading
                             />
                             <input
                                 type="text"
@@ -127,6 +168,7 @@ const AddressScreen = () => {
                                 value={postalCode}
                                 onChange={(e) => setPostalCode(e.target.value)}
                                 required
+                                disabled={loadingLocation} // Disable input during loading
                             />
                             <input
                                 type="text"
@@ -134,9 +176,19 @@ const AddressScreen = () => {
                                 value={country}
                                 onChange={(e) => setCountry(e.target.value)}
                                 required
+                                disabled={loadingLocation} // Disable input during loading
                             />
-                            <button type="submit">{addressToEdit ? 'Update Address' : 'Add Address'}</button>
+                            <div className="address-buttons">
+                                <button type="submit" disabled={loadingLocation}> {/* Disable button during loading */}
+                                    {addressToEdit ? 'Update Address' : 'Add Address'}
+                                </button>
+                                <button type="button" className="current-location-button" onClick={getCurrentLocation} disabled={loadingLocation}>
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: 'red' }} />
+                                    <span>  Current Location</span>
+                                </button>
+                            </div>
                         </form>
+                        {loadingLocation && <p className="loading-message">Getting your location...</p>} {/* Loading message */}
                     </div>
                 </div>
             ) : (

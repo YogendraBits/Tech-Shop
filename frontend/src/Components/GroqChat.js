@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './GroqChat.css';
+import { FaMoon, FaSun, FaTrash } from 'react-icons/fa'; // Import icons for theme toggle and clear chat
 
 const GroqChat = () => {
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isTyping, setIsTyping] = useState(false); // For typing indicator
+    const [theme, setTheme] = useState("light"); // Light/Dark theme state
+    const messagesEndRef = useRef(null); // Ref for scrolling to the latest message
 
     // Load chat history from local storage when component mounts
     useEffect(() => {
@@ -22,6 +26,7 @@ const GroqChat = () => {
     const sendMessage = async () => {
         if (userMessage.trim() === '') return;
         setLoading(true);
+        setIsTyping(true); // Set typing to true when sending message
         try {
             const response = await fetch('/api/groq/chat', {
                 method: 'POST',
@@ -35,6 +40,7 @@ const GroqChat = () => {
             console.error("Error fetching response:", error);
         } finally {
             setLoading(false);
+            setIsTyping(false); // Reset typing state
         }
     };
 
@@ -44,8 +50,31 @@ const GroqChat = () => {
         }
     };
 
+    const handleClear = () => {
+        setMessages([]); // Clear state
+        localStorage.removeItem('groqChatHistory'); // Clear local storage
+    };
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    };
+
+    // Scroll to the latest message
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, loading]);
+
     return (
-        <div className="groq-chat-container">
+        <div className={`groq-chat-container ${theme}`}>
+            <div className="groq-chat-header">
+                <button onClick={toggleTheme} className="theme-toggle-button">
+                    {theme === "light" ? <FaMoon /> : <FaSun />}
+                </button>
+
+                <button onClick={handleClear} className="clear-button">
+                    <FaTrash />
+                </button>
+            </div>
             <div className="groq-chat-messages">
                 {messages.map((msg, index) => (
                     <div key={index}>
@@ -57,9 +86,10 @@ const GroqChat = () => {
                         </div>
                     </div>
                 ))}
-                {loading && (
+                {isTyping && (
                     <div className="groq-loading-indicator">Thinking...</div>
                 )}
+                <div ref={messagesEndRef} />
             </div>
             <div className="groq-input-area">
                 <input

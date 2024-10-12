@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import './gemini.css';
+import { FaMoon, FaSun, FaTrash } from 'react-icons/fa'; // Import icons from react-icons
 
 const Chat = () => {
     const [message, setMessage] = useState("");
     const [responses, setResponses] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
+    const [theme, setTheme] = useState("light"); // Light/Dark theme state
     const chatEndRef = useRef(null);
 
     // Load chat history from local storage
@@ -24,6 +27,7 @@ const Chat = () => {
         if (!message) return;
 
         setLoading(true);
+        setIsTyping(true); // Set typing to true when sending message
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
@@ -32,7 +36,7 @@ const Chat = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Network response was not ok");
+                throw new Error("Failed to fetch response.");
             }
 
             const data = await response.json();
@@ -45,6 +49,7 @@ const Chat = () => {
             console.error("Error fetching response:", error);
         } finally {
             setLoading(false);
+            setIsTyping(false); // Reset typing state
         }
     };
 
@@ -55,12 +60,31 @@ const Chat = () => {
         }
     };
 
+    const handleClear = () => {
+        setResponses([]); // Clear state
+        localStorage.removeItem("chatHistory"); // Clear local storage
+    };
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    };
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [responses, loading]);
 
     return (
-        <div className="chat-container">
+        <div className={`chat-container ${theme}`}>
+            <div className="chat-header">
+                <button onClick={toggleTheme} className="theme-toggle-button">
+                    {theme === "light" ? <FaMoon /> : <FaSun />}
+                </button>
+                
+
+                <button onClick={handleClear} className="clear-button">
+                    <FaTrash />
+                </button>
+            </div>
             <div className="chat-messages">
                 {responses.map((res, index) => (
                     <div key={index}>
@@ -73,7 +97,7 @@ const Chat = () => {
                         <hr />
                     </div>
                 ))}
-                {loading && <p className="loading-indicator"></p>}
+                {isTyping && <div className="typing-indicator">Gemini is typing...</div>}
                 <div ref={chatEndRef} />
             </div>
             <div className="input-area">

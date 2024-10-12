@@ -1,67 +1,62 @@
-/* Toggle Switch */
-.toggle-switch {
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    margin-top: 10px; /* Add margin top */
-    margin-bottom: 10px; /* Add margin bottom */
-  }
-  
-  .toggle-switch-checkbox {
-    display: none;
-  }
-  
-  .toggle-switch-label {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    cursor: pointer;
-    margin-right: 10px; /* Add margin right */
-  }
-  
-  .toggle-switch-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 60px;
-    height: 100%;
-    padding: 0 5px;
-    background-color: #dcdcdc;
-    border-radius: 34px;
-    transition: background-color 0.3s;
-  }
-  
-  .toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner {
-    background-color: #28a745;
-  }
-  
-  .toggle-switch-inner:before,
-  .toggle-switch-inner:after {
-    content: attr(data-content);
-    font-size: 14px;
-    color: #fff;
-  }
-  
-  .toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner:before {
-    content: attr(data-content-checked);
-  }
-  
-  .toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner:after {
-    content: attr(data-content-unchecked);
-  }
-  
-  .toggle-switch-switch {
-    position: relative;
-    width: 28px;
-    height: 28px;
-    background-color: #fff;
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
-  }
-  
-  .toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-switch {
-    transform: translateX(26px);
-  }
-  
+.user-edit-container {
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.back-button {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #333;
+}
+
+.edit-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.knob-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.knob-container.active .knob {
+  transform: rotate(0deg); /* Green/Admin state: default/right-facing */
+  background-color: #28a745;
+}
+
+.knob {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s, background-color 0.3s;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.knob-container:not(.active) .knob {
+  transform: rotate(-180deg); /* Left for No Admin state */
+}
+
+.knob i {
+  font-size: 24px;
+  color: white;
+}
+
+.status-text {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #6c757d;
+  transition: color 0.3s;
+}
+
+.knob-container.active .status-text {
+  color: #28a745;
+}

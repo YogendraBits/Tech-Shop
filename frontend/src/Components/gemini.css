@@ -1,12 +1,48 @@
-/* Chat Window */
+/* General Styles */
 .chat-container {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #f5f5f5;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Styles */
+.chat-container.dark {
+    background-color: #333;
+    color: #f5f5f5;
+}
+
+/* Header */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Center items vertically */
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-button,
+.clear-button {
+    position: relative; /* Required for tooltip positioning */
+    background: none;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em; /* Larger icon */
+    margin: 0 10px; /* Margin for spacing between buttons and tooltips */
+}
+
+/* Show tooltip on hover */
+.theme-toggle-button:hover ~ .tooltip:first-of-type,
+.clear-button:hover ~ .tooltip:last-of-type {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Chat Messages */
@@ -17,7 +53,8 @@
 }
 
 /* User and AI Messages */
-.user-message, .ai-message {
+.user-message,
+.ai-message {
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 10px;
@@ -28,8 +65,7 @@
 .user-message {
     background-color: #d1e7dd;
     color: #0f5132;
-    align-self: flex-end;
-    margin-left: auto; /* Align right */
+    align-self: flex-end; /* Align right */
 }
 
 .ai-message {
@@ -68,42 +104,21 @@
 }
 
 .send-button:hover {
-    background-color: #f4e861;
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
-/* Loading Indicator */
-.loading-indicator {
-    text-align: center;
+/* Typing Indicator */
+.typing-indicator {
     color: #007bff;
-    font-weight: bold;
-    margin: 10px 10px;
-    font-size: 1.5em;
-    position: relative;
+    font-style: italic;
+    margin: 10px 0;
+    animation: blink 1s infinite;
 }
 
-.loading-indicator::after {
-    content: '';
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    border: 2px solid rgba(0, 123, 255, 0.5);
-    border-top-color: #007bff;
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50%;
-    margin-top: -0.75em;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
 /* Responsive Design */
@@ -113,8 +128,9 @@
         height: 100vh;
         border-radius: 0;
     }
-    
-    .user-message, .ai-message {
+
+    .user-message,
+    .ai-message {
         max-width: 90%;
     }
 }

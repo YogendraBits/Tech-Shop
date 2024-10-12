@@ -1,34 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Card, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
 import Loader from '../Components/Loader';
-import formContainer from '../Components/formContainer';
 import { getUserDetails, updateUser } from '../actions/userActions';
 import { USER_UPDATE_RESET } from '../constants/userConstants';
-import './UserEditScreen.css';
+import './UserEditScreen.css'; // Include your CSS
 
 const UserEditScreen = () => {
-  const { id: userId } = useParams(); // Use useParams to get the user ID
-  const navigate = useNavigate(); // Use useNavigate for navigation
+  const { id: userId } = useParams();
+  const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
 
   const dispatch = useDispatch();
-
-  const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user } = userDetails;
-
-  const userUpdate = useSelector((state) => state.userUpdate);
-  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = userUpdate;
+  const { loading, error, user } = useSelector((state) => state.userDetails);
+  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = useSelector((state) => state.userUpdate);
 
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });
-      navigate('/admin/userlist'); // Use navigate for redirection
+      navigate('/admin/userlist');
     } else {
       if (!user.name || user._id !== userId) {
         dispatch(getUserDetails(userId));
@@ -45,62 +40,69 @@ const UserEditScreen = () => {
     dispatch(updateUser({ _id: userId, name, email, isAdmin }));
   };
 
+  const handleToggle = () => setIsAdmin((prev) => !prev);
+
   return (
-    <formContainer>
-      <Link to='/admin/userlist' className='btn btn-light my-3'>
-        <i className='fas fa-arrow-left'></i> Go Back
+    <div className="user-edit-container">
+      <Link to="/admin/userlist" className="back-button">
+        <i className="fas fa-arrow-left"></i> Back to Users
       </Link>
-      <div className='card'>
-        <div className='card-header'>
-          <h1>Edit User</h1>
-        </div>
-        <div className='card-body'>
+      <Card className="edit-card">
+        <Card.Header className="text-center">
+          <h2>Edit User</h2>
+        </Card.Header>
+        <Card.Body>
           {loadingUpdate && <Loader />}
-          {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+          {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
           {loading ? (
-            <Loader />
+            <div className="center-spinner">
+              <Spinner animation="border" />
+            </div>
           ) : error ? (
-            <Message variant='danger'>{error}</Message>
+            <Message variant="danger">{error}</Message>
           ) : (
             <Form onSubmit={submitHandler}>
-              <Form.Group controlId='name'>
+              <Form.Group controlId="name" className="mb-4">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
-                  type='text'
-                  placeholder='Enter name'
+                  type="text"
+                  placeholder="Enter full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="input-field"
                 />
               </Form.Group>
 
-              <Form.Group controlId='email'>
+              <Form.Group controlId="email" className="mb-4">
                 <Form.Label>Email Address</Form.Label>
                 <Form.Control
-                  type='email'
-                  placeholder='Enter email'
+                  type="email"
+                  placeholder="Enter email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="input-field"
                 />
               </Form.Group>
 
-              <Form.Group controlId='isadmin' className='mt-3'>
-                <Form.Check
-                  type='switch'
-                  label='Is Admin'
-                  checked={isAdmin}
-                  onChange={(e) => setIsAdmin(e.target.checked)}
-                  className='form-check'
-                />
-              </Form.Group>
+              {/* Knob Switch */}
+              <div className={`knob-container ${isAdmin ? 'active' : ''}`} onClick={handleToggle}>
+                <div className="knob">
+                  <i className={`fas ${isAdmin ? 'fa-check' : 'fa-times'}`}></i>
+                </div>
+                <span className="status-text">
+                  {isAdmin ? 'Admin Access Granted' : 'No Admin Access'}
+                </span>
+              </div>
 
-              <Button type='submit' variant='primary' className='mt-3'>
-                Update
+
+              <Button type="submit" variant="primary" className="submit-button mt-4">
+                Save Changes
               </Button>
             </Form>
           )}
-        </div>
-      </div>
-    </formContainer>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 

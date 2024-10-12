@@ -14,6 +14,8 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import groqRoutes from './routes/groqRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
+import axios from 'axios';
+
 
 dotenv.config();
 connectDB();
@@ -56,6 +58,28 @@ app.post("/api/chat", async (req, res) => {
   } catch (error) {
     console.error("Error generating content:", error);
     res.status(500).json({ error: "Error generating content" });
+  }
+});
+
+app.get('/api/geocode', async (req, res) => {
+  const { latitude, longitude } = req.query;
+
+  try {
+      const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
+          params: {
+              q: `${latitude}+${longitude}`,
+              key: process.env.LOCATION_API, // Use the API key from .env
+          },
+      });
+
+      if (response.data.results.length > 0) {
+          res.json(response.data.results[0].components);
+      } else {
+          res.status(404).json({ message: 'No address found for the current location.' });
+      }
+  } catch (error) {
+      console.error('Error fetching geocoding data:', error);
+      res.status(500).json({ message: 'Unable to retrieve address details.' });
   }
 });
 
