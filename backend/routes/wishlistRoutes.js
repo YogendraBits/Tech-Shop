@@ -1,21 +1,23 @@
-// wishlistRoutes.js
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js'; 
+import rateLimit from 'express-rate-limit';
+import { protect } from '../middleware/authMiddleware.js';
 import {
-    addTowishlist,
-    getWishlist,
-    removeFromWishlist,
-} from '../controllers/wishlistControllers.js'; // Import all controller functions
+  addTowishlist,
+  getWishlist,
+  removeFromWishlist,
+} from '../controllers/wishlistControllers.js';
 
 const router = express.Router();
 
-// Route to add a product to the wishlist
-router.post('/', protect, addTowishlist); 
+// Limit wishlist operations (e.g., 20 requests per hour)
+const wishlistLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 20,
+  message: 'Too many wishlist requests, please try again later.',
+});
 
-// Route to get all wishlist items for a user
-router.get('/', protect, getWishlist); 
-
-// Route to remove an item from the wishlist
-router.delete('/:id', protect, removeFromWishlist);
+router.post('/', protect, wishlistLimiter, addTowishlist);
+router.get('/', protect, wishlistLimiter, getWishlist);
+router.delete('/:id', protect, wishlistLimiter, removeFromWishlist);
 
 export default router;

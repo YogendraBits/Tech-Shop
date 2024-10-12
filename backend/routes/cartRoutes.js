@@ -1,28 +1,36 @@
-import express from 'express'
-import { 
-  addCartItems, 
-  getCartById, 
-  updateCartItem, 
-  deleteCartItem, 
-  getMyCart, 
-  getCarts 
-} from '../controllers/cartControllers.js'
-import { protect , admin } from '../middleware/authMiddleware.js'
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import {
+  addCartItems,
+  getCartById,
+  updateCartItem,
+  deleteCartItem,
+  getMyCart,
+  getCarts,
+} from '../controllers/cartControllers.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
 
-const router = express.Router()
+const router = express.Router();
+
+// Limit cart operations (e.g., 50 requests per hour)
+const cartLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 50,
+  message: 'Too many cart requests, please try again later.',
+});
 
 router.route('/')
-  .post(protect, addCartItems)
-  .get(protect, admin, getCarts)
+  .post(protect, cartLimiter, addCartItems)
+  .get(protect, admin, cartLimiter, getCarts);
 
-router.route('/mycart')
-  .get(protect, getMyCart)
+router.route('/mycart').get(protect, cartLimiter, getMyCart);
 
 router.route('/:id')
-  .get(protect, getCartById)
-  .put(protect, updateCartItem)
+  .get(protect, cartLimiter, getCartById)
+  .put(protect, cartLimiter, updateCartItem);
 
 router.route('/:cartId/item/:itemId')
-  .put(protect, updateCartItem)
-  .delete(protect, deleteCartItem); 
-export default router 
+  .put(protect, cartLimiter, updateCartItem)
+  .delete(protect, cartLimiter, deleteCartItem);
+
+export default router;

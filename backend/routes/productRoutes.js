@@ -1,17 +1,43 @@
-import express from 'express'
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import {
+  getProducts,
+  getProductById,
+  deleteProduct,
+  updateProduct,
+  createProduct,
+  createProductReview,
+  getTopProducts,
+  updateProductReview,
+  deleteProductReview,
+} from '../controllers/productControllers.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-import {getProducts, getProductById , deleteProduct , updateProduct ,createProduct , createProductReview , getTopProducts, updateProductReview, deleteProductReview } from '../controllers/productControllers.js'
-import {protect , admin } from '../middleware/authMiddleware.js'
 
+// Limit review operations (e.g., 3 reviews per hour)
+const reviewLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  message: 'Too many reviews, please try again later.',
+});
 
-router.route('/').get(getProducts).post(protect , admin , createProduct)
-router.route('/:id/reviews').post(protect, createProductReview)
-router.route('/top').get(getTopProducts)
-router.route('/:id').get(getProductById).delete(protect,admin,deleteProduct).put(protect,admin,updateProduct) 
+router.route('/')
+  .get(getProducts)
+  .post(protect, admin, createProduct);
 
-router.route('/:id/reviews/:reviewId').put(protect, updateProductReview);
+router.route('/:id/reviews')
+  .post(protect, reviewLimiter, createProductReview);
 
-router.route('/:id/reviews/:reviewId').delete(protect, deleteProductReview);
+router.route('/top').get(getTopProducts);
 
+router.route('/:id')
+  .get(getProductById)
+  .delete(protect, admin, deleteProduct)
+  .put(protect, admin, updateProduct);
 
-export default router
+router.route('/:id/reviews/:reviewId')
+  .put(protect, reviewLimiter, updateProductReview)
+  .delete(protect, reviewLimiter, deleteProductReview);
+
+export default router;
