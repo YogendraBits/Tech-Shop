@@ -1,7 +1,5 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { combineReducers } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { thunk } from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import {
     productListReducer,
     productDetailsReducer,
@@ -96,15 +94,6 @@ const initialState = {
     userLogin: { userInfo: userInfoFromStorage },
     wishlist: { wishlistitems: [] },
 };
-
-const middleware = [thunk];
-
-// Create Redux store with reducers, initial state, and middleware
-// const store = createStore(
-//     reducer, 
-//     initialState, 
-//     composeWithDevTools(applyMiddleware(...middleware))
-// );
 
 const store = configureStore({
     reducer,
