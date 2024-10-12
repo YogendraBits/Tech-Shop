@@ -10,6 +10,8 @@ import Address from './models/addressModel.js'
 import Cart from './models/cartModel.js'
 import Wishlist from './models/wishlistModel.js'
 import connectDB from './config/db.js'
+import { log } from 'winston'
+import Log from './models/logModel.js'
 
 dotenv.config()
 connectDB()
@@ -46,6 +48,7 @@ const destroyData = async ()=>{
         await Address.deleteMany()
         await Cart.deleteMany()
         await Wishlist.deleteMany()
+        await Log.deleteMany()
         process.exit()
     } catch (error) {
 

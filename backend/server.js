@@ -1,3 +1,4 @@
+// server.js
 import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
@@ -15,6 +16,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import groqRoutes from './routes/groqRoutes.js';
 import addressRoutes from './routes/addressRoutes.js';
 import axios from 'axios';
+import winstonLogger from './monitoring/winstonLogger.js';
+import { trackRequest, metricsRoute } from './monitoring/metrics.js';
+import logRoutes from './routes/logRoutes.js';
 
 
 dotenv.config();
@@ -29,6 +33,11 @@ if (process.env.NODE_ENV === 'development') {
 // Middleware to parse JSON requests
 app.use(express.json());
 
+// Log HTTP requests with morgan and Winston
+app.use(morgan('combined', {
+  stream: { write: message => winstonLogger.info(message.trim()) }
+}));
+
 // API Routes
 app.use("/api/products", productsRoutes);
 app.use("/api/users", userRoutes);
@@ -38,12 +47,12 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/groq", groqRoutes);
+app.use('/api/logs', logRoutes);
 
 // PayPal Client ID endpoint
 app.get('/api/config/paypal', (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID);
 });
-
 
 // Google Generative AI integration
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -54,38 +63,47 @@ app.post("/api/chat", async (req, res) => {
 
   try {
     const result = await model.generateContent(prompt);
+    winstonLogger.info(`Chat response sent: ${result.response.text()}`); // Log successful response
     res.json({ response: result.response.text() });
   } catch (error) {
-    console.error("Error generating content:", error);
+    winstonLogger.error(`Error generating content: ${error.message}`);
     res.status(500).json({ error: "Error generating content" });
   }
 });
 
+// Geocoding endpoint
 app.get('/api/geocode', async (req, res) => {
   const { latitude, longitude } = req.query;
 
   try {
-      const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
-          params: {
-              q: `${latitude}+${longitude}`,
-              key: process.env.LOCATION_API, // Use the API key from .env
-          },
-      });
+    const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
+      params: {
+        q: `${latitude}+${longitude}`,
+        key: process.env.LOCATION_API,
+      },
+    });
 
-      if (response.data.results.length > 0) {
-          res.json(response.data.results[0].components);
-      } else {
-          res.status(404).json({ message: 'No address found for the current location.' });
-      }
+    if (response.data.results.length > 0) {
+      winstonLogger.info(`Geocode success for ${latitude}, ${longitude}`); // Log successful geocode
+      res.json(response.data.results[0].components);
+    } else {
+      res.status(404).json({ message: 'No address found for the current location.' });
+    }
   } catch (error) {
-      console.error('Error fetching geocoding data:', error);
-      res.status(500).json({ message: 'Unable to retrieve address details.' });
+    winstonLogger.error(`Error fetching geocoding data: ${error.message}`);
+    res.status(500).json({ message: 'Unable to retrieve address details.' });
   }
 });
 
 // Serve static files from the uploads directory
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Apply metrics middleware
+app.use(trackRequest);
+
+// Expose /metrics for Prometheus scraping
+app.get('/metrics', metricsRoute);
 
 // Production setup for serving frontend
 if (process.env.NODE_ENV === 'production') {
@@ -102,6 +120,12 @@ if (process.env.NODE_ENV === 'production') {
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
+
+// Global error handler
+app.use((err, req, res, next) => {
+  winstonLogger.error(`${req.method} ${req.url} - ${err.message}`); // Log the error with Winston
+  res.status(500).json({ message: 'Internal Server Error' });
+});
 
 // Start the server
 const PORT = process.env.PORT || 5000;

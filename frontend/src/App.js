@@ -21,6 +21,7 @@ import OrderListScreen from './screen/OrderListScreen';
 import WishlistScreen from './screen/WishlistScreen'; 
 import AboutUs from './Components/AboutUs';
 import AddressScreen from './Components/AddressScreen';
+import Dashboard from './Components/Dashboard';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="/page/:pageNumber" element={<HomeScreen />} exact />
             <Route path="/page/search/:keyword/:pageNumber" element={<HomeScreen />} exact />
             <Route path="/" element={<HomeScreen />} exact />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
           </Routes>
         </Container>
       </main>

@@ -1,0 +1,35 @@
+/* Dashboard.css */
+
+.logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .logs-table th,
+  .logs-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .logs-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .log-level {
+    font-weight: bold;
+  }
+  
+  .log-level.info {
+    color: green;
+  }
+  
+  .log-level.warn {
+    color: orange;
+  }
+  
+  .log-level.error {
+    color: red;
+  }
+  
