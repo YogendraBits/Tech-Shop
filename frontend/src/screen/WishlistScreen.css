@@ -60,7 +60,7 @@
     margin-top: 10px; /* Space above actions */
 }
 
-.wis-button,wis-quantity-display {
+.wis-button, .wis-quantity-display {
     border-radius: 50%; /* Round buttons for a more modern look */
     width: 35px; /* Adjusted width */
     height: 35px; /* Adjusted height */
@@ -125,4 +125,23 @@
 
 .empty-button:hover {
     background-color: #0056b3; /* Darker blue on hover */
+}
+
+.wis-pagination .page-item {
+    margin: 0 5px;
+}
+
+.wis-pagination .page-link {
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: #007bff; /* Link color */
+}
+
+.wis-pagination .page-item.active .page-link {
+    background-color: #007bff; /* Active page color */
+    color: white;
+}
+
+.wis-pagination .page-link:hover {
+    background-color: #e2e6ea; /* Light background on hover */
 }

@@ -9,11 +9,10 @@ import {
 
 
 // Fetch Wishlist
-export const fetchWishlist = () => async (dispatch, getState) => {
+export const fetchWishlist = (pageNumber = 1) => async (dispatch, getState) => {
     try {
         dispatch({ type: WISHLIST_REQUEST });
 
-        // Get user info from state
         const { userLogin: { userInfo } } = getState();
 
         const config = {
@@ -22,7 +21,7 @@ export const fetchWishlist = () => async (dispatch, getState) => {
             },
         };
 
-        const { data } = await axios.get('/api/wishlist', config); // Update URL according to your API
+        const { data } = await axios.get(`/api/wishlist?page=${pageNumber}`, config);
 
         dispatch({
             type: WISHLIST_SUCCESS,
@@ -37,6 +36,7 @@ export const fetchWishlist = () => async (dispatch, getState) => {
         });
     }
 };
+
 
 // Add an item to the wishlist
 export const addTowishlist = (productId, qty) => async (dispatch, getState) => {

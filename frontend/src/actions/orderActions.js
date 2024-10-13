@@ -164,7 +164,7 @@ export const payOrder =
         payload: message,
       })
     }
-  }
+  };
 export const listMyOrders = () => async (dispatch, getState) => {
   try {
     dispatch({
@@ -198,15 +198,11 @@ export const listMyOrders = () => async (dispatch, getState) => {
   }
 };
 
-export const listOrders = () => async (dispatch, getState) => {
+export const listOrders = (pageNumber = '') => async (dispatch, getState) => {
   try {
-    dispatch({
-      type: ORDER_LIST_REQUEST,
-    });
+    dispatch({ type: ORDER_LIST_REQUEST });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+    const { userLogin: { userInfo } } = getState();
 
     const config = {
       headers: {
@@ -214,7 +210,7 @@ export const listOrders = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`/api/orders`, config);
+    const { data } = await axios.get(`/api/orders?pageNumber=${pageNumber}`, config);
 
     dispatch({
       type: ORDER_LIST_SUCCESS,
@@ -223,10 +219,7 @@ export const listOrders = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      payload: error.response?.data.message || error.message,
     });
   }
 };

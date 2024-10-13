@@ -43,3 +43,36 @@
     background-color: #0056b3;
   }
   
+  .order-list-container {
+    padding: 20px;
+  }
+  
+  .pagination {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+  }
+  
+  .pagination-item {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .pagination-item:hover {
+    background-color: #e9ecef; /* Light background on hover */
+    color: #495057; /* Darker text on hover */
+  }
+  
+  .pagination .active {
+    background-color: #007bff; /* Primary color for active page */
+    color: white;
+  }
+  
+  .pagination .disabled {
+    pointer-events: none; /* Disable click events */
+    opacity: 0.5; /* Dim the disabled buttons */
+  }
+  
+  .pagination .prev, .pagination .next {
+    font-weight: bold; /* Make previous and next buttons bold */
+  }
+  

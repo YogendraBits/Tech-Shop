@@ -1,6 +1,6 @@
-import asyncHandler from 'express-async-handler'; // Import asyncHandler for error handling
-import WishlistItem from '../models/wishlistModel.js'; // Ensure the model name is consistent
-import Product from '../models/productModel.js'; // Import the Product model
+import asyncHandler from 'express-async-handler';
+import WishlistItem from '../models/wishlistModel.js'; 
+import Product from '../models/productModel.js'; 
 
 // @desc    Add an item to the wishlist
 // @route   POST /api/wishlist
@@ -57,16 +57,22 @@ export const addTowishlist = asyncHandler(async (req, res) => {
 // @route   GET /api/wishlist
 // @access  Private
 export const getWishlist = asyncHandler(async (req, res) => {
-    try {
-        // Retrieve all wishlist items for the logged-in user
-        const wishlistItems = await WishlistItem.find({ userId: req.user._id }).populate('productId');
-        
-        // Respond with the user's wishlist items
-        res.status(200).json(wishlistItems);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+    const pageSize = 3;
+    const page = Number(req.query.page) || 1;
+
+    const count = await WishlistItem.countDocuments({ userId: req.user._id });
+    const wishlistItems = await WishlistItem.find({ userId: req.user._id })
+        .limit(pageSize)
+        .skip(pageSize * (page - 1))
+        .populate('productId');
+
+    res.status(200).json({
+        wishlistitems: wishlistItems,
+        page,
+        pages: Math.ceil(count / pageSize),
+    });
 });
+
 
 // @desc    Remove an item from the wishlist
 // @route   DELETE /api/wishlist/:id
