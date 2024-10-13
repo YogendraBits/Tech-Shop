@@ -19,7 +19,7 @@ import axios from 'axios';
 import winstonLogger from './monitoring/winstonLogger.js';
 import { trackRequest, metricsRoute } from './monitoring/metrics.js';
 import logRoutes from './routes/logRoutes.js';
-
+import cors from 'cors'; // Import CORS package
 
 dotenv.config();
 connectDB();
@@ -32,6 +32,15 @@ if (process.env.NODE_ENV === 'development') {
 
 // Middleware to parse JSON requests
 app.use(express.json());
+
+// CORS configuration
+const corsOptions = {
+  origin: 'https://your-frontend-domain.com', // Change to your allowed origin , not applicable on local host
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  credentials: true, // Allow credentials (cookies, authorization headers)
+};
+
+app.use(cors(corsOptions)); // Use CORS middleware
 
 // Log HTTP requests with morgan and Winston
 app.use(morgan('combined', {
