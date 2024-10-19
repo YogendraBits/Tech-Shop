@@ -20,7 +20,7 @@ import ProductEditScreen from './screen/ProductEditScreen';
 import OrderListScreen from './screen/OrderListScreen';
 import WishlistScreen from './screen/WishlistScreen'; 
 import AboutUs from './Components/AboutUs';
-import AddressScreen from './Components/AddressScreen';
+import AddressScreen from './screen/AddressScreen';
 import Dashboard from './Components/Dashboard';
 
 function App() {
