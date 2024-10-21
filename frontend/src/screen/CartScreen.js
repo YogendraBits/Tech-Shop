@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCart, removeFromCart, updateCartItem } from '../actions/cartActions';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { FaTrash, FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
 import './CartScreen.css';
 
 const CartScreen = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate(); // Get navigate function
+    const navigate = useNavigate();
 
     const cart = useSelector(state => state.cart);
     const { cartItems } = cart;
@@ -41,29 +41,39 @@ const CartScreen = () => {
         try {
             if (quantity < 1) return;
             await dispatch(updateCartItem(itemId, quantity));
-            // Consider removing the page reload
+
+            // Update the local quantities state after a successful backend update
+            setQuantities((prev) => ({
+                ...prev,
+                [itemId]: quantity, // Set the input field to the updated quantity
+            }));
         } catch (err) {
             setError('Failed to update item quantity.');
         }
     };
 
     const handleQuantityChange = (itemId, newQuantity) => {
-        setQuantities((prev) => ({
-            ...prev,
-            [itemId]: newQuantity,
-        }));
+        const item = cartItems.find(item => item._id === itemId);
+        if (item && newQuantity <= item.countInStock) {
+            setQuantities((prev) => ({
+                ...prev,
+                [itemId]: newQuantity,
+            }));
+        } else if (newQuantity > item.countInStock) {
+            setError('Quantity exceeds available stock.');
+        }
     };
 
     const checkoutHandler = () => {
         if (!userInfo) {
-            navigate('/login?redirect=shipping'); // Use navigate for redirection
+            navigate('/login?redirect=shipping');
         } else {
             navigate('/shipping');
         }
     };
 
     const shopNowHandler = () => {
-        navigate('/'); // Use navigate for shop now
+        navigate('/');
     };
 
     return (
@@ -72,7 +82,7 @@ const CartScreen = () => {
             {error && <div className="error-notification">{error}</div>}
             {!userInfo ? (
                 <div className="login-prompt">
-                    <h5>Please log-in to add items to your cart.</h5>
+                    <h5>Please log in to add items to your cart.</h5>
                     <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
                 </div>
             ) : (
@@ -84,41 +94,44 @@ const CartScreen = () => {
                         </div>
                     ) : (
                         <>
-                            {cartItems.map(item => (
-                                <div key={item._id} className="cart-item">
-                                    <Link to={`/product/${item.product._id}`} className="item-details">
-                                        <img src={item.image} alt={item.name} className="item-image" />
-                                        <div>
-                                            <h2 className="item-name">{item.name}</h2>
-                                            <p className="item-price">Price: ${item.price.toFixed(2)}</p>
-                                            <p className="item-subtotal">
-                                                Subtotal: ${(item.price * quantities[item._id] || 0).toFixed(2)}
-                                            </p>
+                            {cartItems.map(item => {
+                                return (
+                                    <div key={item._id} className="cart-item">
+                                        <Link to={`/product/${item.product._id}`} className="item-details">
+                                            <img src={item.image} alt={item.name} className="item-image" />
+                                            <div>
+                                                <h2 className="item-name">{item.name}</h2>
+                                                <p className="item-price">Price: ${item.price.toFixed(2)}</p>
+                                                <p className="item-subtotal">
+                                                    Subtotal: ${(item.price * quantities[item._id] || 0).toFixed(2)}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                        <div className="quantity-controller">
+                                            <button onClick={() => handleQuantityChange(item._id, Math.max(1, quantities[item._id] - 1))} className="quantity-btn">
+                                                <FaMinus />
+                                            </button>
+                                            <input
+                                                type="number"
+                                                value={quantities[item._id] || 1}
+                                                onChange={(e) => handleQuantityChange(item._id, Number(e.target.value))}
+                                                min="1"
+                                                max={item.countInStock} // Limit input to available stock
+                                                className="quantity-input"
+                                            />
+                                            <button onClick={() => handleQuantityChange(item._id, Math.min(item.countInStock, quantities[item._id] + 1))} className="quantity-btn">
+                                                <FaPlus />
+                                            </button>
+                                            <button onClick={() => updateQuantityHandler(item._id, quantities[item._id])} className="update-btn">
+                                                <FaCheckCircle />
+                                            </button>
                                         </div>
-                                    </Link>
-                                    <div className="quantity-controller">
-                                        <button onClick={() => handleQuantityChange(item._id, Math.max(1, quantities[item._id] - 1))} className="quantity-btn">
-                                            <FaMinus />
-                                        </button>
-                                        <input
-                                            type="number"
-                                            value={quantities[item._id] || 1}
-                                            onChange={(e) => handleQuantityChange(item._id, Number(e.target.value))}
-                                            min="1"
-                                            className="quantity-input"
-                                        />
-                                        <button onClick={() => handleQuantityChange(item._id, quantities[item._id] + 1)} className="quantity-btn">
-                                            <FaPlus />
-                                        </button>
-                                        <button onClick={() => updateQuantityHandler(item._id, quantities[item._id])} className="update-btn">
-                                            <FaCheckCircle />
+                                        <button onClick={() => removeItemHandler(item._id)} className="remove-btn">
+                                            <FaTrash />
                                         </button>
                                     </div>
-                                    <button onClick={() => removeItemHandler(item._id)} className="remove-btn">
-                                        <FaTrash />
-                                    </button>
-                                </div>
-                            ))}
+                                );
+                            })}
                             <div className="total-section">
                                 <h2 className="total-amount">
                                     Total: ${cartItems.reduce((acc, item) => acc + item.price * quantities[item._id], 0).toFixed(2)}

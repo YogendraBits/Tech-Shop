@@ -15,7 +15,7 @@ const router = express.Router();
 // Limit cart operations (e.g., 50 requests per hour)
 const cartLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 50,
+  max: 500,
   message: 'Too many cart requests, please try again later.',
 });
 

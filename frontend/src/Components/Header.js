@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navbar, Nav, Container, NavDropdown, Modal, Button } from "react-bootstrap";
 import { logout } from "../actions/userActions";
 import SearchBox from './SearchBox';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Chat from './gemini'; // Regular Chat component
 import GroqChat from './GroqChat'; // Groq Chat component
 import AIChatOptions from './AIChatOptions'; // AI chat options component
@@ -14,12 +13,8 @@ const Header = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [selectedChatType, setSelectedChatType] = useState(null); // State to track selected chat type
     const dispatch = useDispatch();
-    const navigate = useNavigate(); 
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
-
-    const wishlist = useSelector((state) => state.wishlist);
-    const { wishlistitems } = wishlist;
 
     const handleLogout = () => {
         dispatch(logout());

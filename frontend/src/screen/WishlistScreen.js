@@ -20,6 +20,7 @@ const WishlistScreen = () => {
 
     const [addedToCart, setAddedToCart] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [outOfStockMessage, setOutOfStockMessage] = useState('');
 
     // Fetch wishlist items when user logs in or currentPage changes
     useEffect(() => {
@@ -29,8 +30,13 @@ const WishlistScreen = () => {
     }, [dispatch, userInfo, currentPage]);
 
     const handleAddToCart = (productId, quantity) => {
+        if (quantity === 0) {
+            setOutOfStockMessage("Item is out of stock");
+            return;
+        }
         dispatch(addToCart(productId, quantity));
         setAddedToCart((prev) => ({ ...prev, [productId]: true }));
+        setOutOfStockMessage(''); // Clear message if added successfully
     };
 
     const handleRemoveFromwishlist = (id) => {
@@ -132,25 +138,31 @@ const WishlistScreen = () => {
                                         </Link>
                                     </div>
                                     <div className="wis-item-actions">
-                                        {addedToCart[item.productId?._id] ? (
-                                            <Button
-                                                variant="success"
-                                                onClick={() => navigate('/cart')}
-                                                className="wis-button wis-added-button"
-                                            >
-                                                <FaShoppingCart />
-                                            </Button>
+                                        {item.quantity > 0 ? (
+                                            <>
+                                                {addedToCart[item.productId?._id] ? (
+                                                    <Button
+                                                        variant="success"
+                                                        onClick={() => navigate('/cart')}
+                                                        className="wis-button wis-added-button"
+                                                    >
+                                                        <FaShoppingCart />
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        type="button"
+                                                        variant="light"
+                                                        onClick={() => handleAddToCart(item.productId._id, item.quantity)}
+                                                        className="wis-button wis-add-button"
+                                                    >
+                                                        <FaShoppingCart />
+                                                    </Button>
+                                                )}
+                                                <span className="wis-quantity-display">Qty: {item.quantity}</span>
+                                            </>
                                         ) : (
-                                            <Button
-                                                type="button"
-                                                variant="light"
-                                                onClick={() => handleAddToCart(item.productId._id, item.quantity)}
-                                                className="wis-button wis-add-button"
-                                            >
-                                                <FaShoppingCart />
-                                            </Button>
+                                            <span className="wis-out-of-stock">Out of Stock</span>
                                         )}
-                                        <span className="wis-quantity-display">Qty: {item.quantity}</span>
                                         <Button
                                             type="button"
                                             variant="danger"
@@ -164,6 +176,7 @@ const WishlistScreen = () => {
                             </Col>
                         ))}
                     </Row>
+                    {outOfStockMessage && <Message variant="warning">{outOfStockMessage}</Message>}
                     <Pagination className="wis-pagination justify-content-center mt-3">
                         <Pagination.First onClick={() => handlePageChange(1)} disabled={page === 1} />
                         <Pagination.Prev onClick={() => handlePageChange(page - 1)} disabled={page === 1} />

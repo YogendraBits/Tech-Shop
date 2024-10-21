@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
-import { Card, Badge, Spinner } from "react-bootstrap";
+import { Card, Badge} from "react-bootstrap";
 import Rating from "../Components/Rating";
 import { Link } from "react-router-dom";
 import './Product.css'; // Import the CSS file

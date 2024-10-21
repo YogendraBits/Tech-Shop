@@ -80,13 +80,15 @@ const ProductScreen = () => {
 
   const addToWishlistHandler = async () => {
     if (userInfo) {
-      try {
-        await dispatch(addTowishlist(product._id, qty));
-      } catch (error) {
-        alert('Failed to add item to wishlist. Please try again.');
-      }
+        try {
+            // Set qty to 0 if countInStock is 0
+            const quantityToAdd = product.countInStock > 0 ? qty : 0;
+            await dispatch(addTowishlist(product._id, quantityToAdd));
+        } catch (error) {
+            alert('Failed to add item to wishlist. Please try again.');
+        }
     } else {
-      setShowLoginModal(true); 
+        setShowLoginModal(true); 
     }
   };
 
