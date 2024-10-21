@@ -18,7 +18,7 @@ const router = express.Router();
 // Limit review operations (e.g., 3 reviews per hour)
 const reviewLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3,
+  max: 30,
   message: 'Too many reviews, please try again later.',
 });
 

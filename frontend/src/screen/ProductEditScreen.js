@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -8,9 +8,9 @@ import { listProductDetails, updateProduct } from '../actions/productActions';
 import { PRODUCT_UPDATE_RESET } from '../constants/productConstants';
 import './ProductEditScreen.css';
 
-const ProductEditScreen = ({ match }) => {
+const ProductEditScreen = () => {
   const navigate = useNavigate(); // Initialize useNavigate
-  const productId = match.params.id;
+  const { id: productId } = useParams(); // Use useParams to get productId
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
@@ -154,7 +154,7 @@ const ProductEditScreen = ({ match }) => {
               />
             </Form.Group>
 
-            <Button type='submit' variant='primary' className="btn">
+            <Button type='submit' variant='primary' className="update_btn">
               Update
             </Button>
           </Form>

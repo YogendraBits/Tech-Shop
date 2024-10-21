@@ -60,7 +60,7 @@ h1 {
 }
 
 /* Buttons */
-.btn {
+.update_btn {
   background-color: #007bff; /* Primary color */
   border: none; /* Remove border */
   color: white; /* White text */
@@ -69,14 +69,15 @@ h1 {
   transition: background-color 0.2s; /* Smooth transition */
   cursor: pointer; /* Pointer cursor */
   font-size: 16px; /* Larger font size */
+  margin-top: 10px;
 }
 
-.btn:hover {
+.update_btn:hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
 
 /* Go Back Link */
-.btn-light {
+.update_btn-light {
   background-color: #f8f9fa; /* Light background */
   color: #007bff; /* Blue text */
   text-decoration: none; /* Remove underline */
@@ -85,7 +86,7 @@ h1 {
   display: inline-block; /* Inline block for better spacing */
 }
 
-.btn-light:hover {
+.update_btn-light:hover {
   background-color: #e2e6ea; /* Slightly darker on hover */
 }
 
