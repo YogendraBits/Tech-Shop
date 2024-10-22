@@ -15,7 +15,7 @@ const Footer = () => {
                 <div className="footer-social">
                     <h5>Follow Us</h5>
                     <div className="social-icons">
-                    <a href="https://github.com/YogendraBits/FSADProject" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <a href="https://github.com/YogendraBits/Tech-Shop" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                         <i className="fab fa-github"></i></a>
                     </div>
                 </div>

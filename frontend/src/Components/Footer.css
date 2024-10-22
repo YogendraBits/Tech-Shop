@@ -1,10 +1,11 @@
-/* Compact modern design for Footer */
+/* Enhanced modern design for Footer */
 
 .new-footer {
     background-color: #121212; /* Darker background for a modern feel */
     color: #ffffff; /* White text for contrast */
-    padding: 10px 0; /* Reduced padding for height */
+    padding: 20px 0; /* Increased padding for a more spacious feel */
     font-family: 'Helvetica Neue', Arial, sans-serif; /* Clean sans-serif font */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
 }
 
 .footer-content {
@@ -22,38 +23,52 @@
 }
 
 .footer-brand h1 {
-    font-size: 1.5rem; /* Title font size */
+    font-size: 1.6rem; /* Larger title font size */
     font-weight: 700; /* Bold weight for visibility */
     color: #00bfff; /* Bright cyan color */
     margin: 0; /* Remove margin */
+    letter-spacing: 1px; /* Slightly increased letter spacing */
 }
 
 .footer-brand p {
-    font-size: 0.8rem; /* Subtitle font size */
+    font-size: 0.9rem; /* Subtitle font size */
     color: #bbb; /* Softer grey for the subtitle */
     margin: 0; /* Remove margin */
 }
 
 .footer-links {
     display: flex; /* Flexbox for navigation links */
-    gap: 20px; /* Space between links */
+    gap: 30px; /* Increased space between links */
 }
 
 .footer-links a {
     color: #ffffff; /* Link color */
-    font-size: 0.8rem; /* Smaller font size for links */
+    font-size: 0.9rem; /* Increased font size for better readability */
     text-decoration: none; /* Remove underline */
+    position: relative; /* For pseudo-element */
     transition: color 0.3s ease; /* Smooth transition for hover effects */
 }
 
-.footer-links a:hover {
-    color: #00bfff; /* Change color on hover */
+.footer-links a::after {
+    content: ''; /* Pseudo-element for underline effect */
+    display: block; /* Make it a block */
+    height: 2px; /* Height of the underline */
+    width: 0; /* Start with no width */
+    background: #00bfff; /* Color of the underline */
+    transition: width 0.3s ease; /* Smooth transition for width */
+    position: absolute; /* Position relative to the link */
+    bottom: -5px; /* Position it below the text */
+    left: 0; /* Align it to the left */
+}
+
+.footer-links a:hover::after {
+    width: 100%; /* Expand underline on hover */
 }
 
 .footer-social {
     display: flex; /* Flexbox for social section */
     align-items: center; /* Center items vertically */
-    gap: 15px; /* Space between icons */
+    gap: 20px; /* Space between icons */
 }
 
 .footer-social h5 {
@@ -64,25 +79,25 @@
 
 .social-icons {
     display: flex; /* Flexbox for social icons */
-    gap: 10px; /* Space between icons */
+    gap: 15px; /* Space between icons */
 }
 
 .social-icons a {
-    font-size: 1.3rem; /* Icon size */
+    font-size: 1.5rem; /* Increased icon size */
     color: #bbb; /* Default color for icons */
     transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effects */
 }
 
 .social-icons a:hover {
     color: #00bfff; /* Change color on hover */
-    transform: scale(1.1); /* Scale effect on hover */
+    transform: scale(1.2); /* Larger scale effect on hover */
 }
 
 .footer-bottom {
     background-color: #121212; /* Slightly lighter background for contrast */
-    padding: 5px 0; /* Reduced padding */
+    padding: 10px 0; /* Increased padding */
     text-align: center; /* Center text */
-    font-size: 0.7rem; /* Smaller font size for bottom text */
+    font-size: 0.8rem; /* Font size for bottom text */
     color: #f3ecec; /* Lighter grey for bottom text */
 }
 
@@ -93,7 +108,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .new-footer {
-        padding: 8px 0; /* Adjust padding for smaller screens */
+        padding: 15px 0; /* Adjust padding for smaller screens */
     }
 
     .footer-content {
@@ -111,10 +126,10 @@
     }
 
     .footer-links a {
-        font-size: 0.7rem; /* Adjust font size for smaller screens */
+        font-size: 0.8rem; /* Adjust font size for smaller screens */
     }
 
     .social-icons a {
-        font-size: 1.2rem; /* Adjust size for smaller screens */
+        font-size: 1.3rem; /* Adjust size for smaller screens */
     }
 }

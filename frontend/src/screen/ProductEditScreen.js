@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom'; // Import useParams
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Components/Message';
@@ -9,8 +9,8 @@ import { PRODUCT_UPDATE_RESET } from '../constants/productConstants';
 import './ProductEditScreen.css';
 
 const ProductEditScreen = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const { id: productId } = useParams(); // Use useParams to get productId
+  const navigate = useNavigate();
+  const { id: productId } = useParams();
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
@@ -68,7 +68,7 @@ const ProductEditScreen = () => {
         Go Back
       </Link>
       <div className="form-container">
-        <h1>Edit Product</h1>
+        <h1 className="form-title">Edit Product</h1>
         {loadingUpdate && <Loader />}
         {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
         {loading ? (
@@ -76,85 +76,85 @@ const ProductEditScreen = () => {
         ) : error ? (
           <Message variant='danger'>{error}</Message>
         ) : (
-          <Form onSubmit={submitHandler}>
-            <Form.Group controlId='name' className="form-group">
-              <Form.Label className="form-label">Name</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+          <Form onSubmit={submitHandler} className="product-edit-form">
+            <div className="form-row">
+              <Form.Group controlId='name' className="form-group">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Enter product name'
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Form.Group>
 
-            <Form.Group controlId='price' className="form-group">
-              <Form.Label className="form-label">Price</Form.Label>
-              <Form.Control
-                type='number'
-                placeholder='Enter price'
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+              <Form.Group controlId='price' className="form-group">
+                <Form.Label>Price</Form.Label>
+                <Form.Control
+                  type='number'
+                  placeholder='Enter price'
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </Form.Group>
+            </div>
 
-            <Form.Group controlId='image' className="form-group">
-              <Form.Label className="form-label">Image URL</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter image URL'
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+            <div className="form-row">
+              <Form.Group controlId='image' className="form-group">
+                <Form.Label>Image URL</Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Enter image URL'
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                />
+              </Form.Group>
 
-            <Form.Group controlId='brand' className="form-group">
-              <Form.Label className="form-label">Brand</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter brand'
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+              <Form.Group controlId='brand' className="form-group">
+                <Form.Label>Brand</Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Enter brand name'
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                />
+              </Form.Group>
+            </div>
 
-            <Form.Group controlId='countInStock' className="form-group">
-              <Form.Label className="form-label">Count In Stock</Form.Label>
-              <Form.Control
-                type='number'
-                placeholder='Enter count in stock'
-                value={countInStock}
-                onChange={(e) => setCountInStock(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+            <div className="form-row">
+              <Form.Group controlId='countInStock' className="form-group">
+                <Form.Label>Count In Stock</Form.Label>
+                <Form.Control
+                  type='number'
+                  placeholder='Enter available stock'
+                  value={countInStock}
+                  onChange={(e) => setCountInStock(e.target.value)}
+                />
+              </Form.Group>
 
-            <Form.Group controlId='category' className="form-group">
-              <Form.Label className="form-label">Category</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter category'
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="form-control"
-              />
-            </Form.Group>
+              <Form.Group controlId='category' className="form-group">
+                <Form.Label>Category</Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Enter product category'
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </Form.Group>
+            </div>
 
             <Form.Group controlId='description' className="form-group">
-              <Form.Label className="form-label">Description</Form.Label>
+              <Form.Label>Description</Form.Label>
               <Form.Control
                 as='textarea'
-                placeholder='Enter description'
+                rows={4}
+                placeholder='Enter product description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="form-control textarea"
               />
             </Form.Group>
 
-            <Button type='submit' variant='primary' className="update_btn">
+            <Button type='submit' variant='primary' className="update-btn">
               Update
             </Button>
           </Form>

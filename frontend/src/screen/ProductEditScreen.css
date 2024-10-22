@@ -1,120 +1,122 @@
-/* Styles for the entire page */
-body {
-  background-color: #f0f0f0; /* Slightly darker light background */
-  font-family: 'Arial', sans-serif; /* Clean font */
-  margin: 0; /* Remove default margin */
-}
-
-/* Container for the form */
+/* Container styling for the edit product form */
 .form-container {
-  background: white; /* White background for the form */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
-  max-width: 500px; /* Limit the width */
-  margin: 40px auto; /* Center it with margin */
-  padding: 30px; /* Inner padding */
-  display: grid; /* Use grid layout */
-  grid-template-columns: 1fr; /* Single column layout */
-  gap: 20px; /* Space between grid items */
+  max-width: 900px; 
+  margin: 2rem auto; 
+  padding: 2rem; 
+  border-radius: 12px; 
+  background-color: #ffffff; /* White background for a fresh look */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
 }
 
-/* Header */
-h1 {
-  font-size: 22px; /* Adjusted font size */
-  margin-bottom: 20px; /* Space below header */
-  color: #333; /* Dark text */
-  text-align: center; /* Center the header */
+/* Hover effect for the container */
+.form-container:hover {
+  transform: translateY(-5px); /* Subtle lift on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); 
 }
 
-/* Form elements */
+/* Title styling */
+.form-title {
+  text-align: center; 
+  margin-bottom: 1.5rem; 
+  font-size: 2.5rem; /* Slightly larger for impact */
+  color: #444; /* Soft, darker gray */
+  font-weight: 700; 
+  letter-spacing: 1px; 
+}
+
+/* Styling for the form itself */
+.product-edit-form {
+  display: flex; 
+  flex-direction: column; 
+}
+
+/* Flex styling for rows */
+.form-row {
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: space-between; 
+  margin-bottom: 1.5rem; 
+}
+
+/* Individual form group styling */
 .form-group {
-  display: flex; /* Flexbox for label and input alignment */
-  flex-direction: column; /* Stack label above input */
+  flex: 1; 
+  margin-right: 1rem; 
+  min-width: 250px; 
+  position: relative; 
 }
 
-/* Input fields */
-.form-control {
-  border: 1px solid #ddd; /* Light border color */
-  border-radius: 4px; /* Rounded edges */
-  padding: 12px; /* Inner padding */
-  transition: border-color 0.2s; /* Smooth transition */
+/* Remove margin for the last item in the row */
+.form-group:last-child {
+  margin-right: 0; 
 }
 
-.form-control:focus {
-  border-color: #007bff; /* Focus border color */
-  outline: none; /* Remove outline */
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1); /* Focus shadow */
-}
-
-/* Textarea for description */
-.textarea {
-  resize: vertical; /* Allow vertical resizing */
-  height: 100px; /* Set a default height */
-}
-
-/* Labels */
+/* Label styling */
 .form-label {
-  font-weight: 600; /* Slightly bolder labels */
-  color: #555; /* Slightly dark text */
-  margin-bottom: 5px; /* Space below labels */
+  margin-bottom: 0.5rem; 
+  font-weight: bold; 
+  color: #6c757d; /* Muted blue-gray */
+  transition: color 0.3s ease; 
 }
 
-/* Buttons */
-.update_btn {
-  background-color: #007bff; /* Primary color */
-  border: none; /* Remove border */
-  color: white; /* White text */
-  padding: 12px; /* Inner padding */
-  border-radius: 4px; /* Rounded corners */
-  transition: background-color 0.2s; /* Smooth transition */
-  cursor: pointer; /* Pointer cursor */
-  font-size: 16px; /* Larger font size */
+/* Input field styling */
+.form-control {
+  border-radius: 8px; 
+  border: 1px solid #ddd; /* Softer border color */
+  padding: 12px; 
+  font-size: 1rem; 
+  background-color: #f7f9fc; /* Soft light blue-gray */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; 
+}
+
+/* Focus state for input fields */
+.form-control:focus {
+  border-color: #007bff; /* Vibrant blue for focus */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Softer shadow */
+  outline: none; /* Remove default outline */
+}
+
+/* Placeholder styling */
+.form-control::placeholder {
+  color: #aaa; /* Softer placeholder color */
+  opacity: 1; /* Make placeholder fully opaque */
+}
+
+/* Button styling */
+.update-btn {
+  background-color: #007bff; /* Vibrant blue for the button */
+  color: white; 
+  border: none; 
   margin-top: 10px;
+  padding: 0.75rem 1.5rem; 
+  border-radius: 8px; 
+  font-weight: bold; 
+  font-size: 1.1rem; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease; 
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); /* Soft shadow for button */
 }
 
-.update_btn:hover {
+/* Hover effect for button */
+.update-btn:hover {
   background-color: #0056b3; /* Darker blue on hover */
+  transform: translateY(-2px); /* Slightly lift the button */
 }
 
-/* Go Back Link */
-.update_btn-light {
-  background-color: #f8f9fa; /* Light background */
-  color: #007bff; /* Blue text */
-  text-decoration: none; /* Remove underline */
-  padding: 10px; /* Inner padding */
-  border-radius: 4px; /* Rounded corners */
-  display: inline-block; /* Inline block for better spacing */
+/* Active state for button */
+.update-btn:active {
+  transform: translateY(1px); /* Push down slightly on click */
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2); /* Reduce shadow */
 }
 
-.update_btn-light:hover {
-  background-color: #e2e6ea; /* Slightly darker on hover */
-}
-
-/* Loader and Message styles */
-.loader {
-  margin: 20px 0; /* Space above and below loader */
-  text-align: center; /* Center the loader */
-}
-
-.message {
-  padding: 12px; /* Inner padding */
-  border-radius: 4px; /* Rounded corners */
-  margin-bottom: 20px; /* Space below messages */
-  text-align: center; /* Center text in messages */
-}
-
-.message.danger {
-  background-color: #f8d7da; /* Light red */
-  color: #721c24; /* Dark red text */
-}
-
-/* Responsive adjustments */
+/* Media query for responsive design */
 @media (max-width: 600px) {
-  .form-container {
-    padding: 20px; /* Less padding on smaller screens */
+  .form-row {
+      flex-direction: column; 
   }
 
-  h1 {
-    font-size: 20px; /* Smaller header on small screens */
+  .form-group {
+      margin-right: 0; 
   }
 }
