@@ -22,7 +22,6 @@ const WishlistScreen = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [outOfStockMessage, setOutOfStockMessage] = useState('');
 
-    // Fetch wishlist items when user logs in or currentPage changes
     useEffect(() => {
         if (userInfo) {
             dispatch(fetchWishlist(currentPage));
@@ -36,22 +35,19 @@ const WishlistScreen = () => {
         }
         dispatch(addToCart(productId, quantity));
         setAddedToCart((prev) => ({ ...prev, [productId]: true }));
-        setOutOfStockMessage(''); // Clear message if added successfully
+        setOutOfStockMessage('');
     };
 
     const handleRemoveFromwishlist = (id) => {
         dispatch(removeFromwishlist(id));
 
-        // Check if removing an item leads to the current page becoming empty
-        if (wishlistitems.length === 1) { // Only one item on current page
+        if (wishlistitems.length === 1) {
             if (currentPage === 1) {
-                // If we're on the first page, fetch the first page again
-                dispatch(fetchWishlist(1)); // Fetch first page
+                dispatch(fetchWishlist(1));
             } else {
-                // If we're on a non-first page, go back one page
                 const previousPage = currentPage - 1;
                 setCurrentPage(previousPage);
-                dispatch(fetchWishlist(previousPage)); // Fetch previous page
+                dispatch(fetchWishlist(previousPage));
             }
         }
     };
@@ -59,7 +55,7 @@ const WishlistScreen = () => {
     const handlePageChange = (pageNumber) => {
         if (pageNumber < 1 || pageNumber > pages) return;
         setCurrentPage(pageNumber);
-        dispatch(fetchWishlist(pageNumber)); // Fetch the selected page
+        dispatch(fetchWishlist(pageNumber));
     };
 
     const renderPaginationItems = () => {
@@ -69,9 +65,7 @@ const WishlistScreen = () => {
         const endPage = Math.min(pages, startPage + maxVisiblePages - 1);
 
         if (startPage > 1) {
-            items.push(
-                <Pagination.First key="first" onClick={() => handlePageChange(1)} />
-            );
+            items.push(<Pagination.First key="first" onClick={() => handlePageChange(1)} />);
             if (startPage > 2) {
                 items.push(<Pagination.Ellipsis key="first-ellipsis" />);
             }
@@ -93,17 +87,15 @@ const WishlistScreen = () => {
             if (endPage < pages - 1) {
                 items.push(<Pagination.Ellipsis key="last-ellipsis" />);
             }
-            items.push(
-                <Pagination.Last key="last" onClick={() => handlePageChange(pages)} />
-            );
+            items.push(<Pagination.Last key="last" onClick={() => handlePageChange(pages)} />);
         }
 
         return items;
     };
 
     return (
-        <div className="wis-screen">
-            <h1 className="wis-title">Your Wishlist</h1>
+        <div className="wishlist-screen">
+            <h1 className="wishlist-title">Your Wishlist</h1>
             {!userInfo ? (
                 <div className="login-prompt">
                     <Message>Please log in to see your wishlist.</Message>
@@ -115,59 +107,59 @@ const WishlistScreen = () => {
                 <Loader />
             ) : error ? (
                 <Message variant="danger">{error}</Message>
-            ) : totalItems === 0 || (wishlistitems.length === 0 && currentPage === 1) ? (  // Show empty message if no items
+            ) : totalItems === 0 || (wishlistitems.length === 0 && currentPage === 1) ? (
                 <div className="empty-wishlist-container">
                     <FaHeartBroken className="empty-wishlist-icon" />
-                    <Message className="wis-empty-message">Your wishlist is empty.</Message>
+                    <Message className="wishlist-empty-message">Your wishlist is empty.</Message>
                     <Button className="empty-button" onClick={() => navigate('/')}>
                         Browse Products
                     </Button>
                 </div>
             ) : (
                 <>
-                    <Row className="wis-list-group">
+                    <Row className="wishlist-list-group">
                         {wishlistitems.map((item) => (
-                            <Col xs={12} sm={6} md={4} key={item._id} className="wis-list-item">
-                                <div className="wis-tile">
+                            <Col xs={12} sm={6} md={4} key={item._id} className="wishlist-list-item">
+                                <div className="wishlist-tile">
                                     <Link to={`/product/${item.productId?._id}`}>
-                                        <img src={item.image} alt={item.name} className="wis-item-image" />
+                                        <img src={item.image} alt={item.name} className="wishlist-item-image" />
                                     </Link>
-                                    <div className="wis-item-info">
+                                    <div className="wishlist-item-info">
                                         <Link to={`/product/${item.productId?._id}`}>
-                                            <strong className="wis-item-name">{item.name}</strong>
+                                            <strong className="wishlist-item-name">{item.name}</strong>
                                         </Link>
                                     </div>
-                                    <div className="wis-item-actions">
+                                    <div className="wishlist-item-actions">
                                         {item.quantity > 0 ? (
                                             <>
                                                 {addedToCart[item.productId?._id] ? (
                                                     <Button
                                                         variant="success"
                                                         onClick={() => navigate('/cart')}
-                                                        className="wis-button wis-added-button"
+                                                        className="wishlist-button wishlist-added-button"
                                                     >
                                                         <FaShoppingCart />
                                                     </Button>
                                                 ) : (
                                                     <Button
                                                         type="button"
-                                                        variant="light"
+                                                        variant="primary"
                                                         onClick={() => handleAddToCart(item.productId._id, item.quantity)}
-                                                        className="wis-button wis-add-button"
+                                                        className="wishlist-button wishlist-add-button"
                                                     >
                                                         <FaShoppingCart />
                                                     </Button>
                                                 )}
-                                                <span className="wis-quantity-display">Qty: {item.quantity}</span>
+                                                <span className="wishlist-quantity-display">Qty: {item.quantity}</span>
                                             </>
                                         ) : (
-                                            <span className="wis-out-of-stock">Out of Stock</span>
+                                            <span className="wishlist-out-of-stock">Out of Stock</span>
                                         )}
                                         <Button
                                             type="button"
                                             variant="danger"
                                             onClick={() => handleRemoveFromwishlist(item._id)}
-                                            className="wis-button wis-remove-button"
+                                            className="wishlist-button wishlist-remove-button"
                                         >
                                             <FaTrash />
                                         </Button>
@@ -177,7 +169,7 @@ const WishlistScreen = () => {
                         ))}
                     </Row>
                     {outOfStockMessage && <Message variant="warning">{outOfStockMessage}</Message>}
-                    <Pagination className="wis-pagination justify-content-center mt-3">
+                    <Pagination className="wishlist-pagination justify-content-center mt-3">
                         <Pagination.First onClick={() => handlePageChange(1)} disabled={page === 1} />
                         <Pagination.Prev onClick={() => handlePageChange(page - 1)} disabled={page === 1} />
                         {renderPaginationItems()}

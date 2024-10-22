@@ -1,34 +1,54 @@
 .profile-container {
   margin-top: 20px;
+  font-family: 'Arial', sans-serif; /* Added a clean font for better readability */
 }
 
 .tile {
   background-color: #ffffff;
   padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
   position: relative; /* To position the delete button */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+}
+
+.tile:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
 }
 
 .section-title {
   font-size: 24px;
-  margin-bottom: 20px; /* Adjusted margin for better spacing */
+  margin-bottom: 20px;
+  color: #333; /* Darker text for better contrast */
 }
 
-.delete-button {
-  position: absolute; /* Positioning the delete button */
-  top: 20px; /* Adjust as needed */
-  right: 20px; /* Adjust as needed */
+.delete-icon {
+  position: absolute;
+  top: 15px; /* Adjust as needed */
+  right: 15px; /* Adjust as needed */
+  transition: color 0.3s; /* Transition effect for color */
+}
 
+.delete-icon:hover {
+  color: darkred; /* Dark red on hover for emphasis */
 }
 
 .orders-table-wrapper {
   max-height: 350px;
   overflow-y: auto;
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ddd; /* Light border for distinction */
+  margin-top: 15px; /* Spacing between sections */
 }
 
 .table-sm {
   cursor: pointer;
+  transition: background-color 0.3s; /* Smooth transition for row hover effect */
+}
+
+.table-sm tr:hover {
+  background-color: #f8f9fa; /* Light background on row hover */
 }
 
 .submit-btn {
@@ -37,16 +57,51 @@
   font-size: 18px;
   padding: 10px;
   border-radius: 8px;
+  background-color: #007bff; /* Primary button color */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
 }
 
 .submit-btn:hover {
-  background-color: #007bff;
+  background-color: #0056b3; /* Darker shade on hover */
+  transform: scale(1.05); /* Slight increase in size on hover */
 }
 
 .submit-btn:active {
-  background-color: #0056b3;
+  background-color: #004494; /* Even darker shade on active */
 }
 
 .submit-btn:focus {
   box-shadow: none;
+}
+
+.orders-table-wrapper::-webkit-scrollbar {
+  width: 8px; /* Custom scrollbar width */
+}
+
+.orders-table-wrapper::-webkit-scrollbar-thumb {
+  background: #888; /* Scrollbar thumb color */
+  border-radius: 10px; /* Rounded scrollbar */
+}
+
+.orders-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker thumb on hover */
+}
+
+.modal-header {
+  background-color: #f7f7f7; /* Light header background */
+  border-bottom: 2px solid #ddd; /* Subtle border at the bottom */
+}
+
+.modal-title {
+  color: #333; /* Darker title color */
+}
+
+.modal-footer button {
+  transition: background-color 0.3s; /* Transition for footer buttons */
+}
+
+.modal-footer button:hover {
+  background-color: #f0f0f0; /* Light background on hover */
 }

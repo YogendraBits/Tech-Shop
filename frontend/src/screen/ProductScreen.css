@@ -1,78 +1,142 @@
-.btn-block {
-  display: block;        /* Makes the button a block-level element */
-  width: 100%;          /* Ensures the button takes the full width of its parent */
-  margin: 0;            /* Removes default margin */
-  padding: 0.5rem 1rem; /* Adds padding for a better touch area */
-  border: none;         /* Removes border */
-  border-radius: 0.25rem; /* Optional: rounded corners */
-  font-size: 1rem;      /* Sets font size */
-  text-align: center;   /* Centers the text inside the button */
-  cursor: pointer;      /* Changes the cursor to pointer on hover */
+/* Root Variables for Colors */
+:root {
+  --primary-color: #5b3cc4; /* Purple for primary buttons */
+  --secondary-color: #ff6b6b; /* Red for delete actions */
+  --light-bg: #f7f9fc; /* Light background for body */
+  --card-bg: linear-gradient(135deg, #ffffff 0%, #e9ecef 100%); /* Gradient background for cards */
+  --border-color: #e1e1e1; /* Light border for items */
+  --text-color: #333; /* Primary text color */
+  --muted-text-color: #666; /* Muted text color */
 }
 
-.btn-block:hover {
-  opacity: 0.8;         /* Changes opacity on hover for visual feedback */
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--light-bg);
 }
 
 .card {
-  border: 1px solid #e1e1e1; /* Light border around the card */
-  border-radius: 0.5rem; /* Rounded corners for the card */
+  border: none; /* No solid border */
+  border-radius: 1rem; /* Rounded corners for cards */
+  margin-bottom: 1.5rem; /* Space between cards */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+  background: var(--card-bg); /* Gradient background */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
 
 .card h2 {
-  font-size: 1.75rem; /* Larger font size for the heading */
-  font-weight: 600; /* Bold heading for emphasis */
+  font-size: 2rem; /* Larger title font size */
+  font-weight: bold;
+  color: var(--text-color); /* Title color */
+  padding: 1rem; /* Padding inside the card */
+  margin: 0; /* Remove default margin */
+  text-align: center; /* Center align titles */
 }
 
 .list-group-item {
-  border-radius: 0.25rem; /* Rounded corners for list items */
+  border-radius: 0.5rem; /* Slightly rounded corners */
+  padding: 1rem; /* Padding for list items */
+  transition: background-color 0.3s; /* Smooth transition */
 }
 
-.bg-light {
-  transition: background-color 0.3s ease; /* Smooth background transition */
-}
-.list-group-item:hover .bg-light {
-  background-color: #e2e6ea; /* Change background on hover */
+.list-group-item:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Light hover effect */
 }
 
-
-.ed-button {
-  font-size: 1.2rem; /* Adjust size as needed */
-  color: #6de90e; /* Default color for the icon */
-  padding: 0; /* Remove padding to keep it aligned */
-  display: flex; /* Align center */
-  align-items: center; /* Center the icon vertically */
-  margin: 10px;
+.btn-block {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 1.5rem; /* Rounded button corners */
+  font-size: 1.1rem; /* Slightly larger button text */
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: white; /* White text */
+  transition: background-color 0.3s ease, transform 0.3s; /* Smooth transition */
 }
 
-.ed-button:hover {
-  color: #f37907; /* Change color on hover */
-  text-decoration: none; /* Remove underline on hover */
+.btn-block:hover {
+  background-color: #4a2b8e; /* Darker purple on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
 }
 
+.qty-display {
+  display: flex; /* Flexbox for alignment */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center items */
+}
 
 .qty-display button {
-  margin: 0 10px; /* Adds equal margin on both sides of the buttons */
+  margin: 0 5px; /* Spacing between buttons */
+  background-color: transparent; /* No background */
+  border: 2px solid var(--primary-color); /* Solid border */
+  color: var(--primary-color); /* Button color */
+  border-radius: 1rem; /* Rounded corners */
+  padding: 0.5rem 1rem; /* Padding for touch area */
+  cursor: pointer; /* Pointer on hover */
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
 
-.qty-display .qty-number {
-  padding: 0 10px; /* Ensures the quantity number also has space on both sides */
-}
-
-
-.review-comment {
-  max-height: 100px; /* Set a maximum height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  padding: 5px; /* Optional padding for aesthetics */
-  border: 1px solid #ccc; /* Optional border */
-  border-radius: 4px; /* Optional rounded corners */
-  background-color: #f9f9f9; /* Optional background color */
+.qty-display button:hover {
+  background-color: rgba(91, 60, 196, 0.1); /* Light purple on hover */
 }
 
 .review-container {
-  max-height: 300px; /* Adjust height as needed */
-  overflow-y: auto; /* Enables vertical scrolling */
-  margin-top: 1rem; /* Optional: Add some space above the reviews */
+  max-height: 300px; /* Set max height for reviews */
+  overflow-y: auto; /* Allow scrolling */
+  margin-top: 1.5rem; /* Space above review container */
 }
 
+.review-comment {
+  max-height: 120px; /* Limit height for review comments */
+  overflow-y: auto; /* Allow scrolling if needed */
+  padding: 10px;
+  border-radius: 0.5rem; /* Rounded corners for comments */
+  background-color: rgba(248, 249, 250, 0.9); /* Light comment background */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.review-comment:hover {
+  background-color: rgba(230, 230, 230, 0.8); /* Light grey on hover */
+}
+
+/* Edit and Delete buttons */
+.ed-button {
+  font-size: 1.1rem; /* Slightly larger font size */
+  color: var(--secondary-color); /* Secondary color for delete */
+  display: flex;
+  align-items: center; /* Center vertically */
+  margin: 5px; /* Margin around buttons */
+  transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.ed-button:hover {
+  color: darkred; /* Change color on hover */
+}
+
+/* Modal styles */
+.modal-header, .modal-footer {
+  background-color: var(--light-bg); /* Light background for modals */
+}
+
+.modal-title {
+  font-weight: bold; /* Bold title for modals */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .qty-display {
+    flex-direction: column; /* Stack buttons on smaller screens */
+    align-items: flex-start; /* Align items to start */
+  }
+
+  .qty-display button {
+    margin: 5px 0; /* Margin between stacked buttons */
+  }
+}

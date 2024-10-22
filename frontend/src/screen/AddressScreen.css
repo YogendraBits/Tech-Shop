@@ -1,3 +1,4 @@
+/* Container Styles */
 .address-screen-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -6,49 +7,73 @@
     flex-direction: column;
 }
 
+/* Layout Styles */
 .address-layout {
     display: flex;
     justify-content: space-between;
     gap: 20px;
 }
 
+/* Address List Styles */
 .address-list {
     flex: 1;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 12px; /* More rounded corners */
     padding: 20px;
-    background-color: #fff;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); /* Gradient background */
     max-height: 400px;
     overflow-y: auto; /* Allow scrolling if content overflows */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Deeper shadow for more depth */
+    transition: background 0.3s, transform 0.3s; /* Transition for background and scale */
 }
 
+.address-list:hover {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e9ecef 100%); /* Light gradient on hover */
+    transform: scale(1.02); /* Slightly scale up on hover */
+}
+
+/* Address Form Styles */
 .address-form-container {
     flex: 1;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 12px; /* More rounded corners */
     padding: 20px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background: linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%); /* Gradient background */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Deeper shadow for more depth */
+    transition: background 0.3s; /* Transition for background color */
 }
 
+.address-form-container:hover {
+    background: linear-gradient(135deg, #f7f9fc 0%, #e9ecef 100%); /* Light gradient on hover */
+}
+
+/* Heading Styles */
 h1, h2 {
     text-align: center;
-    color: #333; /* Darker text for better readability */
+    color: #343a40; /* Darker text for better readability */
+    margin-bottom: 20px; /* Space below headings */
+    font-family: 'Arial', sans-serif; /* Stylish font */
 }
 
+/* Address Item Styles */
 .address-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #dee2e6;
     padding: 10px 0;
+    transition: background 0.3s; /* Smooth background transition */
 }
 
+.address-item:hover {
+    background-color: #e9ecef; /* Highlight effect on hover */
+}
+
+/* Address Details Styles */
 .address-details {
     flex: 1;
+    font-family: 'Arial', sans-serif; /* Stylish font */
 }
 
+/* Action Button Styles */
 .address-actions {
     display: flex;
     align-items: center;
@@ -61,13 +86,15 @@ h1, h2 {
     color: #007bff; /* Bootstrap primary color */
     font-size: 1.5em;
     margin-left: 10px;
-    transition: color 0.3s; /* Smooth transition */
+    transition: color 0.3s, transform 0.2s; /* Smooth transition */
 }
 
 .icon-button:hover {
     color: #0056b3; /* Darker color on hover */
+    transform: scale(1.2); /* Slightly scale up on hover */
 }
 
+/* Form Styles */
 .address-form-container form {
     display: flex;
     flex-direction: column;
@@ -75,37 +102,43 @@ h1, h2 {
 }
 
 .address-form-container input {
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    transition: border-color 0.3s; /* Smooth transition */
+    padding: 12px; /* Increased padding for a better touch target */
+    margin: 10px 0;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+    font-size: 16px; /* Increased font size for better readability */
 }
 
 .address-form-container input:focus {
     border-color: #007bff; /* Highlight on focus */
     outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add glow effect on focus */
 }
 
+/* Button Group Styles */
 .address-buttons {
     display: flex; /* Use flexbox to align buttons side by side */
     justify-content: space-between; /* Space them evenly */
     margin-top: 20px; /* Space above the button area */
 }
 
+/* Current Location Button Styles */
 .current-location-button {
-    background-color: transparent; /* Make it transparent to blend in */
-    border: 1px solid #007bff; /* Add border for visibility */
-    border-radius: 4px; /* Rounded corners */
-    padding: 10px; /* Space around the icon */
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border-radius: 6px; /* Rounded corners */
+    padding: 10px 15px; /* Space around the icon */
     cursor: pointer; /* Pointer cursor for interactivity */
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
 }
 
 .current-location-button:hover {
-    background-color: #e0e7ff; /* Light blue on hover */
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.05); /* Scale up on hover */
 }
 
+/* Login Prompt Styles */
 .login-prompt {
     text-align: center;
     margin-top: 50px;
@@ -114,20 +147,23 @@ h1, h2 {
 .login-button {
     background-color: #007bff; /* Bootstrap primary color */
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px; /* Increased padding for a better touch target */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px; /* Rounded corners */
     cursor: pointer;
     text-decoration: none; /* Remove underline */
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
 }
 
 .login-button:hover {
     background-color: #0056b3; /* Darker color on hover */
+    transform: scale(1.05); /* Scale up on hover */
 }
 
+/* Loading Message Styles */
 .loading-message {
     color: #007bff; /* Primary color */
     text-align: center; /* Center the text */
     margin-top: 10px; /* Add some space above */
+    font-weight: bold; /* Bold text for emphasis */
 }

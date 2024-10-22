@@ -1,147 +1,169 @@
-.wis-screen {
-    padding: 20px;
-    background-color: #f8f9fa; /* Light background */
+.wishlist-screen {
+    padding: 40px; /* Increased padding for better spacing */
+    background-color: #f9f9f9; /* Light gray background for a softer look */
+    min-height: 100vh; /* Ensure full height */
 }
 
-.wis-title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #343a40; /* Dark color for the title */
+.wishlist-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #444; /* Darker title color for contrast */
     text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 600; /* Bold title */
 }
 
-.wis-list-group {
+.wishlist-list-group {
     margin-top: 20px;
 }
 
-.wis-list-item {
-    display: flex; /* Use flexbox for tile layout */
-    justify-content: center; /* Center content */
-    margin-bottom: 20px; /* Space between tiles */
+.wishlist-list-item {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px; /* Increased space between tiles */
 }
 
-.wis-tile {
+.wishlist-tile {
     background-color: #ffffff; /* White background for tiles */
-    border: 1px solid #dee2e6; /* Light border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 10px; /* Padding inside tile */
+    border-radius: 16px; /* More rounded corners for a modern look */
+    padding: 20px; /* Increased padding for a spacious feel */
     width: 100%; /* Full width of the column */
-    max-width: 300px; /* Maximum width for tiles */
+    max-width: 350px; /* Slightly wider tiles */
     text-align: center; /* Center all text */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
-    transition: box-shadow 0.3s; /* Smooth shadow transition */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    position: relative; /* For positioning child elements */
 }
 
-.wis-tile:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+.wishlist-tile:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
 }
 
-.wis-item-image {
+.wishlist-item-image {
     width: 100%; /* Image takes full width of tile */
-    height: 150px; /* Fixed height for uniformity */
+    height: 180px; /* Fixed height for uniformity */
     object-fit: cover; /* Cover the image */
-    border-radius: 8px; /* Rounded corners for image */
+    border-radius: 10px; /* Rounded corners for image */
+    border: 2px solid #007bff; /* Blue border for image */
+    transition: transform 0.2s ease; /* Smooth scaling on hover */
 }
 
-.wis-item-info {
-    margin: 10px 0; /* Space above and below item info */
+.wishlist-item-image:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
 }
 
-.wis-item-name {
+.wishlist-item-info {
+    margin: 15px 0; /* Space above and below item info */
+}
+
+.wishlist-item-name {
     font-weight: bold;
     color: #007bff; /* Bootstrap primary color */
     text-decoration: none;
-    margin-bottom: 5px; /* Space below name */
+    margin: 0;
+    font-size: 1.25rem; /* Larger font size for item name */
 }
 
-.wis-item-actions {
-    display: flex; /* Use flexbox for actions */
-    justify-content: space-around; /* Space out actions evenly */
-    margin-top: 10px; /* Space above actions */
+.wishlist-item-actions {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    align-items: center; /* Align items vertically center */
+    margin-top: 10px; /* Space above action buttons */
 }
 
-.wis-button, .wis-quantity-display {
-    border-radius: 50%; /* Round buttons for a more modern look */
-    width: 35px; /* Adjusted width */
-    height: 35px; /* Adjusted height */
+.wishlist-button, .wishlist-quantity-display {
+    border-radius: 50%; /* Round buttons for a modern look */
+    width: 30px; /* Adjusted width */
+    height: 30px; /* Adjusted height */
     display: flex; /* Center icon */
     align-items: center;
     justify-content: center;
+    padding: 0; /* Removed padding to make background smaller */
 }
 
-.wis-added-button {
-    background-color: #28a745; /* Green for added button */
-    color: white;
+.wishlist-remove-button {
+    background-color: #dc3545; /* Danger color */
 }
 
-.wis-add-button {
-    background-color: #f8f9fa; /* Light background for add button */
-}
-
-.wis-remove-button {
-    background-color: #dc3545; /* Red for remove button */
-    color: white;
-}
-
-.wis-remove-button:hover {
+.wishlist-remove-button:hover {
     background-color: #c82333; /* Darker red on hover */
 }
 
-.wis-add-button:hover {
-    background-color: #e2e6ea; /* Slightly darker on hover */
+.wishlist-add-button {
+    background-color: #28a745; /* Success color */
 }
 
-.wis-added-button:hover {
+.wishlist-add-button:hover {
     background-color: #218838; /* Darker green on hover */
 }
 
+.wishlist-quantity-display {
+    margin-top: 10px; /* Space above quantity display */
+    font-weight: bold;
+    color: #666; /* Lighter text color */
+}
+
+.wishlist-out-of-stock {
+    color: #dc3545; /* Danger color for out of stock */
+    font-weight: bold;
+    font-size: 1.1rem; /* Slightly larger font */
+}
+
 .empty-wishlist-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 50px;
-    background-color: #f8f9fa; /* Light background */
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    text-align: center;
+    margin-top: 50px; /* Space above empty state */
 }
 
 .empty-wishlist-icon {
-    font-size: 3rem; /* Larger icon */
-    color: #007bff; /* Bootstrap primary color */
-    margin-bottom: 20px;
+    font-size: 60px; /* Larger icon */
+    color: #dc3545; /* Danger color for empty state */
+}
+
+.wishlist-empty-message {
+    margin: 20px 0; /* Space above and below empty message */
+    font-size: 1.5rem;
+    color: #666; /* Lighter text color */
 }
 
 .empty-button {
-    border-radius: 25px; /* Rounded button */
-    padding: 10px 20px; /* Padding for button */
-    font-size: 1rem; /* Font size for button */
-    color: white; /* Text color */
-    background-color: #007bff; /* Primary color */
+    background-color: #007bff; /* Bootstrap primary color */
     border: none; /* Remove border */
-    transition: background-color 0.3s; /* Transition effect */
+    padding: 10px 20px; /* Button padding */
+    border-radius: 5px; /* Slightly rounded button */
+    color: white; /* White text */
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
 .empty-button:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
 
-.wis-pagination .page-item {
-    margin: 0 5px;
+.wishlist-pagination {
+    margin-top: 30px; /* Space above pagination */
+    justify-content: center; /* Center pagination */
 }
 
-.wis-pagination .page-link {
+.wishlist-pagination .pagination-item {
+    margin: 0 5px; /* Space between pagination items */
+}
+
+.wishlist-pagination .active {
+    background-color: #007bff; /* Highlight active page */
+    color: white; /* White text for active page */
+}
+
+.wishlist-pagination .page-link {
     padding: 10px 15px;
     border-radius: 5px;
     color: #007bff; /* Link color */
 }
 
-.wis-pagination .page-item.active .page-link {
+.wishlist-pagination .page-item.active .page-link {
     background-color: #007bff; /* Active page color */
     color: white;
 }
 
-.wis-pagination .page-link:hover {
+.wishlist-pagination .page-link:hover {
     background-color: #e2e6ea; /* Light background on hover */
 }
